@@ -14,10 +14,36 @@ export default function Home() {
   const [isAuthOpen, setIsAuthOpen] = useState(false)
   const [prompt, setPrompt] = useState("")
   const [output, setOutput] = useState("")
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
 
   const handleProcess = async () => {
-    // TODO: Implement API call
-    setOutput("# Processing...\nYour request is being processed.")
+    if (uploadedFiles.length === 0) {
+      alert("No files uploaded")
+      return
+    }
+
+    const formData = new FormData()
+    uploadedFiles.forEach((file) => formData.append("files", file))
+    formData.append("prompt", prompt)
+
+    try {
+      const response = await fetch("/api/process", {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        method: "POST",
+        body: formData,
+      })
+      if (!response.ok) {
+        throw new Error("Network response was not ok")
+      }
+      const responseData = await response.json()
+
+      setOutput(responseData)
+    } catch (error) {
+      console.error("Error processing request:", error)
+      alert("Failed to process request")
+    }
   }
 
   return (
@@ -28,7 +54,7 @@ export default function Home() {
       <main className="container mx-auto px-4 py-8 max-w-3xl">
         <div className="space-y-4">
           <div className="bg-white rounded-lg shadow-sm p-6 space-y-4">
-            <FileUpload />
+            <FileUpload onFilesUploaded={setUploadedFiles} uploadedFiles={uploadedFiles} />
             
             <div className="flex gap-2 items-center">
               <Input

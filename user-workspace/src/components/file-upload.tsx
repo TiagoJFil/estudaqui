@@ -5,8 +5,13 @@ import { useDropzone } from "react-dropzone"
 import { Upload } from "lucide-react"
 import { Card } from "@/components/ui/card"
 
-export default function FileUpload() {
-  const [files, setFiles] = useState<File[]>([])
+type FileUploadProps = {
+  uploadedFiles: File[]
+  onFilesUploaded: (files: File[]) => void
+}
+export default function FileUpload(
+  { uploadedFiles: files , onFilesUploaded: setFiles }: FileUploadProps
+) {
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles(acceptedFiles)
