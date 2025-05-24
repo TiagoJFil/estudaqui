@@ -2,48 +2,109 @@
 
 import { ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useSession, signOut } from "next-auth/react"
+import { useTranslation } from "react-i18next"
+import Image from "next/image"
+import { Github } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { GoogleIcon } from "./ui/google-icon"
+import { GithubIcon } from "./ui/github-icon"
+
 
 interface NavbarProps {
-  onAuthClick: () => void
+  onAuthClick: () => void,
+  onBuyMoreClick: () => void,
+  credits: number
 }
 
-export default function Navbar({ onAuthClick }: NavbarProps) {
+export default function Navbar({ onAuthClick,onBuyMoreClick, credits }: NavbarProps) {
+  const { data: session } = useSession()
+  const { t } = useTranslation()
+
   return (
     <nav className="border-b bg-white shadow-sm">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-purple-600 text-white rounded-lg flex items-center justify-center">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              className="w-5 h-5"
-            >
-              <path
-                d="M12 14l9-5-9-5-9 5 9 5z"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M12 14l9-5-9-5-9 5 9 5z"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-purple-600 text-white rounded-lg flex items-center justify-center">
+              <svg
+                viewBox="0 0 24 24"
+                className="w-6 h-6"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 14l9-5-9-5-9 5 9 5z"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M12 14l9-5-9-5-9 5 9 5z"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <span className="text-xl font-semibold">Examify</span>
           </div>
-          <span className="text-xl font-semibold">Examify</span>
         </div>
 
-        <Button
-          variant="outline"
-          className="flex items-center gap-2 hover:bg-gray-50"
-          onClick={onAuthClick}
-        >
-          Sign in
-          <ChevronDown className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-4">
+          <div className="text-lg font-bold text-gray-600">
+            {t("navbar.credits")}: {credits}
+          </div>
+
+          <Button
+            onClick={() => onBuyMoreClick()}
+            className="hover:bg-gray-200 hover:text-black transition-colors"
+          >
+            {t("navbar.buyMore")}
+          </Button>
+
+          {session ? (
+            <>
+              <span className="text-sm font-medium text-gray-700">
+                {session.user?.name}
+              </span>
+              {session.user?.image && (
+                <Image
+                  src={session.user.image}
+                  alt="User Profile"
+                  width={32}
+                  height={32}
+                  className="rounded-full"
+                />
+              )}
+              <Button
+                variant="outline"
+                className="hover:bg-gray-50"
+                onClick={() => signOut()}
+              >
+                {t("signOut")}
+              </Button>
+            </>
+          ) : (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="hover:bg-gray-200 hover:text-black transition-colors">
+                  {t("signIn")}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-white shadow-lg rounded-md p-2 w-48">
+                <DropdownMenuItem className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded-md" onClick={() => alert("Sign in with Google")}>
+                  <GoogleIcon width={20} height={20} />
+                  {t("signInWithGoogle")}
+                </DropdownMenuItem>
+                <DropdownMenuItem className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded-md" onClick={() => alert("Sign in with GitHub")}>
+                  <GithubIcon width={20} height={20} />
+                  {t("signInWithGitHub")}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
       </div>
     </nav>
   )

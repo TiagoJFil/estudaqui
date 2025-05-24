@@ -2,5 +2,12 @@
   "dialog": {
     "title": "Título do Diálogo",
     "close": "Fechar"
+  },
+  "navbar": {
+    "credits": "Ingressos",
+    "buyMore": "Comprar Mais"
+  },
+  "footer": {
+    "copyright": "Examify. Todos os direitos reservados."
   }
 }

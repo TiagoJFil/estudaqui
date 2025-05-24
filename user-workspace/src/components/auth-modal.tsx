@@ -3,6 +3,7 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Github } from "lucide-react"
+import { signIn } from "next-auth/react"
 
 interface AuthModalProps {
   open: boolean
@@ -14,7 +15,11 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <div className="grid gap-4">
-          <Button variant="outline" className="flex items-center gap-3 h-12">
+          <Button
+            variant="outline"
+            className="flex items-center gap-3 h-12"
+            onClick={() => signIn("google")}
+          >
             <svg viewBox="0 0 24 24" className="w-5 h-5">
               <path
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -35,7 +40,11 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
             </svg>
             Sign in with Google
           </Button>
-          <Button variant="outline" className="flex items-center gap-3 h-12">
+          <Button
+            variant="outline"
+            className="flex items-center gap-3 h-12"
+            onClick={() => signIn("github")}
+          >
             <Github className="w-5 h-5" />
             Sign in with GitHub
           </Button>

@@ -8,6 +8,16 @@ const nextConfig: NextConfig = {
         hostname: 'images.pexels.com',
         pathname: '/photos/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'cdn.discordapp.com',
+        pathname: '/attachments/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+        pathname: '/**',
+      },
     ],
   },
 }
