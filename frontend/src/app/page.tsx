@@ -17,17 +17,21 @@ export default function Home() {
     const [prompt, setPrompt] = useState("")
     const [output, setOutput] = useState("")
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
-    const [credits, setCredits] = useState(1) 
+    const [credits, setCredits] = useState(1)
 
     const handleProcess = async () => {
         if (uploadedFiles.length === 0) {
             alert("No files uploaded")
             return
         }
-
         try {
-            const responseData = await uploadFilesToServer(uploadedFiles, prompt)
-            setOutput(responseData)
+            const examJson = await uploadFilesToServer(uploadedFiles)
+            if (!examJson || Object.keys(examJson).length === 0) {
+                alert("No exam data found in the uploaded files")
+                return
+            }
+            setOutput(JSON.stringify(examJson, null, 2)) // Format JSON output
+            setCredits(credits - 1) // Decrease credits after processing
         } catch (error) {
             alert("Failed to process request")
         }
