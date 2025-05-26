@@ -1,0 +1,13 @@
+{
+  "dialog": {
+    "title": "Dialog Title",
+    "close": "Close"
+  },
+  "navbar": {
+    "credits": "Credits",
+    "buyMore": "Buy More"
+  },
+  "footer": {
+    "copyright": "Examify. All rights reserved."
+  }
+}

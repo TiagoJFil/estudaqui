@@ -1,15 +1,11 @@
 "use client"
 
-import { ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useSession, signOut } from "next-auth/react"
+import { useSession, signIn, signOut } from "next-auth/react"
 import { useTranslation } from "react-i18next"
 import Image from "next/image"
-import { Github } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { GoogleIcon } from "./ui/google-icon"
-import { GithubIcon } from "./ui/github-icon"
 import i18n from "@/lib/i18n"
+import { AuthDropDown } from "./AuthDropDown"
 
 
 interface NavbarProps {
@@ -19,7 +15,7 @@ interface NavbarProps {
 
 export default function Navbar({ onBuyMoreClick, credits }: NavbarProps) {
   const { data: session } = useSession()
-  const { t } = useTranslation('ns1', {i18n})
+  const { t } = useTranslation('ns1', {i18n, useSuspense:false})
 
   return (
     <nav className="border-b bg-white shadow-sm">
@@ -86,23 +82,7 @@ export default function Navbar({ onBuyMoreClick, credits }: NavbarProps) {
               </Button>
             </>
           ) : (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="hover:bg-gray-200 hover:text-black transition-colors">
-                  {t("signIn")}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white shadow-lg rounded-md p-2 w-48">
-                <DropdownMenuItem className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded-md" onClick={() => alert("Sign in with Google")}>
-                  <GoogleIcon width={20} height={20} />
-                  {t("signInWithGoogle")}
-                </DropdownMenuItem>
-                <DropdownMenuItem className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded-md" onClick={() => alert("Sign in with GitHub")}>
-                  <GithubIcon width={20} height={20} />
-                  {t("signInWithGitHub")}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <AuthDropDown onSignIn={ (platform) => {signIn(platform)}}/>
           )}
         </div>
       </div>
