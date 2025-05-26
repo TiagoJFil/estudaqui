@@ -9,17 +9,17 @@ import { Github } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { GoogleIcon } from "./ui/google-icon"
 import { GithubIcon } from "./ui/github-icon"
+import i18n from "@/lib/i18n"
 
 
 interface NavbarProps {
-  onAuthClick: () => void,
   onBuyMoreClick: () => void,
   credits: number
 }
 
-export default function Navbar({ onAuthClick,onBuyMoreClick, credits }: NavbarProps) {
+export default function Navbar({ onBuyMoreClick, credits }: NavbarProps) {
   const { data: session } = useSession()
-  const { t } = useTranslation()
+  const { t } = useTranslation('ns1', {i18n})
 
   return (
     <nav className="border-b bg-white shadow-sm">

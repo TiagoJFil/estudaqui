@@ -8,13 +8,11 @@ import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import Navbar from "@/components/navbar"
 import FileUpload from "@/components/file-upload"
-import AuthModal from "@/components/auth-modal"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 import { uploadFilesToServer } from "@/lib/api-service"
 
 export default function Home() {
-    const [isAuthOpen, setIsAuthOpen] = useState(false)
     const { data: session } = useSession()
     const [prompt, setPrompt] = useState("")
     const [output, setOutput] = useState("")
@@ -38,8 +36,7 @@ export default function Home() {
     console.log("Session:", session)
     return (
         <div className="min-h-screen bg-gray-50">
-            <Navbar onAuthClick={() => setIsAuthOpen(true)} onBuyMoreClick={() =>{} } credits={credits} />
-            <AuthModal open={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
+            <Navbar onBuyMoreClick={() =>{} } credits={credits} />
         
             <main className="container mx-auto px-4 py-8 max-w-3xl">
                 <div className="space-y-4">
