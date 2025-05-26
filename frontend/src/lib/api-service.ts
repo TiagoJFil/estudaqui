@@ -1,22 +1,19 @@
-export async function uploadFilesToServer(uploadedFiles: File[], prompt: string): Promise<any> {
+export async function uploadFilesToServer(uploadedFiles: File[]): Promise<any> {
     const formData = new FormData();
     uploadedFiles.forEach((file) => formData.append("files", file));
-    formData.append("prompt", prompt);
 
     try {
-        const response = await fetch("http://100.88.78.35:5000/api/v1/upload", {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
+        const response = await fetch("/api/v1/upload", {
             method: "POST",
             body: formData,
         });
 
         if (!response.ok) {
-            throw new Error("Network response was not ok");
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        return await response.json();
+        const data = await response.json();
+        return data; // Return the structured exam JSON
     } catch (error) {
         console.error("Error processing request:", error);
         throw error;
