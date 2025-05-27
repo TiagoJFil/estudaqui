@@ -19,3 +19,21 @@ export async function getUserIdentifier(){
     }
     return userEmail;
 }
+
+export const MAX_FILE_SIZE_MB = 10;
+
+export const VALID_FILE_TYPES = {
+    'application/pdf': ['.pdf'],
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx']
+};
+
+export const isValidFileType = (file: File): boolean => {
+    return Object.keys(VALID_FILE_TYPES).includes(file.type);
+}
+export const isValidFileSize = (file: File): boolean => {
+    const maxSizeBytes = MAX_FILE_SIZE_MB * 1024 * 1024; // Convert MB to bytes
+    return file.size <= maxSizeBytes;
+}
+export const isValidFile = (file: File): boolean => {
+    return isValidFileType(file) && isValidFileSize(file);
+}

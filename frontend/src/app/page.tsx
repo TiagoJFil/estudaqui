@@ -7,15 +7,37 @@ import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import FileUpload from "@/components/file-upload"
 import { useSession } from "next-auth/react"
-import { getUserInfo, uploadFilesToServer } from "@/lib/api-service"
+import {  uploadFilesToServer } from "@/lib/api-service"
 import { useUserContext } from "@/context/user-context"
+import FileDragDropOverlay from "@/components/ui/file-drag-drop-overlay"
 
 export default function Home() {
     const { data: session, status  } = useSession()
     const [output, setOutput] = useState("")
   const { credits, setCredits } = useUserContext();
-    const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
-    
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
+  const [showFileUploadOverlay, setShowFileUploadOverlay] = useState(false);
+
+  // Function to append files preventing duplicates based on name, size, and lastModified
+  const appendFiles = (newFiles: File[]) => {
+    setUploadedFiles((currentFiles) => {
+      // Create a map of existing files for quick lookup
+      const existingFilesMap = new Map<string, File>()
+      currentFiles.forEach(file => {
+        const key = `${file.name}-${file.size}-${file.lastModified}`
+        existingFilesMap.set(key, file)
+      })
+
+      // Filter new files to exclude duplicates
+      const filteredNewFiles = newFiles.filter(file => {
+        const key = `${file.name}-${file.size}-${file.lastModified}`
+        return !existingFilesMap.has(key)
+      })
+
+      // Return combined array of existing files and filtered new files
+      return [...currentFiles, ...filteredNewFiles]
+    })
+  }
 
     const handleProcess = async () => {
         if (uploadedFiles.length === 0) {
@@ -35,15 +57,15 @@ export default function Home() {
         }
     }
 
-    
 
 
     return (
         <div>
+            <FileDragDropOverlay showOverlay={showFileUploadOverlay} setShowOverlay={setShowFileUploadOverlay} onFileDrop={appendFiles}  />
             <main className="container mx-auto px-4 py-8 max-w-3xl">
                 <div className="space-y-4">
                     <div className="bg-white rounded-lg shadow-sm p-6 space-y-4">
-                        <FileUpload onFilesUploaded={setUploadedFiles} uploadedFiles={uploadedFiles} />
+                        <FileUpload  showOverlay={showFileUploadOverlay} onFilesUploaded={appendFiles} uploadedFiles={uploadedFiles} />
                         
                         <div className="flex gap-2 items-center">
                             <Button
@@ -69,11 +91,6 @@ export default function Home() {
                     </div>
                 </div>
             </main>
-
-            <footer className="py-6 text-center text-sm text-gray-500">
-                <p className="mb-1">© 2025 Examify</p>
-                <a href="#" className="hover:underline">Privacy Policy</a>
-            </footer>
             </div>
     )
 }

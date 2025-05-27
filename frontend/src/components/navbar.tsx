@@ -6,40 +6,39 @@ import { useTranslation } from "react-i18next"
 import Image from "next/image"
 import i18n from "@/lib/i18n"
 import { AuthDropDown } from "./AuthDropDown"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { getUserInfo } from "@/lib/api-service"
 import { useUserContext } from "@/context/user-context"
 import { useRouter } from "next/navigation"
-
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface NavbarProps {
 }
 
 export default function Navbar({ }: NavbarProps) {
   const { data: session, status } = useSession()
-    const { credits, setCredits } = useUserContext();
-  const { t } = useTranslation('ns1', {i18n, useSuspense:false})
+  const { credits, setCredits } = useUserContext();
+  const { t } = useTranslation('ns1', { i18n, useSuspense: false })
   const router = useRouter()
 
   useEffect(() => {
-          console.log("Session Status:", status)
-          if(status === "loading") {
-              return
-          }
-          if (!session || !session.user || !session.user.email) {
-              return
-          }
-          getUserInfo().then((userInfo) => {
-              if (userInfo && userInfo.credits) {
-                  setCredits(userInfo.credits)
-              }
-          }
-          ).catch((error) => {
-              console.error("Failed to fetch user info:", error)
-              alert("Failed to fetch user information")
-          })
-      }, [credits,status])
-      
+    console.log("Session Status:", status)
+    if (status === "loading") {
+      return
+    }
+    if (!session || !session.user || !session.user.email) {
+      return
+    }
+    getUserInfo().then((userInfo) => {
+      if (userInfo && userInfo.credits) {
+        setCredits(userInfo.credits)
+      }
+    }).catch((error) => {
+      console.error("Failed to fetch user info:", error)
+      alert("Failed to fetch user information")
+    })
+  }, [credits, status])
+
   return (
     <nav className="border-b bg-white shadow-sm">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -71,9 +70,13 @@ export default function Navbar({ }: NavbarProps) {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="text-lg font-bold text-gray-600">
-            {t("navbar.credits")}: {credits}
-          </div>
+          {status === "loading" ? (
+            <Skeleton className="h-6 w-20" />
+          ) : (
+            <div className="text-lg font-bold text-gray-600">
+              {t("navbar.credits")}: {credits}
+            </div>
+          )}
 
           <Button
             onClick={() => router.push("/buy")}
@@ -82,7 +85,13 @@ export default function Navbar({ }: NavbarProps) {
             {t("navbar.buyMore")}
           </Button>
 
-          {session ? (
+          {status === "loading" ? (
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-6 w-24" />
+              <Skeleton className="h-8 w-8 rounded-full" />
+              <Skeleton className="h-8 w-20" />
+            </div>
+          ) : session ? (
             <>
               <span className="text-sm font-medium text-gray-700">
                 {session.user?.name}
@@ -105,7 +114,7 @@ export default function Navbar({ }: NavbarProps) {
               </Button>
             </>
           ) : (
-            <AuthDropDown onSignIn={ (platform) => {signIn(platform)}}/>
+            <AuthDropDown onSignIn={(platform) => { signIn(platform) }} />
           )}
         </div>
       </div>
