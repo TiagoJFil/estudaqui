@@ -1,6 +1,6 @@
 // services/examService.ts
 import { llm } from "../lib/llm/LLMFacade";
-import * as pdfjsLib from "pdfjs-dist/build/pdf";
+import pdfParse from "pdf-parse";
 
 export interface ExamQuestion {
   question: string;
@@ -14,26 +14,12 @@ export interface ExamJSON {
 }
 
 /**
- * Extracts text from a PDF file buffer using pdfjs-dist
+ * Extracts text from a PDF file buffer using pdf-parse
  * @param arrayBuffer PDF file as ArrayBuffer
  */
 async function extractTextFromPDF(arrayBuffer: ArrayBuffer): Promise<string> {
-  // Load PDF document
-  const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
-  const pdf = await loadingTask.promise;
-
-  let fullText = "";
-
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const textContent = await page.getTextContent();
-
-    // Extract text items and join them with spaces
-    const pageText = textContent.items.map((item: any) => item.str).join(" ");
-    fullText += pageText + "\n\n"; // Separate pages by newlines
-  }
-
-  return fullText;
+  const pdfData = await pdfParse(Buffer.from(arrayBuffer));
+  return pdfData.text;
 }
 
 /**
@@ -47,6 +33,7 @@ export async function upload(pdfFile: File): Promise<ExamJSON> {
   }
 
   const rawText = await extractTextFromPDF(arrayBuffer);
+  console.log("Extracted text from PDF:", rawText);
   const result = await llm.analyzeExam(rawText);
 
   return result as ExamJSON;

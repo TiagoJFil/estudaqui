@@ -5,7 +5,7 @@ import { upload } from "@/services/examService";
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
-    const pdfFile = formData.get("file") as File;
+    const pdfFile = formData.get("files") as File;
 
     if (!pdfFile || pdfFile.type !== "application/pdf") {
       return NextResponse.json(

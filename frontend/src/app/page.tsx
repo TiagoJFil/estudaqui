@@ -3,18 +3,15 @@
 import { useState } from "react"
 import { Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import Navbar from "@/components/navbar"
 import FileUpload from "@/components/file-upload"
 import { useSession } from "next-auth/react"
-import Image from "next/image"
 import { uploadFilesToServer } from "@/lib/api-service"
 
 export default function Home() {
     const { data: session } = useSession()
-    const [prompt, setPrompt] = useState("")
     const [output, setOutput] = useState("")
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const [credits, setCredits] = useState(1)
@@ -48,12 +45,6 @@ export default function Home() {
                         <FileUpload onFilesUploaded={setUploadedFiles} uploadedFiles={uploadedFiles} />
                         
                         <div className="flex gap-2 items-center">
-                            <Input
-                                placeholder="Type your prompt here..."
-                                value={prompt}
-                                onChange={(e) => setPrompt(e.target.value)}
-                                className="flex-1"
-                            />
                             <Button
                                 onClick={handleProcess}
                                 size="icon"
