@@ -1,20 +1,21 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
-import Navbar from "@/components/navbar"
 import FileUpload from "@/components/file-upload"
 import { useSession } from "next-auth/react"
-import { uploadFilesToServer } from "@/lib/api-service"
+import { getUserInfo, uploadFilesToServer } from "@/lib/api-service"
+import { useUserContext } from "@/context/user-context"
 
 export default function Home() {
-    const { data: session } = useSession()
+    const { data: session, status  } = useSession()
     const [output, setOutput] = useState("")
+  const { credits, setCredits } = useUserContext();
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
-    const [credits, setCredits] = useState(1)
+    
 
     const handleProcess = async () => {
         if (uploadedFiles.length === 0) {
@@ -34,11 +35,11 @@ export default function Home() {
         }
     }
 
-    console.log("Session:", session)
+    
+
+
     return (
-        <div className="min-h-screen bg-gray-50">
-            <Navbar onBuyMoreClick={() =>{} } credits={credits} />
-        
+        <div>
             <main className="container mx-auto px-4 py-8 max-w-3xl">
                 <div className="space-y-4">
                     <div className="bg-white rounded-lg shadow-sm p-6 space-y-4">
@@ -73,6 +74,6 @@ export default function Home() {
                 <p className="mb-1">© 2025 Examify</p>
                 <a href="#" className="hover:underline">Privacy Policy</a>
             </footer>
-        </div>
+            </div>
     )
 }

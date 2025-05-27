@@ -19,3 +19,21 @@ export async function uploadFilesToServer(uploadedFiles: File[]): Promise<any> {
         throw error;
     }
 }
+
+export async function getUserInfo(): Promise<any> {
+    try {
+        const response = await fetch("/api/v1/user", {
+            method: "GET",
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data; // Return user info
+    } catch (error) {
+        console.error("Error fetching user info:", error);
+        throw error;
+    }
+}

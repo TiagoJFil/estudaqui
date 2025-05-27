@@ -6,17 +6,40 @@ import { useTranslation } from "react-i18next"
 import Image from "next/image"
 import i18n from "@/lib/i18n"
 import { AuthDropDown } from "./AuthDropDown"
+import { useEffect, useState } from "react"
+import { getUserInfo } from "@/lib/api-service"
+import { useUserContext } from "@/context/user-context"
+import { useRouter } from "next/navigation"
 
 
 interface NavbarProps {
-  onBuyMoreClick: () => void,
-  credits: number
 }
 
-export default function Navbar({ onBuyMoreClick, credits }: NavbarProps) {
-  const { data: session } = useSession()
+export default function Navbar({ }: NavbarProps) {
+  const { data: session, status } = useSession()
+    const { credits, setCredits } = useUserContext();
   const { t } = useTranslation('ns1', {i18n, useSuspense:false})
+  const router = useRouter()
 
+  useEffect(() => {
+          console.log("Session Status:", status)
+          if(status === "loading") {
+              return
+          }
+          if (!session || !session.user || !session.user.email) {
+              return
+          }
+          getUserInfo().then((userInfo) => {
+              if (userInfo && userInfo.credits) {
+                  setCredits(userInfo.credits)
+              }
+          }
+          ).catch((error) => {
+              console.error("Failed to fetch user info:", error)
+              alert("Failed to fetch user information")
+          })
+      }, [credits,status])
+      
   return (
     <nav className="border-b bg-white shadow-sm">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -53,7 +76,7 @@ export default function Navbar({ onBuyMoreClick, credits }: NavbarProps) {
           </div>
 
           <Button
-            onClick={() => onBuyMoreClick()}
+            onClick={() => router.push("/buy")}
             className="hover:bg-gray-200 hover:text-black transition-colors"
           >
             {t("navbar.buyMore")}
