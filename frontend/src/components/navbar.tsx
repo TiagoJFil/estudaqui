@@ -2,9 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { useSession, signIn, signOut } from "next-auth/react"
-import { useTranslation } from "react-i18next"
 import Image from "next/image"
-import i18n from "@/lib/i18n"
 import { AuthDropDown } from "./AuthDropDown"
 import { useEffect } from "react"
 import { getUserInfo } from "@/lib/api-service"
@@ -18,7 +16,6 @@ interface NavbarProps {
 export default function Navbar({ }: NavbarProps) {
   const { data: session, status } = useSession()
   const { credits, setCredits } = useUserContext();
-  const { t } = useTranslation('ns1', { i18n, useSuspense: false })
   const router = useRouter()
 
   useEffect(() => {
@@ -74,7 +71,7 @@ export default function Navbar({ }: NavbarProps) {
             <Skeleton className="h-6 w-20" />
           ) : (
             <div className="text-lg font-bold text-gray-600">
-              {t("navbar.credits")}: {credits}
+              Credits: {credits}
             </div>
           )}
 
@@ -82,7 +79,7 @@ export default function Navbar({ }: NavbarProps) {
             onClick={() => router.push("/buy")}
             className="hover:bg-gray-200 hover:text-black transition-colors"
           >
-            {t("navbar.buyMore")}
+            Buy More
           </Button>
 
           {status === "loading" ? (
@@ -110,7 +107,7 @@ export default function Navbar({ }: NavbarProps) {
                 className="hover:bg-gray-50"
                 onClick={() => signOut()}
               >
-                {t("signOut")}
+                Sign Out
               </Button>
             </>
           ) : (

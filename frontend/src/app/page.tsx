@@ -57,7 +57,13 @@ export default function Home() {
         }
     }
 
-
+    const onFileRemove = (index: number) => {
+        setUploadedFiles((currentFiles) => {
+            const updatedFiles = [...currentFiles]
+            updatedFiles.splice(index, 1) // Remove file at specified index
+            return updatedFiles
+        })
+    }
 
     return (
         <div>
@@ -65,7 +71,7 @@ export default function Home() {
             <main className="container mx-auto px-4 py-8 max-w-3xl">
                 <div className="space-y-4">
                     <div className="bg-white rounded-lg shadow-sm p-6 space-y-4">
-                        <FileUpload  showOverlay={showFileUploadOverlay} onFilesUploaded={appendFiles} uploadedFiles={uploadedFiles} />
+                        <FileUpload  showOverlay={showFileUploadOverlay} onFileRemove={onFileRemove} onFilesUploaded={appendFiles} uploadedFiles={uploadedFiles} />
                         
                         <div className="flex gap-2 items-center">
                             <Button
