@@ -19,7 +19,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const examJson = await upload(pdfFile);
+    const examJson = await upload(pdfFile,userID);
 
     await SubtractCreditsFromUser(userID, 1);
 
