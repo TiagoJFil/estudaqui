@@ -120,3 +120,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Increase z-index for Solana Wallet Adapter UI modal */
+.wallet-adapter-modal {
+  z-index: 9999 !important;
+}
+.wallet-adapter-modal__overlay {
+  z-index: 9998 !important;
+}
+.wallet-adapter-modal__content {
+  z-index: 10000 !important;
+}

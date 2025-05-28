@@ -6,6 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+
 export async function hashTextSHA256(text: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(text);
@@ -14,7 +15,7 @@ export async function hashTextSHA256(text: string): Promise<string> {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-export async function getUserIdentifier(){
+export async function getUserIdentifierServerside(){
     const session = await getServerSession();
     if (!session || !session.user) {
         throw new Error("User not authenticated");
@@ -33,6 +34,8 @@ export const VALID_FILE_TYPES = {
     'application/pdf': ['.pdf'],
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx']
 };
+
+export const NEXT_PUBLIC_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
 
 export const isValidFileType = (file: File): boolean => {
     return Object.keys(VALID_FILE_TYPES).includes(file.type);

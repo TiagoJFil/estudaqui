@@ -8,6 +8,7 @@ import { useEffect } from "react"
 import { getUserInfo } from "@/lib/api-service"
 import { useUserContext } from "@/context/user-context"
 import { useRouter } from "next/navigation"
+import { useWallet } from "@solana/wallet-adapter-react"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface NavbarProps {
@@ -17,6 +18,7 @@ export default function Navbar({ }: NavbarProps) {
   const { data: session, status } = useSession()
   const { credits, setCredits } = useUserContext();
   const router = useRouter()
+  const { connect, disconnect, publicKey, connected } = useWallet()
 
   useEffect(() => {
     console.log("Session Status:", status)
@@ -36,6 +38,22 @@ export default function Navbar({ }: NavbarProps) {
     })
   }, [credits, status])
 
+  const handleSignIn = async (platform:string) => {
+    if (platform === "solana") {
+      try {
+        await connect()
+        console.log("Solana wallet connected:", publicKey?.toString())
+        
+        // TODO: call backend to authenticate user with wallet publicKey
+      } catch (error) {
+        console.error("Wallet connection failed:", error)
+        alert("Failed to connect Solana wallet")
+      }
+      return
+    }
+    await signIn(platform)
+  }
+  
   return (
     <nav className="border-b bg-white shadow-sm">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -82,7 +100,20 @@ export default function Navbar({ }: NavbarProps) {
             Buy More
           </Button>
 
-          {status === "loading" ? (
+          {connected ? (
+            <>
+              <span className="text-sm font-medium text-gray-700">
+                {publicKey?.toString()}
+              </span>
+              <Button
+                variant="outline"
+                className="hover:bg-gray-50"
+                onClick={() => disconnect()}
+              >
+                Disconnect Wallet
+              </Button>
+            </>
+          ) : status === "loading" ? (
             <div className="flex items-center gap-2">
               <Skeleton className="h-6 w-24" />
               <Skeleton className="h-8 w-8 rounded-full" />
@@ -111,7 +142,7 @@ export default function Navbar({ }: NavbarProps) {
               </Button>
             </>
           ) : (
-            <AuthDropDown onSignIn={(platform) => { signIn(platform) }} />
+            <AuthDropDown onSignIn={handleSignIn} />
           )}
         </div>
       </div>

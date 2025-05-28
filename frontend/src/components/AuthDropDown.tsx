@@ -4,11 +4,15 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Button } from "@/components/ui/button";
 import { GoogleIcon } from "./ui/google-icon"
 import { GithubIcon } from "./ui/github-icon"
+import { Wallet } from 'lucide-react'
+import { useWalletModal } from '@solana/wallet-adapter-react-ui'
 
 interface AuthDropDownProps {
   onSignIn: (platform: string) => void;
 }
 export function AuthDropDown({ onSignIn }: AuthDropDownProps) {
+  // Solana wallet modal hook
+  const { setVisible } = useWalletModal();
   
     return (
         <DropdownMenu>
@@ -23,12 +27,19 @@ export function AuthDropDown({ onSignIn }: AuthDropDownProps) {
                   <GoogleIcon width={20} height={20} />
                   Sign in with Google
                 </DropdownMenuItem>
-                <DropdownMenuItem className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded-md" 
-                onClick={() => onSignIn("github")}>
+                <DropdownMenuItem className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded-md" onClick={() => onSignIn("github") }>
                   <GithubIcon width={20} height={20} />
                   Sign in with GitHub
                 </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-    );
+                {/* Solana Wallet login */}
+                <DropdownMenuItem 
+                  className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded-md"
+                  onClick={() => setVisible(true)}
+                >
+                  <Wallet className="h-5 w-5" />
+                  Sign in with Solana Wallet
+                </DropdownMenuItem>
+             </DropdownMenuContent>
+           </DropdownMenu>
+     );
 }
