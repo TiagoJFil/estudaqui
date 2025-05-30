@@ -1,3 +1,5 @@
+import { UserI } from "./data/data-interfaces";
+
 export async function uploadFilesToServer(uploadedFiles: File[]): Promise<any> {
     const formData = new FormData();
     uploadedFiles.forEach((file) => formData.append("files", file));
@@ -20,7 +22,7 @@ export async function uploadFilesToServer(uploadedFiles: File[]): Promise<any> {
     }
 }
 
-export async function getUserInfo(): Promise<any> {
+export async function getUserInfo(): Promise<UserI> {
     try {
         const response = await fetch("/api/v1/user", {
             method: "GET",

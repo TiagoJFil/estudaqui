@@ -1,10 +1,12 @@
-import { LLMProvider, ExamJSON } from "./LLMProvider";
+import { ExamJSON } from "@/services/examService";
+import { LLMProvider} from "./LLMProvider";
 
 export class OllamaLLMProvider implements LLMProvider {
-  private endpoint = process.env.OLLAMA_API_URL || "http://localhost:11434/api/chat";
+  //private endpoint = process.env.OLLAMA_API_URL || "http://localhost:11434/api/chat";
 
   async analyzeExam(input: Buffer | string): Promise<ExamJSON> {
         return new Promise<ExamJSON>(async (resolve, reject) => {
+            input
             return {
                 questions: [
                     {

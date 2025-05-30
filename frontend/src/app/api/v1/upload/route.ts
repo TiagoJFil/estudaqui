@@ -2,7 +2,6 @@
 import { NextResponse } from "next/server";
 import { upload } from "@/services/examService";
 import { SubtractCreditsFromUser } from "@/lib/data/data-service";
-import { getServerSession } from "next-auth";
 import { getUserIdentifier } from "@/lib/utils";
 
 export async function POST(request: Request) {

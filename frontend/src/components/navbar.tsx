@@ -10,10 +10,8 @@ import { useUserContext } from "@/context/user-context"
 import { useRouter } from "next/navigation"
 import { Skeleton } from "@/components/ui/skeleton"
 
-interface NavbarProps {
-}
 
-export default function Navbar({ }: NavbarProps) {
+export default function Navbar() {
   const { data: session, status } = useSession()
   const { credits, setCredits } = useUserContext();
   const router = useRouter()

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import {  useState } from "react"
 import { Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -12,7 +12,7 @@ import { useUserContext } from "@/context/user-context"
 import FileDragDropOverlay from "@/components/ui/file-drag-drop-overlay"
 
 export default function Home() {
-    const { data: session, status  } = useSession()
+   // const { data: session, status  } = useSession()
     const [output, setOutput] = useState("")
   const { credits, setCredits } = useUserContext();
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([])

@@ -1,9 +1,7 @@
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import { SessionProvider } from "next-auth/react"
 import ProvidersWrapper from "./providers-wrapper"
-import { useTranslation } from "react-i18next"
 import { Footer } from "@/components/ui/footer"
 import Navbar from "@/components/navbar"
 

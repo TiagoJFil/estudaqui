@@ -1,6 +1,5 @@
 
 import Image from 'next/image';
-import { Component } from 'react';
 
 export function GithubIcon(
     props: React.ComponentProps<'img'> & { className?: string }
