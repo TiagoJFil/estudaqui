@@ -20,5 +20,15 @@ jobs:
           username: ${{ secrets.HETZNER_USER }}
           key: ${{ secrets.HETZNER_SSH_KEY }}
           script: |
-            cd home/tiago/
-            mkdir test
+            cd /home/tiago/projects/services/estudaqui
+            ./install-and-restart.sh
+
+#todo check if server is up
+      - name: Check server status
+        run: |
+          if ! curl -s --head http://localhost:3000 | grep "200 OK" > /dev/null; then
+            echo "Server is not running!"
+            exit 1
+          else
+            echo "Server is running successfully."
+          fi
