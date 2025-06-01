@@ -26,7 +26,8 @@ jobs:
 #todo check if server is up
       - name: Check server status
         run: |
-          if ! curl -s --head http://localhost:3000 | grep "200 OK" > /dev/null; then
+          pause 5
+          if ! curl -s --head http://37.27.208.65:3000 | grep "200 OK" > /dev/null; then
             echo "Server is not running!"
             exit 1
           else
