@@ -31,7 +31,7 @@ export async function getUser(email: string): Promise<UserI | null> {
   }
 }
 
-export async function SubtractCreditsFromUser(email: string, creditsToSubtract: number): Promise<UserI> {
+export async function subtractCreditsFromUser(email: string, creditsToSubtract: number): Promise<UserI> {
   if (creditsToSubtract < 0) {
     throw new Error("Cannot subtract negative credits");
   }
