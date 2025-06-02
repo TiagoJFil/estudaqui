@@ -1,10 +1,9 @@
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import { SessionProvider } from "next-auth/react"
 import ProvidersWrapper from "./providers-wrapper"
-import { useTranslation } from "react-i18next"
 import { Footer } from "@/components/ui/footer"
+import Navbar from "@/components/navbar"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -26,12 +25,17 @@ export default function RootLayout({
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         />
       </head>
-      <ProvidersWrapper>
+      
         <body className={inter.className}>
+          <ProvidersWrapper>
+        <div className="min-h-screen bg-gray-50">
+            <Navbar />
           {children}
           <Footer />
+        </div>
+          </ProvidersWrapper>
         </body>
-      </ProvidersWrapper>
+      
     </html>
   )
 }

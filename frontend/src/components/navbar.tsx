@@ -2,20 +2,37 @@
 
 import { Button } from "@/components/ui/button"
 import { useSession, signIn, signOut } from "next-auth/react"
-import { useTranslation } from "react-i18next"
 import Image from "next/image"
-import i18n from "@/lib/i18n"
 import { AuthDropDown } from "./AuthDropDown"
+import { useEffect } from "react"
+import { getUserInfo } from "@/lib/api-service"
+import { useUserContext } from "@/context/user-context"
+import { useRouter } from "next/navigation"
+import { Skeleton } from "@/components/ui/skeleton"
 
 
-interface NavbarProps {
-  onBuyMoreClick: () => void,
-  credits: number
-}
+export default function Navbar() {
+  const { data: session, status } = useSession()
+  const { credits, setCredits } = useUserContext();
+  const router = useRouter()
 
-export default function Navbar({ onBuyMoreClick, credits }: NavbarProps) {
-  const { data: session } = useSession()
-  const { t } = useTranslation('ns1', {i18n, useSuspense:false})
+  useEffect(() => {
+    console.log("Session Status:", status)
+    if (status === "loading") {
+      return
+    }
+    if (!session || !session.user || !session.user.email) {
+      return
+    }
+    getUserInfo().then((userInfo) => {
+      if (userInfo && userInfo.credits) {
+        setCredits(userInfo.credits)
+      }
+    }).catch((error) => {
+      console.error("Failed to fetch user info:", error)
+      alert("Failed to fetch user information")
+    })
+  }, [credits, status])
 
   return (
     <nav className="border-b bg-white shadow-sm">
@@ -48,18 +65,28 @@ export default function Navbar({ onBuyMoreClick, credits }: NavbarProps) {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="text-lg font-bold text-gray-600">
-            {t("navbar.credits")}: {credits}
-          </div>
+          {status === "loading" ? (
+            <Skeleton className="h-6 w-20" />
+          ) : (
+            <div className="text-lg font-bold text-gray-600">
+              Credits: {credits}
+            </div>
+          )}
 
           <Button
-            onClick={() => onBuyMoreClick()}
+            onClick={() => router.push("/buy")}
             className="hover:bg-gray-200 hover:text-black transition-colors"
           >
-            {t("navbar.buyMore")}
+            Buy More
           </Button>
 
-          {session ? (
+          {status === "loading" ? (
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-6 w-24" />
+              <Skeleton className="h-8 w-8 rounded-full" />
+              <Skeleton className="h-8 w-20" />
+            </div>
+          ) : session ? (
             <>
               <span className="text-sm font-medium text-gray-700">
                 {session.user?.name}
@@ -78,11 +105,11 @@ export default function Navbar({ onBuyMoreClick, credits }: NavbarProps) {
                 className="hover:bg-gray-50"
                 onClick={() => signOut()}
               >
-                {t("signOut")}
+                Sign Out
               </Button>
             </>
           ) : (
-            <AuthDropDown onSignIn={ (platform) => {signIn(platform)}}/>
+            <AuthDropDown onSignIn={(platform) => { signIn(platform) }} />
           )}
         </div>
       </div>

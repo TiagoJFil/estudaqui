@@ -5,7 +5,7 @@ import * as SliderPrimitive from "@radix-ui/react-slider"
 
 import { cn } from "@/lib/utils"
 
-function Slider({
+export default function Slider({
   className,
   defaultValue,
   value,

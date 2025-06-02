@@ -1,10 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
-import { db } from "@/lib/data/firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
-import { COLLECTIONS, UserI } from "@/lib/data/data-interfaces";
-import { getDefaultUser } from "@/lib/data/default-values";
+import { createOrGetAccount } from "@/lib/data/data-service";
 
 export default NextAuth({
   providers: [
@@ -19,17 +16,18 @@ export default NextAuth({
   ],
   callbacks: {
     async signIn({ user }) {
-      if (!user?.id) return true;
-      try {
-        const userRef = doc(db, COLLECTIONS.USERS, user.id);
-        const userSnap = await getDoc(userRef);
-        if (!userSnap.exists()) {
-          await setDoc(userRef, getDefaultUser());
-        }
-      } catch (e) {
-        console.error("Error creating user document:", e);
+      console.log("User signing in:", user);
+
+      const userAccount = await createOrGetAccount(user.email);
+      if (userAccount) {
+        return true; // Allow sign-in
+      } else {
+        return false; // Deny sign-in
       }
-      return true;
     },
+  },
+  pages: {
+    signIn: "/", 
+    error: "/?error=auth", // Error page URL
   },
 });

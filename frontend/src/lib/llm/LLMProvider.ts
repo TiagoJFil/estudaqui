@@ -1,17 +1,8 @@
+import { ExamJSON } from "@/services/examService";
+
 export interface ChatMessage {
   role: "user" | "system" | "assistant";
   content: string;
-}
-
-export interface ExamQuestion {
-  question: string;
-  questionType: "openEnded" | "multipleChoice" | "other";
-  responses?: string[];
-  correctResponse?: string;
-}
-
-export interface ExamJSON {
-  questions: ExamQuestion[];
 }
 
 export interface LLMProvider {

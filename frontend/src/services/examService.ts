@@ -1,5 +1,8 @@
+// services/examService.ts
+import { addExamInfoToPDF, savePDF } from "@/lib/data/data-service";
 import { llm } from "../lib/llm/LLMFacade";
 import pdfParse from "pdf-parse";
+import { hashTextSHA256 } from "@/lib/utils";
 import preprocessMathBlocks from "@/components/exam/preprocessMathBlocks";
 import fs from "fs";
 import path from "path";
@@ -29,17 +32,22 @@ async function extractTextFromPDF(arrayBuffer: ArrayBuffer): Promise<string> {
  * Uploads a PDF file, extracts content, and returns structured exam JSON
  * @param pdfFile PDF file as File
  */
-export async function upload(pdfFile: File): Promise<ExamJSON> {
+export async function upload(pdfFile: File,userID: string): Promise<ExamJSON> {
   const arrayBuffer = await pdfFile.arrayBuffer();
   if (!arrayBuffer || arrayBuffer.byteLength === 0) {
     throw new Error("Invalid PDF file");
   }
 
   const rawText = await extractTextFromPDF(arrayBuffer);
-  console.log("Extracted text from PDF:", rawText);
-  const result = await llm.analyzeExam(rawText);
+  const pdfTextHash = await hashTextSHA256(rawText)
+  const savedPdfInfo = await savePDF(pdfFile,userID,pdfTextHash)
+  if(!savedPdfInfo.examInfo){
+    const result = await llm.analyzeExam(rawText);
+    savedPdfInfo.examInfo = result;
+    addExamInfoToPDF(pdfTextHash, result);
+  }
 
-  return result as ExamJSON;
+  return savedPdfInfo.examInfo as ExamJSON;
 }
 
 /**

@@ -1,6 +1,14 @@
+import { ExamJSON } from "@/services/examService";
+
 
 export interface UserI {
     credits: number;
+}
+
+export interface PDFInfo {
+    filename: string;
+    storageRef: string;
+    examInfo?: ExamJSON;
 }
 
 //collections
