@@ -1,0 +1,818 @@
+---
+ORIGINAL:
+To evaluate the integral $\int_0^1 x^2 \, dx$, follow these steps:
+
+1. **Find the antiderivative**: The antiderivative of $x^2$ is $\frac{x^3}{3}$.
+
+2. **Evaluate the definite integral**:
+
+   \[
+   \left[ \frac{x^3}{3} \right]_0^1 = \frac{1^3}{3} - \frac{0^3}{3}
+   \]
+
+3. **Simplify**:
+
+   \[
+   = \frac{1}{3} - 0 = \frac{1}{3}
+   \]
+
+The final answer is $\frac{1}{3}$.
+---
+PROCESSED:
+To evaluate the integral $\int_0^1 x^2 \, dx$, follow these steps:
+
+1. **Find the antiderivative**: The antiderivative of $x^2$ is $\frac{x^3}{3}$.
+
+2. **Evaluate the definite integral**:
+$
+\left[ \frac{x^3}{3} \right]_0^1 = \frac{1^3}{3} - \frac{0^3}{3}
+$
+
+3. **Simplify**:
+$
+= \frac{1}{3} - 0 = \frac{1}{3}
+$
+
+The final answer is $\frac{1}{3}$.
+===
+---
+ORIGINAL:
+The Second Law of Thermodynamics states that the total entropy of an isolated system can never decrease over time. It can remain constant in ideal cases where the system is in a state of equilibrium or undergoes a reversible process. In all natural processes, the entropy of the system and its surroundings tends to increase, leading to the irreversibility of natural processes.
+
+**Example involving heat engines:**
+
+A heat engine operates between two reservoirs: a hot reservoir at temperature $T_H$ and a cold reservoir at temperature $T_C$. According to the Second Law, it is impossible for any heat engine to convert all the heat absorbed from the hot reservoir into work. Some energy must be expelled to the cold reservoir, increasing the total entropy of the system. This is why no heat engine can be 100% efficient. The efficiency $\eta$ of a heat engine is given by:
+
+$$
+\eta = 1 - \frac{T_C}{T_H}
+$$
+
+where $T_H$ and $T_C$ are the absolute temperatures of the hot and cold reservoirs, respectively. This equation shows that efficiency depends on the temperature difference between the two reservoirs.
+---
+PROCESSED:
+The Second Law of Thermodynamics states that the total entropy of an isolated system can never decrease over time. It can remain constant in ideal cases where the system is in a state of equilibrium or undergoes a reversible process. In all natural processes, the entropy of the system and its surroundings tends to increase, leading to the irreversibility of natural processes.
+
+**Example involving heat engines:**
+
+A heat engine operates between two reservoirs: a hot reservoir at temperature $T_H$ and a cold reservoir at temperature $T_C$. According to the Second Law, it is impossible for any heat engine to convert all the heat absorbed from the hot reservoir into work. Some energy must be expelled to the cold reservoir, increasing the total entropy of the system. This is why no heat engine can be 100% efficient. The efficiency $\eta$ of a heat engine is given by:
+$
+\eta = 1 - \frac{T_C}{T_H}
+$
+
+where $T_H$ and $T_C$ are the absolute temperatures of the hot and cold reservoirs, respectively. This equation shows that efficiency depends on the temperature difference between the two reservoirs.
+===
+---
+ORIGINAL:
+To balance the chemical equation:
+
+1. **Count the atoms of each element** on both sides of the equation.
+2. **Balance the carbon atoms**: There are 2 carbon atoms in \( \text{C}_2\text{H}_6 \), so place a coefficient of 2 in front of \( \text{CO}_2 \).
+
+   \[
+   \text{C}_2\text{H}_6 + \text{O}_2 \rightarrow 2\text{CO}_2 + \text{H}_2\text{O}
+   \]
+
+3. **Balance the hydrogen atoms**: There are 6 hydrogen atoms in \( \text{C}_2\text{H}_6 \), so place a coefficient of 3 in front of \( \text{H}_2\text{O} \).
+
+   \[
+   \text{C}_2\text{H}_6 + \text{O}_2 \rightarrow 2\text{CO}_2 + 3\text{H}_2\text{O}
+   \]
+
+4. **Balance the oxygen atoms**: There are 4 oxygen atoms in \( 2\text{CO}_2 \) and 3 oxygen atoms in \( 3\text{H}_2\text{O} \), totaling 7 oxygen atoms. Place a coefficient of \(\frac{7}{2}\) in front of \( \text{O}_2 \).
+
+   \[
+   \text{C}_2\text{H}_6 + \frac{7}{2}\text{O}_2 \rightarrow 2\text{CO}_2 + 3\text{H}_2\text{O}
+   \]
+
+5. **Clear the fraction** by multiplying the entire equation by 2:
+
+   \[
+   2\text{C}_2\text{H}_6 + 7\text{O}_2 \rightarrow 4\text{CO}_2 + 6\text{H}_2\text{O}
+   \]
+
+The balanced equation is:
+
+\[
+2\text{C}_2\text{H}_6 + 7\text{O}_2 \rightarrow 4\text{CO}_2 + 6\text{H}_2\text{O}
+\]
+---
+PROCESSED:
+To balance the chemical equation:
+
+1. **Count the atoms of each element** on both sides of the equation.
+2. **Balance the carbon atoms**: There are 2 carbon atoms in $\text{C}_2\text{H}_6$, so place a coefficient of 2 in front of $\text{CO}_2$.
+$
+\text{C}_2\text{H}_6 + \text{O}_2 \rightarrow 2\text{CO}_2 + \text{H}_2\text{O}
+$
+
+3. **Balance the hydrogen atoms**: There are 6 hydrogen atoms in $\text{C}_2\text{H}_6$, so place a coefficient of 3 in front of $\text{H}_2\text{O}$.
+$
+\text{C}_2\text{H}_6 + \text{O}_2 \rightarrow 2\text{CO}_2 + 3\text{H}_2\text{O}
+$
+
+4. **Balance the oxygen atoms**: There are 4 oxygen atoms in $2\text{CO}_2$ and 3 oxygen atoms in $3\text{H}_2\text{O}$, totaling 7 oxygen atoms. Place a coefficient of $\frac{7}{2}$ in front of $\text{O}_2$.
+$
+\text{C}_2\text{H}_6 + \frac{7}{2}\text{O}_2 \rightarrow 2\text{CO}_2 + 3\text{H}_2\text{O}
+$
+
+5. **Clear the fraction** by multiplying the entire equation by 2:
+$
+2\text{C}_2\text{H}_6 + 7\text{O}_2 \rightarrow 4\text{CO}_2 + 6\text{H}_2\text{O}
+$
+
+The balanced equation is:
+$
+2\text{C}_2\text{H}_6 + 7\text{O}_2 \rightarrow 4\text{CO}_2 + 6\text{H}_2\text{O}
+$
+===
+---
+ORIGINAL:
+The given differential equation is 
+
+\[
+\frac{dy}{dx} + y = e^x
+\]
+
+This is a first-order linear differential equation. To solve it, we use an integrating factor. The standard form is 
+
+\[
+\frac{dy}{dx} + P(x)y = Q(x)
+\]
+
+where \(P(x) = 1\) and \(Q(x) = e^x\).
+
+The integrating factor \(\mu(x)\) is given by 
+
+\[
+\mu(x) = e^{\int P(x) \, dx} = e^{\int 1 \, dx} = e^x
+\]
+
+Multiply the entire differential equation by the integrating factor:
+
+\[
+e^x \frac{dy}{dx} + e^x y = e^{2x}
+\]
+
+The left side is the derivative of \(e^x y\):
+
+\[
+\frac{d}{dx}(e^x y) = e^{2x}
+\]
+
+Integrate both sides with respect to \(x\):
+
+\[
+e^x y = \int e^{2x} \, dx = \frac{1}{2} e^{2x} + C
+\]
+
+where \(C\) is the constant of integration. Solve for \(y\):
+
+\[
+y = \frac{1}{2} e^x + Ce^{-x}
+\]
+
+Thus, the general solution is 
+
+\[
+y = \frac{1}{2} e^x + Ce^{-x}
+\]
+---
+PROCESSED:
+The given differential equation is
+$
+\frac{dy}{dx} + y = e^x
+$
+
+This is a first-order linear differential equation. To solve it, we use an integrating factor. The standard form is
+$
+\frac{dy}{dx} + P(x)y = Q(x)
+$
+
+where $P(x) = 1$ and $Q(x) = e^x$.
+
+The integrating factor $\mu(x)$ is given by
+$
+\mu(x) = e^{\int P(x) \, dx} = e^{\int 1 \, dx} = e^x
+$
+
+Multiply the entire differential equation by the integrating factor:
+$
+e^x \frac{dy}{dx} + e^x y = e^{2x}
+$
+
+The left side is the derivative of $e^x y$:
+$
+\frac{d}{dx}(e^x y) = e^{2x}
+$
+
+Integrate both sides with respect to $x$:
+$
+e^x y = \int e^{2x} \, dx = \frac{1}{2} e^{2x} + C
+$
+
+where $C$ is the constant of integration. Solve for $y$:
+$
+y = \frac{1}{2} e^x + Ce^{-x}
+$
+
+Thus, the general solution is
+$
+y = \frac{1}{2} e^x + Ce^{-x}
+$
+===
+---
+ORIGINAL:
+To find the pH of a 0.01 M HCl solution, follow these steps:
+
+1. **Identify the concentration of $H^+$ ions:**
+
+   Since HCl is a strong acid, it dissociates completely in water:
+
+   $$ \text{HCl} \rightarrow \text{H}^+ + \text{Cl}^- $$
+
+   Therefore, the concentration of $H^+$ ions is the same as the concentration of HCl, which is 0.01 M.
+
+2. **Calculate the pH:**
+
+   The pH is calculated using the formula:
+
+   $$ \text{pH} = -\log [\text{H}^+] $$
+
+   Substitute the concentration of $H^+$:
+
+   $$ \text{pH} = -\log (0.01) $$
+
+   $$ \text{pH} = 2 $$
+
+Thus, the pH of the 0.01 M HCl solution is 2.
+---
+PROCESSED:
+To find the pH of a 0.01 M HCl solution, follow these steps:
+
+1. **Identify the concentration of $H^+$ ions:**
+
+   Since HCl is a strong acid, it dissociates completely in water:
+$
+\text{HCl} \rightarrow \text{H}^+ + \text{Cl}^-
+$
+
+   Therefore, the concentration of $H^+$ ions is the same as the concentration of HCl, which is 0.01 M.
+
+2. **Calculate the pH:**
+
+   The pH is calculated using the formula:
+$
+\text{pH} = -\log [\text{H}^+]
+$
+
+   Substitute the concentration of $H^+$:
+$
+\text{pH} = -\log (0.01)
+$
+\text{pH} = 2
+$
+
+Thus, the pH of the 0.01 M HCl solution is 2.
+===
+---
+ORIGINAL:
+To calculate the maximum height reached by the projectile, we can use the following kinematic equation:
+
+\[
+v_y^2 = v_{0y}^2 - 2g h
+\]
+
+At maximum height, the vertical velocity $v_y = 0$. Therefore, the equation becomes:
+
+\[
+0 = v_{0y}^2 - 2g h
+\]
+
+Solving for $h$, we have:
+
+\[
+h = \frac{v_{0y}^2}{2g}
+\]
+
+First, we need to find the initial vertical velocity $v_{0y}$:
+
+\[
+v_{0y} = v_0 \sin \theta
+\]
+
+Given $v_0 = 20 \, \text{m/s}$ and $\theta = 30^\circ$, we find:
+
+\[
+v_{0y} = 20 \sin 30^\circ = 20 \times 0.5 = 10 \, \text{m/s}
+\]
+
+Now, substitute $v_{0y}$ and $g = 9.8 \, \text{m/s}^2$ into the equation for $h$:
+
+\[
+h = \frac{10^2}{2 \times 9.8} = \frac{100}{19.6} \approx 5.10 \, \text{m}
+\]
+
+Thus, the maximum height reached is approximately $5.10 \, \text{m}$.
+---
+PROCESSED:
+To calculate the maximum height reached by the projectile, we can use the following kinematic equation:
+$
+v_y^2 = v_{0y}^2 - 2g h
+$
+
+At maximum height, the vertical velocity $v_y = 0$. Therefore, the equation becomes:
+$
+0 = v_{0y}^2 - 2g h
+$
+
+Solving for $h$, we have:
+$
+h = \frac{v_{0y}^2}{2g}
+$
+
+First, we need to find the initial vertical velocity $v_{0y}$:
+$
+v_{0y} = v_0 \sin \theta
+$
+
+Given $v_0 = 20 \, \text{m/s}$ and $\theta = 30^\circ$, we find:
+$
+v_{0y} = 20 \sin 30^\circ = 20 \times 0.5 = 10 \, \text{m/s}
+$
+
+Now, substitute $v_{0y}$ and $g = 9.8 \, \text{m/s}^2$ into the equation for $h$:
+$
+h = \frac{10^2}{2 \times 9.8} = \frac{100}{19.6} \approx 5.10 \, \text{m}
+$
+
+Thus, the maximum height reached is approximately $5.10 \, \text{m}$.
+===
+---
+ORIGINAL:
+Heisenberg's Uncertainty Principle states that it is impossible to simultaneously know both the exact position and exact momentum of a particle. The more precisely one is known, the less precisely the other can be known.
+
+The mathematical expression for the uncertainty principle is:
+
+$$
+\Delta x \cdot \Delta p \geq \frac{\hbar}{2}
+$$
+
+where:
+- $\Delta x$ is the uncertainty in position,
+- $\Delta p$ is the uncertainty in momentum,
+- $\hbar$ is the reduced Planck's constant, $\hbar = \frac{h}{2\pi}$.
+
+Significance: This principle is fundamental in quantum mechanics, highlighting the intrinsic limitations of measurement at the quantum level and challenging classical notions of determinism.
+---
+PROCESSED:
+Heisenberg's Uncertainty Principle states that it is impossible to simultaneously know both the exact position and exact momentum of a particle. The more precisely one is known, the less precisely the other can be known.
+
+The mathematical expression for the uncertainty principle is:
+$
+\Delta x \cdot \Delta p \geq \frac{\hbar}{2}
+$
+
+where:
+- $\Delta x$ is the uncertainty in position,
+- $\Delta p$ is the uncertainty in momentum,
+- $\hbar$ is the reduced Planck's constant, $\hbar = \frac{h}{2\pi}$.
+
+Significance: This principle is fundamental in quantum mechanics, highlighting the intrinsic limitations of measurement at the quantum level and challenging classical notions of determinism.
+===
+---
+ORIGINAL:
+To find the eigenvalues of the matrix 
+
+\[
+\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}
+\]
+
+we need to solve the characteristic equation:
+
+\[
+\det(A - \lambda I) = 0
+\]
+
+where \( A = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix} \) and \( I \) is the identity matrix. Thus,
+
+\[
+A - \lambda I = \begin{pmatrix} 2 - \lambda & 1 \\ 1 & 2 - \lambda \end{pmatrix}
+\]
+
+The determinant is:
+
+\[
+\det(A - \lambda I) = (2 - \lambda)(2 - \lambda) - (1)(1)
+\]
+
+Simplifying:
+
+\[
+= (2 - \lambda)^2 - 1
+\]
+
+\[
+= 4 - 4\lambda + \lambda^2 - 1
+\]
+
+\[
+= \lambda^2 - 4\lambda + 3
+\]
+
+Set the determinant to zero:
+
+\[
+\lambda^2 - 4\lambda + 3 = 0
+\]
+
+Solve the quadratic equation using the quadratic formula:
+
+\[
+\lambda = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+\]
+
+where \( a = 1 \), \( b = -4 \), and \( c = 3 \):
+
+\[
+\lambda = \frac{4 \pm \sqrt{(-4)^2 - 4 \cdot 1 \cdot 3}}{2 \cdot 1}
+\]
+
+\[
+= \frac{4 \pm \sqrt{16 - 12}}{2}
+\]
+
+\[
+= \frac{4 \pm \sqrt{4}}{2}
+\]
+
+\[
+= \frac{4 \pm 2}{2}
+\]
+
+The solutions are:
+
+\[
+\lambda_1 = \frac{4 + 2}{2} = 3
+\]
+
+\[
+\lambda_2 = \frac{4 - 2}{2} = 1
+\]
+
+Thus, the eigenvalues are \( \lambda_1 = 3 \) and \( \lambda_2 = 1 \).
+---
+PROCESSED:
+To find the eigenvalues of the matrix
+$
+\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}
+$
+
+we need to solve the characteristic equation:
+$
+\det(A - \lambda I) = 0
+$
+
+where $A = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}$ and $I$ is the identity matrix. Thus,
+$
+A - \lambda I = \begin{pmatrix} 2 - \lambda & 1 \\ 1 & 2 - \lambda \end{pmatrix}
+$
+
+The determinant is:
+$
+\det(A - \lambda I) = (2 - \lambda)(2 - \lambda) - (1)(1)
+$
+
+Simplifying:
+$
+= (2 - \lambda)^2 - 1
+$
+= 4 - 4\lambda + \lambda^2 - 1
+$
+= \lambda^2 - 4\lambda + 3
+$
+
+Set the determinant to zero:
+$
+\lambda^2 - 4\lambda + 3 = 0
+$
+
+Solve the quadratic equation using the quadratic formula:
+$
+\lambda = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+$
+
+where $a = 1$, $b = -4$, and $c = 3$:
+$
+\lambda = \frac{4 \pm \sqrt{(-4)^2 - 4 \cdot 1 \cdot 3}}{2 \cdot 1}
+$
+= \frac{4 \pm \sqrt{16 - 12}}{2}
+$
+= \frac{4 \pm \sqrt{4}}{2}
+$
+= \frac{4 \pm 2}{2}
+$
+
+The solutions are:
+$
+\lambda_1 = \frac{4 + 2}{2} = 3
+$
+\lambda_2 = \frac{4 - 2}{2} = 1
+$
+
+Thus, the eigenvalues are $\lambda_1 = 3$ and $\lambda_2 = 1$.
+===
+---
+ORIGINAL:
+The equilibrium constant expression ($K_{eq}$) for the reaction is:
+
+$$
+K_{eq} = \frac{[NH_3]^2}{[N_2][H_2]^3}
+$$
+---
+PROCESSED:
+The equilibrium constant expression ($K_{eq}$) for the reaction is:
+$
+K_{eq} = \frac{[NH_3]^2}{[N_2][H_2]^3}
+$
+===
+---
+ORIGINAL:
+To calculate the acceleration of the block, we need to consider the forces acting on it.
+
+1. **Calculate the force of friction:**
+
+   The force of friction $f_k$ is given by:
+
+   $$ f_k = \mu_k \cdot N $$
+
+   where $\mu_k = 0.2$ is the coefficient of kinetic friction, and $N$ is the normal force. For a horizontal surface, the normal force $N$ is equal to the gravitational force on the block:
+
+   $$ N = m \cdot g = 5 \, \text{kg} \cdot 9.8 \, \text{m/s}^2 = 49 \, \text{N} $$
+
+   Therefore, the force of friction is:
+
+   $$ f_k = 0.2 \cdot 49 \, \text{N} = 9.8 \, \text{N} $$
+
+2. **Calculate the net force:**
+
+   The net force $F_{\text{net}}$ acting on the block is the applied force minus the force of friction:
+
+   $$ F_{\text{net}} = F_{\text{applied}} - f_k = 20 \, \text{N} - 9.8 \, \text{N} = 10.2 \, \text{N} $$
+
+3. **Calculate the acceleration:**
+
+   Using Newton's second law, $F = m \cdot a$, we can solve for the acceleration $a$:
+
+   $$ a = \frac{F_{\text{net}}}{m} = \frac{10.2 \, \text{N}}{5 \, \text{kg}} = 2.04 \, \text{m/s}^2 $$
+
+Thus, the acceleration of the block is $2.04 \, \text{m/s}^2$.
+---
+PROCESSED:
+To calculate the acceleration of the block, we need to consider the forces acting on it.
+
+1. **Calculate the force of friction:**
+
+   The force of friction $f_k$ is given by:
+$
+f_k = \mu_k \cdot N
+$
+
+   where $\mu_k = 0.2$ is the coefficient of kinetic friction, and $N$ is the normal force. For a horizontal surface, the normal force $N$ is equal to the gravitational force on the block:
+$
+N = m \cdot g = 5 \, \text{kg} \cdot 9.8 \, \text{m/s}^2 = 49 \, \text{N}
+$
+
+   Therefore, the force of friction is:
+$
+f_k = 0.2 \cdot 49 \, \text{N} = 9.8 \, \text{N}
+$
+
+2. **Calculate the net force:**
+
+   The net force $F_{\text{net}}$ acting on the block is the applied force minus the force of friction:
+$
+F_{\text{net}} = F_{\text{applied}} - f_k = 20 \, \text{N} - 9.8 \, \text{N} = 10.2 \, \text{N}
+$
+
+3. **Calculate the acceleration:**
+
+   Using Newton's second law, $F = m \cdot a$, we can solve for the acceleration $a$:
+$
+a = \frac{F_{\text{net}}}{m} = \frac{10.2 \, \text{N}}{5 \, \text{kg}} = 2.04 \, \text{m/s}^2
+$
+
+Thus, the acceleration of the block is $2.04 \, \text{m/s}^2$.
+===
+---
+ORIGINAL:
+To find the eigenvalues of the matrix 
+
+\[
+\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}
+\]
+
+we need to solve the characteristic equation:
+
+1. **Set up the characteristic equation**:  
+   The characteristic equation is given by $\det(A - \lambda I) = 0$, where $A$ is the matrix and $I$ is the identity matrix.
+
+2. **Subtract $\lambda$ from the diagonal elements**:  
+   \[
+   A - \lambda I = \begin{pmatrix} 2 - \lambda & 1 \\ 1 & 2 - \lambda \end{pmatrix}
+   \]
+
+3. **Calculate the determinant**:  
+   \[
+   \det(A - \lambda I) = (2 - \lambda)(2 - \lambda) - (1)(1)
+   \]
+   \[
+   = (2 - \lambda)^2 - 1
+   \]
+   \[
+   = 4 - 4\lambda + \lambda^2 - 1
+   \]
+   \[
+   = \lambda^2 - 4\lambda + 3
+   \]
+
+4. **Solve the characteristic equation**:  
+   \[
+   \lambda^2 - 4\lambda + 3 = 0
+   \]
+
+5. **Factor the quadratic equation**:  
+   \[
+   (\lambda - 3)(\lambda - 1) = 0
+   \]
+
+6. **Find the eigenvalues**:  
+   The solutions to the equation are $\lambda = 3$ and $\lambda = 1$.
+
+Thus, the eigenvalues of the matrix are $\lambda = 3$ and $\lambda = 1$.
+---
+PROCESSED:
+To find the eigenvalues of the matrix
+$
+\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}
+$
+
+we need to solve the characteristic equation:
+
+1. **Set up the characteristic equation**:  
+   The characteristic equation is given by $\det(A - \lambda I) = 0$, where $A$ is the matrix and $I$ is the identity matrix.
+
+2. **Subtract $\lambda$ from the diagonal elements**:
+$
+A - \lambda I = \begin{pmatrix} 2 - \lambda & 1 \\ 1 & 2 - \lambda \end{pmatrix}
+$
+
+3. **Calculate the determinant**:
+$
+\det(A - \lambda I) = (2 - \lambda)(2 - \lambda) - (1)(1)
+$
+= (2 - \lambda)^2 - 1
+$
+= 4 - 4\lambda + \lambda^2 - 1
+$
+= \lambda^2 - 4\lambda + 3
+$
+
+4. **Solve the characteristic equation**:
+$
+\lambda^2 - 4\lambda + 3 = 0
+$
+
+5. **Factor the quadratic equation**:
+$
+(\lambda - 3)(\lambda - 1) = 0
+$
+
+6. **Find the eigenvalues**:  
+   The solutions to the equation are $\lambda = 3$ and $\lambda = 1$.
+
+Thus, the eigenvalues of the matrix are $\lambda = 3$ and $\lambda = 1$.
+===
+---
+ORIGINAL:
+To find the eigenvalues of the matrix 
+
+\[
+\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}
+\]
+
+we need to solve the characteristic equation:
+
+\[
+\det\left(\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix} - \lambda \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}\right) = 0
+\]
+
+This simplifies to:
+
+\[
+\det\begin{pmatrix} 2 - \lambda & 1 \\ 1 & 2 - \lambda \end{pmatrix} = 0
+\]
+
+The determinant is calculated as:
+
+\[
+(2 - \lambda)(2 - \lambda) - (1)(1) = (2 - \lambda)^2 - 1
+\]
+
+Expanding this, we get:
+
+\[
+(2 - \lambda)^2 - 1 = 4 - 4\lambda + \lambda^2 - 1 = \lambda^2 - 4\lambda + 3
+\]
+
+Set the equation to zero:
+
+\[
+\lambda^2 - 4\lambda + 3 = 0
+\]
+
+To find the eigenvalues, solve this quadratic equation using the quadratic formula:
+
+\[
+\lambda = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+\]
+
+where \(a = 1\), \(b = -4\), and \(c = 3\). Plugging in these values:
+
+\[
+\lambda = \frac{4 \pm \sqrt{(-4)^2 - 4 \cdot 1 \cdot 3}}{2 \cdot 1}
+\]
+
+\[
+\lambda = \frac{4 \pm \sqrt{16 - 12}}{2}
+\]
+
+\[
+\lambda = \frac{4 \pm \sqrt{4}}{2}
+\]
+
+\[
+\lambda = \frac{4 \pm 2}{2}
+\]
+
+This gives the solutions:
+
+\[
+\lambda = \frac{6}{2} = 3 \quad \text{and} \quad \lambda = \frac{2}{2} = 1
+\]
+
+Thus, the eigenvalues are \(\lambda = 3\) and \(\lambda = 1\).
+---
+PROCESSED:
+To find the eigenvalues of the matrix
+$
+\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}
+$
+
+we need to solve the characteristic equation:
+$
+\det(\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix} - \lambda \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}) = 0
+$
+
+This simplifies to:
+$
+\det\begin{pmatrix} 2 - \lambda & 1 \\ 1 & 2 - \lambda \end{pmatrix} = 0
+$
+
+The determinant is calculated as:
+$
+(2 - \lambda)(2 - \lambda) - (1)(1) = (2 - \lambda)^2 - 1
+$
+
+Expanding this, we get:
+$
+(2 - \lambda)^2 - 1 = 4 - 4\lambda + \lambda^2 - 1 = \lambda^2 - 4\lambda + 3
+$
+
+Set the equation to zero:
+$
+\lambda^2 - 4\lambda + 3 = 0
+$
+
+To find the eigenvalues, solve this quadratic equation using the quadratic formula:
+$
+\lambda = {-b \pm \sqrt{b^2 - 4ac}}{2a}
+$
+
+where $a = 1$, $b = -4$, and $c = 3$. Plugging in these values:
+$
+\lambda = {4 \pm \sqrt{(-4)^2 - 4  1  3}}{2  1}
+$
+\lambda = {4 \pm \sqrt{16 - 12}}{2}
+$
+\lambda = {4 \pm \sqrt{4}}{2}
+$
+\lambda = {4 \pm 2}{2}
+$
+
+This gives the solutions:
+$
+\lambda = {6}{2} = 3 \quad {and} \quad \lambda = {2}{2} = 1
+$
+
+Thus, the eigenvalues are $\lambda = 3$ and $\lambda = 1$.
+===

@@ -1,12 +1,15 @@
-// services/examService.ts
 import { llm } from "../lib/llm/LLMFacade";
 import pdfParse from "pdf-parse";
+import preprocessMathBlocks from "@/components/exam/preprocessMathBlocks";
+import fs from "fs";
+import path from "path";
 
 export interface ExamQuestion {
   question: string;
+  supplementalContent?: string | null; // Optional field for additional context
   questionType: "openEnded" | "multipleChoice" | "other";
-  responses?: string[];
-  correctResponse?: string;
+  responses?: string[] | null;
+  correctResponse?: string | null;
 }
 
 export interface ExamJSON {
@@ -37,4 +40,25 @@ export async function upload(pdfFile: File): Promise<ExamJSON> {
   const result = await llm.analyzeExam(rawText);
 
   return result as ExamJSON;
+}
+
+/**
+ * Given an exam question, returns a suggested answer from the AI
+ * @param question The question to generate an answer for
+ */
+export async function getSuggestedAnswer(question: string, additionalContent: string | null): Promise<string> {
+  if (!question || question.trim() === "") {
+    throw new Error("Question text cannot be empty");
+  }
+  const answer = await llm.getSuggestedAnswer(question, additionalContent);
+  const processed = preprocessMathBlocks(answer.trim());
+  // Log both original and processed to a file (server-side only)
+  try {
+    const logPath = path.resolve(process.cwd(), "preprocess-mathblock-log.txt");
+    const logEntry = `---\nORIGINAL:\n${answer.trim()}\n---\nPROCESSED:\n${processed}\n===\n`;
+    fs.appendFileSync(logPath, logEntry, "utf8");
+  } catch (e) {
+    // Ignore logging errors
+  }
+  return answer.trim();
 }

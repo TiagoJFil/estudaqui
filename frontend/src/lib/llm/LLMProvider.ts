@@ -20,4 +20,10 @@ export interface LLMProvider {
    * @param inputBuffer Buffer for PDF or extracted text string
    */
   analyzeExam(input: Buffer | string): Promise<ExamJSON>;
+
+  /**
+   * Given an exam question, returns a suggested answer from the AI.
+   * @param question The question to generate an answer for
+   */
+  getSuggestedAnswer(question: string, additionalContent: string | null): Promise<string>;
 }
