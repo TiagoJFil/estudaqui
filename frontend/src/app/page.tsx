@@ -7,9 +7,9 @@ import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import FileUpload from "@/components/file-upload"
 import { useSession } from "next-auth/react"
-import {  uploadFilesToServer } from "@/lib/api-service"
 import { useUserContext } from "@/context/user-context"
 import FileDragDropOverlay from "@/components/ui/file-drag-drop-overlay"
+import { API } from "@/lib/frontend/api-service"
 
 export default function Home() {
     const { data: session, status  } = useSession()
@@ -45,7 +45,7 @@ export default function Home() {
             return
         }
         try {
-            const examJson = await uploadFilesToServer(uploadedFiles)
+            const examJson = await API.uploadFiles(uploadedFiles)
             if (!examJson || Object.keys(examJson).length === 0) {
                 alert("No exam data found in the uploaded files")
                 return

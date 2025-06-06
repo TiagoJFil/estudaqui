@@ -1,6 +1,17 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { getServerSession } from "next-auth";
+import bs58 from "bs58"
+import { PublicKey, Transaction } from "@solana/web3.js";
+
+// Extend Transaction type to include addMemo method
+declare module "@solana/web3.js" {
+  interface Transaction {
+    addMemo(memo: string): this;
+  }
+}
+
+
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -28,6 +39,19 @@ export async function getUserIdentifierServerside(){
     return userEmail;
 }
 
+export async function hashAndEncodeBase58(text: string): Promise<string> {
+    const hash = await hashTextSHA256(text);
+    return bs58.encode(Buffer.from(hash, 'hex'));
+}
+
+export async function getSimpleCryptoPaymentIDMemo(userID:string,packID:string): Promise<string> {
+    return await hashAndEncodeBase58(`${userID}-${packID}`)
+}
+
+export async function getQRCryptoPaymentIDMemo(userID:string, packID:string,orderID: string): Promise<string> {
+    return (await hashAndEncodeBase58(`${userID}-${packID}`)) + ";" + orderID;
+}
+
 export const MAX_FILE_SIZE_MB = 10;
 
 export const VALID_FILE_TYPES = {
@@ -36,6 +60,24 @@ export const VALID_FILE_TYPES = {
 };
 
 export const NEXT_PUBLIC_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+export const MEMO_PROGRAM_ID = "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr";
+
+
+Transaction.prototype.addMemo = function (memo: string) {
+    if (!memo || memo.length === 0) {
+        throw new Error("Memo cannot be empty");
+    }
+    if (memo.length > 200) {
+        throw new Error("Memo exceeds maximum length of 200 characters");
+    }
+
+    this.add({
+        keys: [],
+        programId: new PublicKey(MEMO_PROGRAM_ID),
+        data: Buffer.from(memo, 'utf-8')
+    });
+    return this;
+}
 
 export const isValidFileType = (file: File): boolean => {
     return Object.keys(VALID_FILE_TYPES).includes(file.type);

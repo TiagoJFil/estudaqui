@@ -12,7 +12,7 @@ export default function ProvidersWrapper({ children }: { children: React.ReactNo
   const endpoint = process.env.NEXT_PUBLIC_SOLANA_RPC_ENDPOINT || 'https://api.devnet.solana.com'
   return (
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={[new PhantomWalletAdapter(), new SolflareWalletAdapter()]} autoConnect>
+      <WalletProvider wallets={[new PhantomWalletAdapter(), new SolflareWalletAdapter()] } onError={console.log}  autoConnect>
         <WalletModalProvider>
           <SessionProvider session={undefined}>
             <UserProvider>

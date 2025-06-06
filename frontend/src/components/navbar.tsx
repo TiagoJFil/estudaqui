@@ -3,22 +3,50 @@
 import { Button } from "@/components/ui/button"
 import { useSession, signIn, signOut } from "next-auth/react"
 import Image from "next/image"
-import { AuthDropDown } from "./AuthDropDown"
+import { AuthDropDown } from "./auth-drop-down"
 import { useEffect } from "react"
-import { getUserInfo } from "@/lib/api-service"
+import { API } from "@/lib/frontend/api-service"
 import { useUserContext } from "@/context/user-context"
 import { useRouter } from "next/navigation"
-import { useWallet } from "@solana/wallet-adapter-react"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface NavbarProps {
+}
+
+function AppIcon () {
+  return (
+          <div className="flex items-center gap-2">
+            
+    <div className="w-8 h-8 bg-purple-600 text-white rounded-lg flex items-center justify-center">
+      <svg
+        viewBox="0 0 24 24"
+        className="w-6 h-6"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M12 14l9-5-9-5-9 5 9 5z"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M12 14l9-5-9-5-9 5 9 5z"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>
+            <span className="text-xl font-semibold">Examify</span>
+          </div>
+  )
 }
 
 export default function Navbar({ }: NavbarProps) {
   const { data: session, status } = useSession()
   const { credits, setCredits } = useUserContext();
   const router = useRouter()
-  const { connect, disconnect, publicKey, connected } = useWallet()
 
   useEffect(() => {
     console.log("Session Status:", status)
@@ -28,7 +56,7 @@ export default function Navbar({ }: NavbarProps) {
     if (!session || !session.user || !session.user.email) {
       return
     }
-    getUserInfo().then((userInfo) => {
+    API.getUserInfo().then((userInfo) => {
       if (userInfo && userInfo.credits) {
         setCredits(userInfo.credits)
       }
@@ -39,49 +67,14 @@ export default function Navbar({ }: NavbarProps) {
   }, [credits, status])
 
   const handleSignIn = async (platform:string) => {
-    if (platform === "solana") {
-      try {
-        await connect()
-        console.log("Solana wallet connected:", publicKey?.toString())
-        
-        // TODO: call backend to authenticate user with wallet publicKey
-      } catch (error) {
-        console.error("Wallet connection failed:", error)
-        alert("Failed to connect Solana wallet")
-      }
-      return
-    }
     await signIn(platform)
   }
   
   return (
     <nav className="border-b bg-white shadow-sm">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-purple-600 text-white rounded-lg flex items-center justify-center">
-              <svg
-                viewBox="0 0 24 24"
-                className="w-6 h-6"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M12 14l9-5-9-5-9 5 9 5z"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M12 14l9-5-9-5-9 5 9 5z"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <span className="text-xl font-semibold">Examify</span>
-          </div>
+        <div className="flex items-center gap-4" onClick={() => router.push("/")} style={{ cursor: "pointer" }}>
+          <AppIcon/>
         </div>
 
         <div className="flex items-center gap-4">
@@ -100,20 +93,7 @@ export default function Navbar({ }: NavbarProps) {
             Buy More
           </Button>
 
-          {connected ? (
-            <>
-              <span className="text-sm font-medium text-gray-700">
-                {publicKey?.toString()}
-              </span>
-              <Button
-                variant="outline"
-                className="hover:bg-gray-50"
-                onClick={() => disconnect()}
-              >
-                Disconnect Wallet
-              </Button>
-            </>
-          ) : status === "loading" ? (
+          {status === "loading" ? (
             <div className="flex items-center gap-2">
               <Skeleton className="h-6 w-24" />
               <Skeleton className="h-8 w-8 rounded-full" />
