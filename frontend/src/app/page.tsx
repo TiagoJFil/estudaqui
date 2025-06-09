@@ -98,19 +98,21 @@ export default function Home() {
                             />
                         )}
                         <div className="flex gap-3 items-center justify-end pt-2">
-                            <Button
-                                onClick={handleProcess}
-                                size="lg"
-                                className={cn(
-                                    "bg-teal-500 hover:bg-teal-600 text-white font-semibold px-6 py-2 rounded-lg shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed",
-                                    (!session || uploadedFiles.length === 0) && "opacity-60 cursor-not-allowed"
-                                )}
-                                disabled={!session || uploadedFiles.length === 0}
-                                aria-label="Process uploaded files"
-                            >
-                                <Upload className="h-5 w-5 mr-2" />
-                                Process PDF
-                            </Button>
+                            {session && (
+                                <Button
+                                    onClick={handleProcess}
+                                    size="lg"
+                                    className={cn(
+                                        "bg-teal-500 hover:bg-teal-600 text-white font-semibold px-6 py-2 rounded-lg shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed",
+                                        uploadedFiles.length === 0 && "opacity-60 cursor-not-allowed"
+                                    )}
+                                    disabled={uploadedFiles.length === 0}
+                                    aria-label="Process uploaded files"
+                                >
+                                    <Upload className="h-5 w-5 mr-2" />
+                                    Process PDF
+                                </Button>
+                            )}
                         </div>
                     </div>
                 </div>
