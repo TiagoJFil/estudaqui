@@ -1,5 +1,6 @@
 export interface ExamQuestion {
   question: string;
+  questionType: "openEnded" | "multipleChoice" | "other";
   supplementalContent: string | null; // Optional field for additional context
 }
 
@@ -16,9 +17,9 @@ export interface OpenEndedQuestion extends ExamQuestion {
 
 // Type guard functions
 export function isMultipleChoiceQuestion(question: ExamQuestion): question is MultipleChoiceQuestion {
-  return 'responses' in question || 'correctResponse' in question;
+  return question.questionType === "multipleChoice";
 }
 
 export function isOpenEndedQuestion(question: ExamQuestion): question is OpenEndedQuestion {
-  return 'suggestedAnswer' in question;
+  return question.questionType === "openEnded"; 
 }

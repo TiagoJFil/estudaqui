@@ -10,8 +10,10 @@ import { useSession } from "next-auth/react"
 import {  uploadFilesToServer } from "@/lib/api-service"
 import { useUserContext } from "@/context/user-context"
 import FileDragDropOverlay from "@/components/ui/file-drag-drop-overlay"
+import { useRouter } from "next/navigation"
 
 export default function Home() {
+    const router = useRouter();
    // const { data: session, status  } = useSession()
     const [output, setOutput] = useState("")
   const { credits, setCredits } = useUserContext();
@@ -52,6 +54,9 @@ export default function Home() {
             }
             setOutput(JSON.stringify(examJson, null, 2)) // Format JSON output
             setCredits(credits - 1) // Decrease credits after processing
+            // Save examJson to localStorage for /exam page
+            localStorage.setItem("examData", JSON.stringify(examJson));
+            router.push("/exam/" + examJson.examId ); // Navigate to exam page with ID
         } catch (error) {
             alert("Failed to process request")
         }

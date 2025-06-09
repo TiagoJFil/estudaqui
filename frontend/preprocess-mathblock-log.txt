@@ -816,3 +816,562 @@ $
 
 Thus, the eigenvalues are $\lambda = 3$ and $\lambda = 1$.
 ===
+---
+ORIGINAL:
+```csharp
+using System;
+using System.Threading;
+
+public class SafeMessageBox<M> where M : class
+{
+    private class MsgHolder
+    {
+        internal readonly M msg;
+        internal int lives;
+
+        public MsgHolder(M message, int lvs)
+        {
+            msg = message;
+            lives = lvs;
+        }
+    }
+
+    private volatile MsgHolder msgHolder = null;
+
+    public void Publish(M m, int lvs)
+    {
+        Interlocked.Exchange(ref msgHolder, new MsgHolder(m, lvs));
+    }
+
+    public M TryConsume()
+    {
+        MsgHolder holder = msgHolder;
+        if (holder != null && Interlocked.CompareExchange(ref holder.lives, holder.lives - 1, holder.lives) > 0)
+        {
+            return holder.msg;
+        }
+        return null;
+    }
+}
+```
+---
+PROCESSED:
+```csharp
+using System;
+using System.Threading;
+
+public class SafeMessageBox<M> where M : class
+{
+    private class MsgHolder
+    {
+        internal readonly M msg;
+        internal int lives;
+
+        public MsgHolder(M message, int lvs)
+        {
+            msg = message;
+            lives = lvs;
+        }
+    }
+
+    private volatile MsgHolder msgHolder = null;
+
+    public void Publish(M m, int lvs)
+    {
+        Interlocked.Exchange(ref msgHolder, new MsgHolder(m, lvs));
+    }
+
+    public M TryConsume()
+    {
+        MsgHolder holder = msgHolder;
+        if (holder != null && Interlocked.CompareExchange(ref holder.lives, holder.lives - 1, holder.lives) > 0)
+        {
+            return holder.msg;
+        }
+        return null;
+    }
+}
+```
+===
+---
+ORIGINAL:
+```java
+import java.util.Optional;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class BroadcastBox<E> {
+    private E message;
+    private final Lock lock = new ReentrantLock();
+    private final Condition hasMessage = lock.newCondition();
+    private int waitingThreads = 0;
+
+    public int deliverToAll(E message) {
+        lock.lock();
+        try {
+            if (waitingThreads == 0) {
+                return 0;
+            }
+            this.message = message;
+            hasMessage.signalAll();
+            int delivered = waitingThreads;
+            waitingThreads = 0;
+            return delivered;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public Optional<E> receive(long timeout) throws InterruptedException {
+        lock.lock();
+        try {
+            waitingThreads++;
+            try {
+                if (!hasMessage.await(timeout, java.util.concurrent.TimeUnit.MILLISECONDS)) {
+                    waitingThreads--;
+                    return Optional.empty();
+                }
+            } catch (InterruptedException e) {
+                waitingThreads--;
+                throw e;
+            }
+            return Optional.of(message);
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+```
+---
+PROCESSED:
+```java
+import java.util.Optional;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class BroadcastBox<E> {
+    private E message;
+    private final Lock lock = new ReentrantLock();
+    private final Condition hasMessage = lock.newCondition();
+    private int waitingThreads = 0;
+
+    public int deliverToAll(E message) {
+        lock.lock();
+        try {
+            if (waitingThreads == 0) {
+                return 0;
+            }
+            this.message = message;
+            hasMessage.signalAll();
+            int delivered = waitingThreads;
+            waitingThreads = 0;
+            return delivered;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public Optional<E> receive(long timeout) throws InterruptedException {
+        lock.lock();
+        try {
+            waitingThreads++;
+            try {
+                if (!hasMessage.await(timeout, java.util.concurrent.TimeUnit.MILLISECONDS)) {
+                    waitingThreads--;
+                    return Optional.empty();
+                }
+            } catch (InterruptedException e) {
+                waitingThreads--;
+                throw e;
+            }
+            return Optional.of(message);
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+```
+===
+---
+ORIGINAL:
+```java
+import java.util.Optional;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.CancellationException;
+
+public class TransferQueueWithShutdown<E> {
+    private final LinkedBlockingQueue<E> queue = new LinkedBlockingQueue<>();
+    private final AtomicBoolean isShutdown = new AtomicBoolean(false);
+
+    public TransferQueueWithShutdown() {}
+
+    public void put(E message) throws CancellationException {
+        if (isShutdown.get()) {
+            throw new CancellationException("Queue is in shutdown mode.");
+        }
+        queue.offer(message);
+    }
+
+    public Optional<E> take(long timeout) throws InterruptedException, CancellationException {
+        if (isShutdown.get() && queue.isEmpty()) {
+            throw new CancellationException("Queue is in shutdown mode and empty.");
+        }
+        E message = queue.poll(timeout, TimeUnit.MILLISECONDS);
+        return Optional.ofNullable(message);
+    }
+
+    public void startShutdown() {
+        isShutdown.set(true);
+    }
+
+    public boolean waitShutdownCompleted(long timeout) throws InterruptedException {
+        long startTime = System.currentTimeMillis();
+        while (!queue.isEmpty()) {
+            if (System.currentTimeMillis() - startTime > timeout) {
+                return false;
+            }
+            Thread.sleep(10); // Small delay to prevent busy waiting
+        }
+        return true;
+    }
+}
+```
+---
+PROCESSED:
+```java
+import java.util.Optional;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.CancellationException;
+
+public class TransferQueueWithShutdown<E> {
+    private final LinkedBlockingQueue<E> queue = new LinkedBlockingQueue<>();
+    private final AtomicBoolean isShutdown = new AtomicBoolean(false);
+
+    public TransferQueueWithShutdown() {}
+
+    public void put(E message) throws CancellationException {
+        if (isShutdown.get()) {
+            throw new CancellationException("Queue is in shutdown mode.");
+        }
+        queue.offer(message);
+    }
+
+    public Optional<E> take(long timeout) throws InterruptedException, CancellationException {
+        if (isShutdown.get() && queue.isEmpty()) {
+            throw new CancellationException("Queue is in shutdown mode and empty.");
+        }
+        E message = queue.poll(timeout, TimeUnit.MILLISECONDS);
+        return Optional.ofNullable(message);
+    }
+
+    public void startShutdown() {
+        isShutdown.set(true);
+    }
+
+    public boolean waitShutdownCompleted(long timeout) throws InterruptedException {
+        long startTime = System.currentTimeMillis();
+        while (!queue.isEmpty()) {
+            if (System.currentTimeMillis() - startTime > timeout) {
+                return false;
+            }
+            Thread.sleep(10); // Small delay to prevent busy waiting
+        }
+        return true;
+    }
+}
+```
+===
+---
+ORIGINAL:
+```csharp
+public async Task<T> ComputeAsync<T>(T[] elems, T initial)
+{
+    T acc = initial;
+    var tasks = elems.Select(async elem =>
+    {
+        var a = await AAsync(elem);
+        var b = await BAsync(elem);
+        var c = await CAsync(elem);
+        var d = await DAsync(b, c);
+        return (a, d);
+    });
+
+    var results = await Task.WhenAll(tasks);
+
+    foreach (var (a, d) in results)
+    {
+        acc = await EAsync(d, acc);
+    }
+
+    return acc;
+}
+```
+---
+PROCESSED:
+```csharp
+public async Task<T> ComputeAsync<T>(T[] elems, T initial)
+{
+    T acc = initial;
+    var tasks = elems.Select(async elem =>
+    {
+        var a = await AAsync(elem);
+        var b = await BAsync(elem);
+        var c = await CAsync(elem);
+        var d = await DAsync(b, c);
+        return (a, d);
+    });
+
+    var results = await Task.WhenAll(tasks);
+
+    foreach (var (a, d) in results)
+    {
+        acc = await EAsync(d, acc);
+    }
+
+    return acc;
+}
+```
+===
+---
+ORIGINAL:
+```csharp
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+public class CountdownLatch
+{
+    private int _counter;
+    private readonly TaskCompletionSource<bool> _tcs = new TaskCompletionSource<bool>();
+
+    public CountdownLatch(int initialValue)
+    {
+        if (initialValue < 0)
+            throw new ArgumentOutOfRangeException(nameof(initialValue), "Initial value must be non-negative.");
+        _counter = initialValue;
+        if (_counter == 0)
+            _tcs.SetResult(true);
+    }
+
+    public void Countdown()
+    {
+        if (_counter <= 0)
+            throw new InvalidOperationException("Counter is already zero.");
+        
+        if (Interlocked.Decrement(ref _counter) == 0)
+            _tcs.SetResult(true);
+    }
+
+    public Task WaitZeroAsync()
+    {
+        return _tcs.Task;
+    }
+
+    public Task WaitZeroAsync(CancellationToken ct)
+    {
+        return _tcs.Task.ContinueWith(t => t, ct, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
+    }
+}
+```
+---
+PROCESSED:
+```csharp
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+public class CountdownLatch
+{
+    private int _counter;
+    private readonly TaskCompletionSource<bool> _tcs = new TaskCompletionSource<bool>();
+
+    public CountdownLatch(int initialValue)
+    {
+        if (initialValue < 0)
+            throw new ArgumentOutOfRangeException(nameof(initialValue), "Initial value must be non-negative.");
+        _counter = initialValue;
+        if (_counter == 0)
+            _tcs.SetResult(true);
+    }
+
+    public void Countdown()
+    {
+        if (_counter <= 0)
+            throw new InvalidOperationException("Counter is already zero.");
+        
+        if (Interlocked.Decrement(ref _counter) == 0)
+            _tcs.SetResult(true);
+    }
+
+    public Task WaitZeroAsync()
+    {
+        return _tcs.Task;
+    }
+
+    public Task WaitZeroAsync(CancellationToken ct)
+    {
+        return _tcs.Task.ContinueWith(t => t, ct, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
+    }
+}
+```
+===
+---
+ORIGINAL:
+```csharp
+using System;
+using System.Threading;
+
+public class SafeMessageBox<M> where M : class
+{
+    private class MsgHolder
+    {
+        internal readonly M msg;
+        internal int lives;
+
+        public MsgHolder(M message, int lives)
+        {
+            msg = message;
+            this.lives = lives;
+        }
+    }
+
+    private volatile MsgHolder msgHolder = null;
+
+    public void Publish(M m, int lvs)
+    {
+        Interlocked.Exchange(ref msgHolder, new MsgHolder(m, lvs));
+    }
+
+    public M TryConsume()
+    {
+        MsgHolder currentHolder = msgHolder;
+        if (currentHolder != null && Interlocked.CompareExchange(ref currentHolder.lives, currentHolder.lives - 1, currentHolder.lives) > 0)
+        {
+            return currentHolder.msg;
+        }
+        return null;
+    }
+}
+```
+---
+PROCESSED:
+```csharp
+using System;
+using System.Threading;
+
+public class SafeMessageBox<M> where M : class
+{
+    private class MsgHolder
+    {
+        internal readonly M msg;
+        internal int lives;
+
+        public MsgHolder(M message, int lives)
+        {
+            msg = message;
+            this.lives = lives;
+        }
+    }
+
+    private volatile MsgHolder msgHolder = null;
+
+    public void Publish(M m, int lvs)
+    {
+        Interlocked.Exchange(ref msgHolder, new MsgHolder(m, lvs));
+    }
+
+    public M TryConsume()
+    {
+        MsgHolder currentHolder = msgHolder;
+        if (currentHolder != null && Interlocked.CompareExchange(ref currentHolder.lives, currentHolder.lives - 1, currentHolder.lives) > 0)
+        {
+            return currentHolder.msg;
+        }
+        return null;
+    }
+}
+```
+===
+---
+ORIGINAL:
+```csharp
+using System;
+using System.Threading;
+
+public class SafeMessageBox<M> where M : class
+{
+    private class MsgHolder
+    {
+        internal readonly M msg;
+        internal int lives;
+
+        public MsgHolder(M message, int lives)
+        {
+            msg = message;
+            this.lives = lives;
+        }
+    }
+
+    private MsgHolder msgHolder = null;
+
+    public void Publish(M m, int lvs)
+    {
+        Interlocked.Exchange(ref msgHolder, new MsgHolder(m, lvs));
+    }
+
+    public M TryConsume()
+    {
+        MsgHolder holder = msgHolder;
+        if (holder != null && Interlocked.CompareExchange(ref holder.lives, holder.lives - 1, holder.lives) > 0)
+        {
+            return holder.msg;
+        }
+        return null;
+    }
+}
+```
+---
+PROCESSED:
+```csharp
+using System;
+using System.Threading;
+
+public class SafeMessageBox<M> where M : class
+{
+    private class MsgHolder
+    {
+        internal readonly M msg;
+        internal int lives;
+
+        public MsgHolder(M message, int lives)
+        {
+            msg = message;
+            this.lives = lives;
+        }
+    }
+
+    private MsgHolder msgHolder = null;
+
+    public void Publish(M m, int lvs)
+    {
+        Interlocked.Exchange(ref msgHolder, new MsgHolder(m, lvs));
+    }
+
+    public M TryConsume()
+    {
+        MsgHolder holder = msgHolder;
+        if (holder != null && Interlocked.CompareExchange(ref holder.lives, holder.lives - 1, holder.lives) > 0)
+        {
+            return holder.msg;
+        }
+        return null;
+    }
+}
+```
+===

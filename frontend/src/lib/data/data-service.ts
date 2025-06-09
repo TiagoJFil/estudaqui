@@ -86,15 +86,16 @@ export async function savePDF(pdf: File, userID: string, pdfTextHash: string): P
   });
   const downloadURL = `https://storage.googleapis.com/${bucket.name}/${fileRef.name}`;
 
-  const metadata: PDFInfo = {
+  const fileFirestoreDocument: PDFInfo = {
     filename: pdf.name,
+    userId: userID,
     storageRef: downloadURL,
   };
 
   const fileDoc = filesRef.doc(pdfTextHash);
-  await fileDoc.set(metadata);
+  await fileDoc.set(fileFirestoreDocument);
 
-  return metadata;
+  return fileFirestoreDocument;
 }
 
 export async function addExamInfoToPDF(pdfTextHash: string, examInfo: ExamJSON): Promise<void> {
@@ -106,4 +107,26 @@ export async function addExamInfoToPDF(pdfTextHash: string, examInfo: ExamJSON):
   const fileDoc = filesRef.doc(pdfTextHash);
   
   await fileDoc.set({ examInfo }, { merge: true });
+}
+
+export async function getPDFInfo(pdfTextHash: string): Promise<PDFInfo | null> {
+  if (!pdfTextHash) {
+    throw new Error("PDF text hash is required");
+  }
+  try{
+    const filesRef = db.collection(COLLECTIONS.FILES);
+    const fileDoc = filesRef.doc(pdfTextHash);
+    const fileSnap = await fileDoc.get();
+
+    if (fileSnap.exists) {
+      return fileSnap.data() as PDFInfo;
+    } else {
+      return null;
+    }
+
+  } catch (error) {
+    console.error("Error accessing Firestore:", error);
+    throw new Error("Could not access Firestore. Please try again later.");
+  }
+
 }

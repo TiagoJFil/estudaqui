@@ -1,3 +1,4 @@
+import { MultipleChoiceQuestion, OpenEndedQuestion } from "@/app/types";
 import { UserI } from "./data/data-interfaces";
 
 export async function uploadFilesToServer(uploadedFiles: File[]): Promise<any> {
@@ -60,4 +61,16 @@ export async function getUserInfo(): Promise<UserI> {
         console.error("Error fetching user info:", error);
         throw error;
     }
+}
+
+
+export type ExamJson = {
+    examId: string;
+    questions: Array<OpenEndedQuestion | MultipleChoiceQuestion>;
+};
+
+export async function getExamById(examId: string): Promise<ExamJson> {
+    const response = await fetch(`/api/v1/exam/${encodeURIComponent(examId)}`);
+    if (!response.ok) throw new Error("Failed to fetch exam");
+    return await response.json();
 }
