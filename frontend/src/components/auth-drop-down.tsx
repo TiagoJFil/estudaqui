@@ -23,12 +23,11 @@ export function AuthDropDown({ onSignIn }: AuthDropDownProps) {
                   <GoogleIcon width={20} height={20} />
                   Sign in with Google
                 </DropdownMenuItem>
-                <DropdownMenuItem className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded-md" 
-                onClick={() => onSignIn("github")}>
+                <DropdownMenuItem className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded-md" onClick={() => onSignIn("github") }>
                   <GithubIcon width={20} height={20} />
                   Sign in with GitHub
                 </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-    );
+             </DropdownMenuContent>
+           </DropdownMenu>
+     );
 }

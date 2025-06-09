@@ -53,6 +53,25 @@ export async function subtractCreditsFromUser(email: string, creditsToSubtract: 
   return updatedUserSnap.data() as UserI;
 }
 
+export async function addCreditsToUser(email: string, amount: number): Promise<UserI> {
+  if (amount <= 0) {
+    throw new Error("Cannot add non-positive credits");
+  }
+
+  const userNullable = await getUser(email);
+  if (!userNullable) {
+    throw new Error("User does not exist");
+  }
+  const user = userNullable as UserI;
+
+  const userRef = db.collection(COLLECTIONS.USERS).doc(email);
+  await userRef.set({ credits: user.credits + amount }, { merge: true });
+
+  const updatedUserSnap = await userRef.get();
+  return updatedUserSnap.data() as UserI;
+}
+
+
 export async function savePDF(pdf: File, userID: string, pdfTextHash: string): Promise<PDFInfo> {
   if (!pdf || !(pdf instanceof File)) {
     throw new Error("Invalid file provided");
@@ -106,4 +125,26 @@ export async function addExamInfoToPDF(pdfTextHash: string, examInfo: ExamJSON):
   const fileDoc = filesRef.doc(pdfTextHash);
   
   await fileDoc.set({ examInfo }, { merge: true });
+}
+
+
+export async function registerPayment(
+  paymentInfo: {
+    method: "solana" | "card" | "paypal" | "mbway";
+    userID: string;
+    packID: string;
+    timestamp: Date;
+    transactionId?: string; // Optional for crypto payments
+  }
+): Promise<void> {
+  if (!paymentInfo || !paymentInfo.userID || !paymentInfo.packID) {
+    throw new Error("Invalid payment information provided");
+  }
+  const paymentInfoWithStringDates = {
+    ...paymentInfo,
+    timestamp: paymentInfo.timestamp.toISOString(),
+  };
+
+  const paymentsRef = db.collection(COLLECTIONS.PAYMENTS);
+  await paymentsRef.add(paymentInfoWithStringDates);
 }

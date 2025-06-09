@@ -11,8 +11,31 @@ export interface PDFInfo {
     examInfo?: ExamJSON;
 }
 
+export interface PaymentInfo {
+    method: "solana" | "card" | "paypal" | "mbway" ;
+    userId: string;
+    packID: string;
+    timestamp: Date;
+    transactionId?: string; // Optional for crypto payments
+}
+
+export interface PackInfo {
+    id: string;
+    name: string;
+    description: string;
+    priceUSD: number;
+    credits: number;
+    subscription?: boolean;
+    subscriptionPeriod?: "monthly" | "yearly"; // Optional for packs that are not subscriptions
+    extraCredits?: number; 
+    active: boolean;
+    imageUrl?: string; // Optional
+}
+
 //collections
 export const COLLECTIONS = {
     USERS: "users",
     FILES: "files",
+    PAYMENTS: "payments",
+    PACKS: "packs",
 }

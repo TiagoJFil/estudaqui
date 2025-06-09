@@ -3,13 +3,43 @@
 import { Button } from "@/components/ui/button"
 import { useSession, signIn, signOut } from "next-auth/react"
 import Image from "next/image"
-import { AuthDropDown } from "./AuthDropDown"
+import { AuthDropDown } from "./auth-drop-down"
 import { useEffect } from "react"
-import { getUserInfo } from "@/lib/api-service"
+import { API } from "@/lib/frontend/api-service"
 import { useUserContext } from "@/context/user-context"
 import { useRouter } from "next/navigation"
 import { Skeleton } from "@/components/ui/skeleton"
 
+
+function AppIcon () {
+  return (
+    <div className="flex items-center gap-2">
+
+      <div className="w-8 h-8 bg-purple-600 text-white rounded-lg flex items-center justify-center">
+        <svg
+          viewBox="0 0 24 24"
+          className="w-6 h-6"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 14l9-5-9-5-9 5 9 5z"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M12 14l9-5-9-5-9 5 9 5z"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+      <span className="text-xl font-semibold">Examify</span>
+    </div>
+  )
+}
 
 export default function Navbar() {
   const { data: session, status } = useSession()
@@ -24,7 +54,7 @@ export default function Navbar() {
     if (!session || !session.user || !session.user.email) {
       return
     }
-    getUserInfo().then((userInfo) => {
+    API.getUserInfo().then((userInfo) => {
       if (userInfo && userInfo.credits) {
         setCredits(userInfo.credits)
       }
@@ -34,34 +64,15 @@ export default function Navbar() {
     })
   }, [credits, status])
 
+  const handleSignIn = async (platform:string) => {
+    await signIn(platform)
+  }
+
   return (
     <nav className="border-b bg-white shadow-sm">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-purple-600 text-white rounded-lg flex items-center justify-center">
-              <svg
-                viewBox="0 0 24 24"
-                className="w-6 h-6"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M12 14l9-5-9-5-9 5 9 5z"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M12 14l9-5-9-5-9 5 9 5z"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <span className="text-xl font-semibold">Examify</span>
-          </div>
+        <div className="flex items-center gap-4" onClick={() => router.push("/")} style={{ cursor: "pointer" }}>
+          <AppIcon/>
         </div>
 
         <div className="flex items-center gap-4">
@@ -109,7 +120,7 @@ export default function Navbar() {
               </Button>
             </>
           ) : (
-            <AuthDropDown onSignIn={(platform) => { signIn(platform) }} />
+            <AuthDropDown onSignIn={handleSignIn} />
           )}
         </div>
       </div>
