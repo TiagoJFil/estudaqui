@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSuggestedAnswer } from "@/services/examService";
+import { getSuggestedAnswer } from "@/lib/llm/exam-service";
 
 export async function GET(request: Request) {
   try {

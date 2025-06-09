@@ -13,9 +13,6 @@ const connection = new Connection(RPC_ENDPOINT)
 export async function POST(request: NextRequest) {
   try {
     const user = await getUserIdentifierServerside()
-    if (!user) {
-      return NextResponse.json({ error: 'User not authenticated' }, { status: 401 })
-    }
     const { signature, packID, orderID } = await request.json()
     if (
       typeof signature !== 'string' ||

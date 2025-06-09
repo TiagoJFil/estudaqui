@@ -3,9 +3,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import clsx from "clsx";
 
-import QuestionCard from "./QuestionCard";
+import QuestionCard from "./question-card";
 import { OpenEndedQuestion, MultipleChoiceQuestion } from "@/app/types";
-import { dotBase, arrowBase } from "./examClassNames";
+import { dotBase, arrowBase } from "./exam-class-names";
 
 export interface ExamCarouselProps {
   questions: (MultipleChoiceQuestion | OpenEndedQuestion)[];

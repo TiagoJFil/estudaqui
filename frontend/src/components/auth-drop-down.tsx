@@ -2,8 +2,8 @@
 
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { GoogleIcon } from "./ui/google-icon"
-import { GithubIcon } from "./ui/github-icon"
+import { GoogleIcon } from "./google-icon"
+import { GithubIcon } from "./github-icon"
 
 interface AuthDropDownProps {
   onSignIn: (platform: string) => void;

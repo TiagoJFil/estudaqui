@@ -7,8 +7,8 @@ import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
-import preprocessMathBlocks from './preprocessMathBlocks';
-import { answerBoxBase, aiIconBase, aiAnswerTextBase } from "./examClassNames";
+import preprocessMathBlocks from './preprocess-math-blocks';
+import { answerBoxBase, aiIconBase, aiAnswerTextBase } from "./exam-class-names";
 import clsx from "clsx";
 
 export default function OpenEnded({

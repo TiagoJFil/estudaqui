@@ -1,7 +1,7 @@
 import { COLLECTIONS, UserI, PDFInfo } from "./data-interfaces";
 import { db, storage } from "@/lib/data/firebase";
 import { getDefaultUserInfo } from "./default-values";
-import { ExamJSON } from "@/services/examService";
+import { ExamJSON } from "@/lib/llm/exam-service";
 
 export async function createOrGetAccount(email: string | null | undefined) {
   if (!email) {

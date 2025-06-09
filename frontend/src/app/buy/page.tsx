@@ -5,7 +5,7 @@ import { useWalletModal } from '@solana/wallet-adapter-react-ui'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { CreditCard, Smartphone } from 'lucide-react'
 // Components
-import InstantPackCard from '@/components/ui/InstantPackCard'
+import InstantPackCard from '@/components/instant-pack-card'
 import SubscriptionPackCard from '@/components/subscription-pack-card'
 import PaymentModal from '@/components/payment-modal'
 import { PACKS } from '@/lib/contants'

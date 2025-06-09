@@ -1,9 +1,9 @@
 "use client"
 
-import {ExamCarousel} from "@/components/exam/ExamCarousel";
-import { getSuggestedAnswerFromApi } from "@/lib/api-service";
+import {ExamCarousel} from "@/components/exam/exam-carousel";
 import { useState } from "react";
 import { ExamQuestion, MultipleChoiceQuestion, OpenEndedQuestion } from "../types";
+import { API } from "@/lib/frontend/api-service";
 
 const mockQuestions: (MultipleChoiceQuestion | OpenEndedQuestion)[] = [
   // Multiple Choice Questions
@@ -210,7 +210,7 @@ export default function ExamPage() {
         );
         try {
             console.debug("Requesting AI answer for question:", question);
-            const answer: string = await getSuggestedAnswerFromApi(question.question, question.supplementalContent);
+            const answer: string = await API.getSuggestedAnswerFromApi(question.question, question.supplementalContent);
             console.debug("Successfully received AI answer:", answer);
             setQuestions(prevQuestions =>
                 prevQuestions.map(q =>

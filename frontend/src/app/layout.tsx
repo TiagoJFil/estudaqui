@@ -28,11 +28,15 @@ export default function RootLayout({
       
         <body className={inter.className}>
           <ProvidersWrapper>
-        <div className="min-h-screen bg-gray-50">
-            <Navbar />
-          {children}
-          <Footer />
-        </div>
+            <div className="min-h-screen flex flex-col bg-gray-50">
+              <Navbar />
+              <main className="flex-1 flex justify-center">
+                <div className="w-full">
+                  {children}
+                </div>
+              </main>
+              <Footer />
+            </div>
           </ProvidersWrapper>
         </body>
       

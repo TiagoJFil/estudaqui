@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { useSession, signIn, signOut } from "next-auth/react"
 import Image from "next/image"
 import { AuthDropDown } from "./auth-drop-down"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { API } from "@/lib/frontend/api-service"
 import { useUserContext } from "@/context/user-context"
 import { useRouter } from "next/navigation"
@@ -45,6 +45,7 @@ export default function Navbar() {
   const { data: session, status } = useSession()
   const { credits, setCredits } = useUserContext();
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(status === "loading")
 
   useEffect(() => {
     console.log("Session Status:", status)
@@ -52,17 +53,19 @@ export default function Navbar() {
       return
     }
     if (!session || !session.user || !session.user.email) {
+        setIsLoading(false)
       return
     }
     API.getUserInfo().then((userInfo) => {
       if (userInfo && userInfo.credits) {
         setCredits(userInfo.credits)
+        setIsLoading(false)
       }
     }).catch((error) => {
       console.error("Failed to fetch user info:", error)
       alert("Failed to fetch user information")
     })
-  }, [credits, status])
+  }, [status])
 
   const handleSignIn = async (platform:string) => {
     await signIn(platform)
@@ -76,7 +79,7 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-4">
-          {status === "loading" ? (
+          {isLoading ? (
             <Skeleton className="h-6 w-20" />
           ) : (
             <div className="text-lg font-bold text-gray-600">
@@ -91,7 +94,7 @@ export default function Navbar() {
             Buy More
           </Button>
 
-          {status === "loading" ? (
+          {isLoading ? (
             <div className="flex items-center gap-2">
               <Skeleton className="h-6 w-24" />
               <Skeleton className="h-8 w-8 rounded-full" />

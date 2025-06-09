@@ -1,4 +1,4 @@
-import { ExamJSON } from "@/services/examService";
+import { ExamJSON } from "@/lib/llm/exam-service";
 
 export interface ChatMessage {
   role: "user" | "system" | "assistant";

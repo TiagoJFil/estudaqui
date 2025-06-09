@@ -2,7 +2,7 @@ import { ExamQuestion, MultipleChoiceQuestion } from "@/app/types";
 import { Check, X } from "lucide-react";
 import { useState } from "react";
 import clsx from "clsx";
-import { cardBase } from "./examClassNames";
+import { cardBase } from "./exam-class-names";
 
 export default function MultipleChoice({ question }: { question: MultipleChoiceQuestion }) {
   const [selected, setSelected] = useState<string | null>(null);

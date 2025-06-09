@@ -2,14 +2,13 @@
 
 import {  useState } from "react"
 import { Upload } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import FileUpload from "@/components/file-upload"
 import { useSession } from "next-auth/react"
 import { useUserContext } from "@/context/user-context"
-import FileDragDropOverlay from "@/components/ui/file-drag-drop-overlay"
+import FileDragDropOverlay from "@/components/file-drag-drop-overlay"
 import { API } from "@/lib/frontend/api-service"
+import { Button } from "@/components/ui/button"
 
 export default function Home() {
    // const { data: session, status  } = useSession()
@@ -66,37 +65,40 @@ export default function Home() {
     }
 
     return (
-        <div>
-            <FileDragDropOverlay showOverlay={showFileUploadOverlay} setShowOverlay={setShowFileUploadOverlay} onFileDrop={appendFiles}  />
-            <main className="container mx-auto px-4 py-8 max-w-3xl">
-                <div className="space-y-4">
-                    <div className="bg-white rounded-lg shadow-sm p-6 space-y-4">
-                        <FileUpload  showOverlay={showFileUploadOverlay} onFileRemove={onFileRemove} onFilesUploaded={appendFiles} uploadedFiles={uploadedFiles} />
-                        
-                        <div className="flex gap-2 items-center">
+        <div className="min-h-auto flex flex-col">
+            <FileDragDropOverlay showOverlay={showFileUploadOverlay} setShowOverlay={setShowFileUploadOverlay} onFileDrop={appendFiles} />
+            <main className="container mx-auto px-4 py-12 max-w-3xl w-full flex-1">
+                <div className="space-y-8 w-full">
+                    <div className="bg-white rounded-xl shadow-md p-8 space-y-6 border border-gray-100 w-full">
+                        <h1 className="text-2xl font-bold text-gray-900">Upload Exam (PDF)</h1>
+                        <p className="text-gray-600 text-base">Upload your exam file in PDF format. Drag and drop or use the button below. Duplicate files are automatically ignored. Only PDF files are allowed.</p>
+                        <FileUpload
+                            showOverlay={showFileUploadOverlay}
+                            onFileRemove={onFileRemove}
+                            onFilesUploaded={appendFiles}
+                            uploadedFiles={uploadedFiles}
+                        />
+                        <div className="flex gap-3 items-center justify-end pt-2">
                             <Button
                                 onClick={handleProcess}
-                                size="icon"
+                                size="lg"
                                 className={cn(
-                                    "bg-teal-500 hover:bg-teal-600 text-white",
-                                    "transition-colors duration-200"
+                                    "bg-teal-500 hover:bg-teal-600 text-white font-semibold px-6 py-2 rounded-lg shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed",
+                                    uploadedFiles.length === 0 && "opacity-60 cursor-not-allowed"
                                 )}
+                                disabled={uploadedFiles.length === 0}
+                                aria-label="Process uploaded files"
                             >
-                                <Upload className="h-4 w-4" />
+                                <Upload className="h-5 w-5 mr-2" />
+                                Process PDF
                             </Button>
                         </div>
-
-                        {output && (
-                            <Card className="mt-6 p-4 bg-white border border-gray-200">
-                                <h2 className="text-lg font-semibold mb-2">Processed Output:</h2>
-                                <div className="prose prose-sm max-w-none">
-                                    {output}
-                                </div>
-                            </Card>
-                        )}
                     </div>
                 </div>
             </main>
-            </div>
+            <footer className="w-full text-center text-xs text-gray-400 py-2 mb-4">
+                You have <span className="font-semibold text-teal-600">{credits}</span> credits remaining.
+            </footer>
+        </div>
     )
 }

@@ -1,13 +1,13 @@
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import React from "react";
 import { OpenEndedQuestion, MultipleChoiceQuestion, isMultipleChoiceQuestion, isOpenEndedQuestion } from "@/app/types";
-import MultipleChoice from "./MultipleChoice";
-import OpenEnded from "./OpenEnded";
+import MultipleChoice from "./multiple-choice";
+import OpenEnded from "./open-ended";
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import preprocessMathBlocks from './preprocessMathBlocks';
-import { cardBase, questionTitleBase, supplementalContentBase } from "./examClassNames";
+import preprocessMathBlocks from './preprocess-math-blocks';
+import { cardBase, questionTitleBase, supplementalContentBase } from "./exam-class-names";
 
 export default function QuestionCard({ question, index, onAiAnswerRequest, isAiSuggestedAnswerLoading, aiSuggestionError }: 
     { question: MultipleChoiceQuestion | OpenEndedQuestion, index: number, onAiAnswerRequest: (question: OpenEndedQuestion) => void, isAiSuggestedAnswerLoading?: boolean, aiSuggestionError?: boolean }) {

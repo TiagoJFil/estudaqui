@@ -1,18 +1,12 @@
 // Build a Next.js API route to handle file uploads receives a PDF file, and calls ExamService.upload to process it. The route should return the structured exam JSON as a response.
 import { NextResponse } from "next/server";
-import { upload } from "@/services/examService";
+import { upload } from "@/lib/llm/exam-service";
 import { getUser,subtractCreditsFromUser } from "@/lib/data/data-service";
 import { getUserIdentifierServerside } from "@/lib/utils";
 
 export async function POST(request: Request) {
   try {
     const userID = await getUserIdentifierServerside();
-    if (!userID) {
-      return NextResponse.json(
-        { error: "User not authenticated." },
-        { status: 401 }
-      );
-    }
     const user = await getUser(userID);
     if(user?.credits === undefined || user?.credits <= 0) {
       return NextResponse.json(
