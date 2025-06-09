@@ -3,31 +3,36 @@
 import { Button } from "@/components/ui/button";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
-import { AuthDropDown } from "./AuthDropDown";
-import { useEffect } from "react";
-import { getUserInfo } from "@/lib/api-service";
+import { useEffect, useState } from "react";
 import { useUserContext } from "@/context/user-context";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
+import { API } from "@/lib/frontend/api-service";
+import { AuthDropDown } from "./auth-drop-down";
 
 export default function CreditsAndSignIn() {
   const { data: session, status } = useSession();
   const { credits, setCredits } = useUserContext();
+  const [isLoading, setIsLoading] = useState(status === "loading");
   const router = useRouter();
 
   useEffect(() => {
     if (status === "loading") return;
-    if (!session || !session.user || !session.user.email) return;
-    getUserInfo().then((userInfo) => {
+    if (!session || !session.user || !session.user.email) {
+      setIsLoading(false);
+      return;
+    }
+    API.getUserInfo().then((userInfo) => {
       if (userInfo && userInfo.credits !== undefined) {
         setCredits(userInfo.credits);
       }
+      setIsLoading(false);
     }).catch(() => {});
   }, [credits, status]);
 
   return (
     <div className="flex items-center gap-4">
-      {status === "loading" ? (
+      {isLoading ? (
         <Skeleton className="h-6 w-20" />
       ) : (
         <div className="text-lg font-bold text-gray-600">
@@ -40,7 +45,7 @@ export default function CreditsAndSignIn() {
       >
         Buy More
       </Button>
-      {status === "loading" ? (
+      {isLoading ? (
         <div className="flex items-center gap-2">
           <Skeleton className="h-6 w-24" />
           <Skeleton className="h-8 w-8 rounded-full" />

@@ -1,11 +1,11 @@
 // services/examService.ts
 import { addExamInfoToPDF, getPDFInfo, savePDF } from "@/lib/data/data-service";
-import { llm } from "../lib/llm/LLMFacade";
 import pdfParse from "pdf-parse";
 import { hashTextSHA256 } from "@/lib/utils";
 import preprocessMathBlocks from "@/components/exam/preprocess-math-blocks";
 import fs from "fs";
 import path from "path";
+import { llm } from "./LLMFacade";
 
 export interface ExamQuestion {
   question: string;

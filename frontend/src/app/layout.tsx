@@ -9,9 +9,9 @@ import CreditsAndSignIn from "@/components/CreditsAndSignIn"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Examify - Study Assistant",
+  title: "Studaki - Study Assistant",
   description: "Your AI-powered study companion",
-}
+}//TODO: change this
 
 export default function RootLayout({
   children,
