@@ -11,7 +11,7 @@ export async function handleQRPayment(
     orderID: string,
     TIMEOUT: number,
     setError: (error: Error) => void,
-    onSuccess: () => void,
+    onSuccess: () => void
 ){
     const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_RPC_ENDPOINT || "https://api.mainnet-beta.solana.com")
     const receiverPublicKey = new PublicKey(process.env.NEXT_PUBLIC_SOLANA_RECEIVER || "")
@@ -22,15 +22,17 @@ export async function handleQRPayment(
     
     // Start polling for payment
     const startTime = Date.now()
-    const POLL_INTERVAL = 5000 // Check every 3 seconds
+    const POLL_INTERVAL = 5000 
+    console.log(TIMEOUT, "TIMEOUT")
+    console.log(startTime, "startTime")
     const pollForPayment = async () => {
       try {
         // Check if timeout exceeded
         console.log("Polling for payment... with ID:", orderID + " and payment ID:", paymentID)
-      
-        if (Date.now() - startTime > TIMEOUT) {
-          setError(new Error("Payment timeout. Please try again."))
-          return
+      console.log("Current time:", Date.now(), "Start time:", startTime, "Timeout:", TIMEOUT)
+        if (Date.now() - startTime > (TIMEOUT * 1000)) {
+          console.log("Payment timeout exceeded")
+          
         }
 
         // Get recent transactions for the receiver
@@ -78,8 +80,8 @@ export async function handleQRPayment(
                 ix.parsed === qrMemo
               )
             })
-            console.log("Transaction memo:", tx.transaction.message.instructions)
-            console.log("Has correct transfer:", hasCorrectTransfer)
+           // console.log("Transaction memo:", tx.transaction.message.instructions)
+           // console.log("Has correct transfer:", hasCorrectTransfer)
             console.log("Has correct memo:", hasCorrectMemo)
 
             // If both conditions are met, payment found
@@ -115,7 +117,7 @@ export async function handleQRPayment(
         setError(error instanceof Error ? error : new Error(String(error)))
       }
     }
-
+console.log("pooling here")
     // Start polling after a short delay
     return setInterval(pollForPayment, POLL_INTERVAL)
 }

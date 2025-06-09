@@ -1,9 +1,6 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
-import { db } from "@/lib/data/firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
-import { COLLECTIONS, UserI } from "@/lib/data/data-interfaces";
 import { createOrGetAccount } from "@/lib/data/data-service";
 
 export default NextAuth({

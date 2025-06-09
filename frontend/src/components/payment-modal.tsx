@@ -5,22 +5,19 @@ import Image from "next/image"
 import { Smartphone } from "lucide-react"
 import { useWallet } from "@solana/wallet-adapter-react"
 import { useWalletModal } from "@solana/wallet-adapter-react-ui"
-import { Connection, PublicKey, Transaction } from "@solana/web3.js"
-import { createTransferInstruction, getAssociatedTokenAddress, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token"
-import { NEXT_PUBLIC_USDC_MINT, getSimpleCryptoPaymentIDMemo } from "@/lib/utils"
 import { paymentMethods } from "@/lib/contants"
 import { CustomModal } from "./custom-modal"
 import { useSession } from "next-auth/react"
 import { SolanaPayQR } from "./solana-qr"
 import { useUserContext } from "@/context/user-context"
 import { PackType } from "@/lib/interfaces"
-import { API } from "@/lib/frontend/api-service"
 import { handleCryptoPayment, handleQRPayment } from "@/lib/frontend/payment-service"
-import { time } from "console"
+import { CheckCircle } from "lucide-react"
+import toast from "react-hot-toast"
+import { useRouter } from "next/navigation"
 
 
 
-// QR Code Component for Solana Pay
 function StatusBadge({ label, value, variant = "default" }: { 
   label: string; 
   value: string; 
@@ -175,11 +172,11 @@ function PaymentDetailsPanel({
   selectedId,
   pack,
   userID,
-  qrKey,
   getOrderID,
+  timerTIMEOUT
   
    }: { useQRCode: boolean; setUseQRCode: (value: boolean) => void;
-     selectedId: string; pack : PackType, userID: string, qrKey: number,
+     selectedId: string; pack : PackType, userID: string,timerTIMEOUT: number,
       getOrderID: () => string }) {
 
   const price = pack!.priceUSD
@@ -216,10 +213,10 @@ function PaymentDetailsPanel({
                     Use Browser Wallet →
                   </button>
                 </div>
-                <p className="text-gray-600 mb-6  text-m">Open your Solana wallet app and scan this QR code to complete the payment of {price} USDC.</p>                  {/* QR Code Container */}
-                <div className="flex flex-col items-center mb-2">
-                  <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm mb-1">
-                    <SolanaPayQR qrKey={qrKey} amount={price}  userID={userID} packName={pack.name} packID={pack.id} getOrderID={getOrderID} />
+                <p className="text-gray-600 mb-5  text-m">Open your Solana wallet app and scan this QR code to complete the payment of {price} USDC.</p>                  {/* QR Code Container */}
+                <div className="flex flex-col items-center mb-1">
+                  <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm ">
+                    <SolanaPayQR timerTIMEOUT={timerTIMEOUT} amount={price}  userID={userID} packName={pack.name} packID={pack.id} getOrderID={getOrderID} />
                   </div>
                 </div>
               </>
@@ -453,19 +450,32 @@ export default function PaymentModal({
   const { data: session, status  } = useSession()
   const { credits, setCredits } = useUserContext();
   const [useQRCode, setUseQRCode] = useState(true)
+  const [orderID, setOrderID] = useState<string | null>(null)
+  const TIMEOUT = 5 * 60 // 5 minutes timeout
+  const checkerTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
   
-  
+const [paymentSuccess, setPaymentSuccess] = useState(false)
+const router = useRouter()
+
   const price = pack!.priceUSD
   const onPaymentSuccess = () => {
     setCredits(credits + pack.credits)
-    alert("Payment successful!")
+  setIsProcessing(false)
+  setPaymentSuccess(true)
+  toast.success(`Successfully purchased ${pack.name}!`)
+  
+  // Close modal after a short delay
+  setTimeout(() => {
     onClose()
+    router.push('/')
+  }, 3000)
   }
   const onError = (error: Error) => {
     console.error("Payment error:", error)
     alert("An error occurred while processing your payment. Please try again.")
     setIsProcessing(false)
   }
+
   const handleConfirmPayment = async () => {
     switch (selectedPayment) {
       case "visa":
@@ -510,25 +520,20 @@ export default function PaymentModal({
 }
 
 
-  const [orderID, setOrderID] = useState<string | null>(null)
-  const [qrKey, setQrKey] = useState(0)
-  const [checkerTimeout, setCheckerTimeout] = React.useState<NodeJS.Timeout | null>(null)
-  const TIMEOUT = 5 * 60 * 1000 // 5 minutes timeout
-
 
   const generateOrderID = () => {
     const value = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
     setOrderID(value)
-    console.log("Generated Order ID:", value)
     return value
   }
 
+const paymentFlowStartedRef = React.useRef(false);
 
   React.useEffect(() => {
     const handlePaymentCheck = async () => {
-      console.log(orderID, useQRCode, checkerTimeout, isOpen)
-      if(useQRCode && orderID && !checkerTimeout && isOpen) { 
+      if(useQRCode && orderID && !checkerTimeoutRef.current && isOpen && !paymentFlowStartedRef.current) { 
         console.log("Using QR code payment flow")
+      paymentFlowStartedRef.current = true;
           
         const timeout = await handleQRPayment(
               pack.id,
@@ -539,26 +544,27 @@ export default function PaymentModal({
               onError,
               onPaymentSuccess
             )
-        setCheckerTimeout(timeout)
+        checkerTimeoutRef.current = timeout
       }
+      paymentFlowStartedRef.current = false;
     }
     handlePaymentCheck()
 
     return () => {
-      console.log("Cleaning up payment checker")
-      if(checkerTimeout){
-        console.log("Clearing timeout for QR code payment: ", checkerTimeout)
-        clearInterval(checkerTimeout)
-        setCheckerTimeout(null)
+      if(checkerTimeoutRef.current){
+        console.log("Clearing timeout for QR code payment: ", checkerTimeoutRef.current)
+        clearInterval(checkerTimeoutRef.current)
+        checkerTimeoutRef.current = null
       }
     };
-  }, [useQRCode,orderID,checkerTimeout,isOpen])
+  }, [useQRCode,orderID,isOpen])
 
   React.useEffect(() => {
-    if (!isOpen && checkerTimeout) {
+    if (!isOpen && checkerTimeoutRef.current) {
       console.log("Modal closed, clearing timeout for QR code payment");
-      clearInterval(checkerTimeout);
-      setCheckerTimeout(null);
+      clearInterval(checkerTimeoutRef.current);
+      checkerTimeoutRef.current = null; 
+    paymentFlowStartedRef.current = false;
     }
   }, [isOpen]);
   return (
@@ -595,17 +601,40 @@ export default function PaymentModal({
           </div>
             {/* Right side - Payment Details and Summary */}
           <div className="bg-gray-50 p-8 flex flex-col overflow-y-auto">
-            <div className="flex-1">
-              <PaymentDetailsPanel 
-                useQRCode={useQRCode }
-                setUseQRCode={setUseQRCode}
-                selectedId={selectedPayment} 
-                pack={pack}
-                userID={session!.user!.email!}
-                getOrderID={generateOrderID}
-                qrKey={qrKey}
-              />
-            </div>
+            {/* Replace your existing PaymentDetailsPanel with this conditional rendering */}
+<div className="flex-1">
+  {paymentSuccess ? (
+    <div className="bg-white p-6 rounded-xl border border-green-200 shadow-sm h-full flex flex-col items-center justify-center">
+      <div className="animate-bounce-once">
+        <CheckCircle className="w-24 h-24 text-green-500 mb-6" />
+      </div>
+      <h2 className="font-bold text-2xl text-gray-800 mb-3 text-center">
+        Payment Successful!
+      </h2>
+      <p className="text-gray-600 text-center mb-6">
+        You've purchased {pack.name} for {price} USDC.
+        {pack.credits} credits have been added to your account.
+      </p>
+      <div className="text-center text-lg font-medium text-green-700">
+        Redirecting to your dashboard...
+      </div>
+      <div className="mt-8 w-full max-w-md bg-gray-100 h-2 rounded-full overflow-hidden">
+        <div className="h-full bg-green-500 rounded-full transition-all duration-3000 ease-out"
+             style={{ width: "100%" }} />
+      </div>
+    </div>
+  ) : (
+    <PaymentDetailsPanel 
+      useQRCode={useQRCode}
+      setUseQRCode={setUseQRCode}
+      selectedId={selectedPayment} 
+      pack={pack}
+      userID={session!.user!.email!}
+      getOrderID={generateOrderID}
+      timerTIMEOUT={TIMEOUT}
+    />
+  )}
+</div>
               <PaymentSummary 
               selectedPayment={selectedPayment} 
               onConfirm={handleConfirmPayment}
