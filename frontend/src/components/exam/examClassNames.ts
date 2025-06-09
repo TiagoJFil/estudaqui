@@ -1,4 +1,3 @@
-// Shared Tailwind class sets for exam components
 
 // ExamCarousel
 export const dotBase = "w-3 h-3 rounded-full transition-colors duration-200 hover:scale-110 transform";
