@@ -10,22 +10,22 @@ export async function createOrGetAccount(email: string | null | undefined) {
   }
 
   const userRef = db.collection(COLLECTIONS.USERS).doc(email);
-  const userSnap = await userRef.get();
+  const userSnapshot = await userRef.get();
 
-  if (!userSnap.exists) {
-    const newUser: UserI = getDefaultUserInfo();
-    await userRef.set(newUser);
-    return newUser;
+  if (!userSnapshot.exists) {
+    const defaultUser: UserI = getDefaultUserInfo();
+    await userRef.set(defaultUser);
+    return defaultUser;
   } else {
-    return userSnap.data() as UserI;
+    return userSnapshot.data() as UserI;
   }
 }
 
 export async function getUser(email: string): Promise<UserI | null> {
   const userRef = db.collection(COLLECTIONS.USERS).doc(email);
-  const userSnap = await userRef.get();
-  if (userSnap.exists) {
-    return userSnap.data() as UserI;
+  const userSnapshot = await userRef.get();
+  if (userSnapshot.exists) {
+    return userSnapshot.data() as UserI;
   } else {
     return null;
   }
@@ -36,11 +36,10 @@ export async function subtractCreditsFromUser(email: string, creditsToSubtract: 
     throw new Error("Cannot subtract negative credits");
   }
 
-  const userNullable = await getUser(email);
-  if (!userNullable) {
+  const user = await getUser(email);
+  if (!user) {
     throw new Error("User does not exist");
   }
-  const user = userNullable as UserI;
 
   if (user.credits < creditsToSubtract) {
     throw new Error("Insufficient credits");
@@ -49,84 +48,80 @@ export async function subtractCreditsFromUser(email: string, creditsToSubtract: 
   const userRef = db.collection(COLLECTIONS.USERS).doc(email);
   await userRef.set({ credits: user.credits - creditsToSubtract }, { merge: true });
 
-  const updatedUserSnap = await userRef.get();
-  return updatedUserSnap.data() as UserI;
+  const updatedUserSnapshot = await userRef.get();
+  return updatedUserSnapshot.data() as UserI;
 }
 
-export async function savePDF(pdf: File, userID: string, pdfTextHash: string): Promise<PDFInfo> {
-  if (!pdf || !(pdf instanceof File)) {
+export async function savePDF(pdfFile: File, userId: string, pdfHash: string): Promise<PDFInfo> {
+  if (!pdfFile || !(pdfFile instanceof File)) {
     throw new Error("Invalid file provided");
   }
-  if (!userID) {
+  if (!userId) {
     throw new Error("User ID is required");
   }
-  if (!pdf.name.toLowerCase().endsWith(".pdf")) {
+  if (!pdfFile.name.toLowerCase().endsWith(".pdf")) {
     throw new Error("File must be a PDF");
   }
 
-  const filesRef = db.collection(COLLECTIONS.FILES);
-  const querySnapshot = await filesRef
-  .doc(pdfTextHash)
-  .get()
+  const filesCollection = db.collection(COLLECTIONS.FILES);
+  const pdfDocRef = filesCollection.doc(pdfHash);
+  const pdfDocSnapshot = await pdfDocRef.get();
 
-  if (querySnapshot.exists) {
-    return querySnapshot.data() as PDFInfo;
+  if (pdfDocSnapshot.exists) {
+    return pdfDocSnapshot.data() as PDFInfo;
   }
 
   const bucket = storage.bucket();
-  const fileRef = bucket.file(`pdfs/${pdfTextHash}`);
-  await fileRef.save(Buffer.from(await pdf.arrayBuffer()), {
+  const fileRef = bucket.file(`pdfs/${pdfHash}`);
+  await fileRef.save(Buffer.from(await pdfFile.arrayBuffer()), {
     metadata: {
-       contentType: pdf.type,
-       metadata: {
-         uploadedBy: userID,
-         fileName: pdf.name,
-       }
+      contentType: pdfFile.type,
+      metadata: {
+        uploadedBy: userId,
+        fileName: pdfFile.name,
+      },
     },
   });
-  const downloadURL = `https://storage.googleapis.com/${bucket.name}/${fileRef.name}`;
+  const downloadUrl = `https://storage.googleapis.com/${bucket.name}/${fileRef.name}`;
 
-  const fileFirestoreDocument: PDFInfo = {
-    filename: pdf.name,
-    userId: userID,
-    storageRef: downloadURL,
+  const pdfInfo: PDFInfo = {
+    filename: pdfFile.name,
+    userId: userId,
+    storageRef: downloadUrl,
+    createdAt: new Date(),
   };
 
-  const fileDoc = filesRef.doc(pdfTextHash);
-  await fileDoc.set(fileFirestoreDocument);
+  await pdfDocRef.set(pdfInfo);
 
-  return fileFirestoreDocument;
+  return pdfInfo;
 }
 
-export async function addExamInfoToPDF(pdfTextHash: string, examInfo: ExamJSON): Promise<void> {
-  if (!pdfTextHash || !examInfo) {
+export async function addExamInfoToPDF(pdfHash: string, examInfo: ExamJSON): Promise<void> {
+  if (!pdfHash || !examInfo) {
     throw new Error("Invalid parameters provided");
   }
 
-  const filesRef = db.collection(COLLECTIONS.FILES);
-  const fileDoc = filesRef.doc(pdfTextHash);
-  
-  await fileDoc.set({ examInfo }, { merge: true });
+  const filesCollection = db.collection(COLLECTIONS.FILES);
+  const pdfDocRef = filesCollection.doc(pdfHash);
+  await pdfDocRef.set({ examInfo }, { merge: true });
 }
 
-export async function getPDFInfo(pdfTextHash: string): Promise<PDFInfo | null> {
-  if (!pdfTextHash) {
+export async function getPDFInfo(pdfHash: string): Promise<PDFInfo | null> {
+  if (!pdfHash) {
     throw new Error("PDF text hash is required");
   }
-  try{
-    const filesRef = db.collection(COLLECTIONS.FILES);
-    const fileDoc = filesRef.doc(pdfTextHash);
-    const fileSnap = await fileDoc.get();
+  try {
+    const filesCollection = db.collection(COLLECTIONS.FILES);
+    const pdfDocRef = filesCollection.doc(pdfHash);
+    const pdfDocSnapshot = await pdfDocRef.get();
 
-    if (fileSnap.exists) {
-      return fileSnap.data() as PDFInfo;
+    if (pdfDocSnapshot.exists) {
+      return pdfDocSnapshot.data() as PDFInfo;
     } else {
       return null;
     }
-
   } catch (error) {
     console.error("Error accessing Firestore:", error);
     throw new Error("Could not access Firestore. Please try again later.");
   }
-
 }

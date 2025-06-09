@@ -78,8 +78,8 @@ export default function ExamPage() {
     
 
     if (isLoading) return (
-        <div className="flex items-center justify-center h-screen w-screen">
-            <div className="w-1/2 max-w-md">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50">
+            <div className="w-full max-w-md mx-auto">
                 <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                     <div className="h-2 bg-blue-500 animate-pulse w-full" style={{ animationDuration: '1.2s' }} />
                 </div>
@@ -90,11 +90,11 @@ export default function ExamPage() {
             </div>
         </div>
     );
-    if (error) return <div className="flex items-center justify-center h-full text-red-600">{error}</div>;
+    if (error) return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50"><div className="text-red-600 text-lg font-semibold bg-white rounded-lg shadow p-6">{error}</div></div>;
 
     return (
-        <div className="min-h-screen h-screen w-full flex flex-col items-center justify-center">
-            <div className="w-full h-full flex-1 max-w-screen-md px-4 flex items-center justify-center">
+        <div className="w-full h-full flex flex-1 justify-center items-start py-2 px-1 sm:px-4 md:px-8 box-border min-h-[calc(100vh-64px)]">
+            <div className="w-full h-full flex flex-col flex-1 min-h-[400px] max-h-[calc(100vh-120px)] p-0">
                 <ExamCarousel
                     props={{
                         questions: questions,
