@@ -1,900 +1,5 @@
 ---
 ORIGINAL:
-To evaluate the integral $\int_0^1 x^2 \, dx$, follow these steps:
-
-1. **Find the antiderivative**: The antiderivative of $x^2$ is $\frac{x^3}{3}$.
-
-2. **Evaluate the definite integral**:
-
-   \[
-   \left[ \frac{x^3}{3} \right]_0^1 = \frac{1^3}{3} - \frac{0^3}{3}
-   \]
-
-3. **Simplify**:
-
-   \[
-   = \frac{1}{3} - 0 = \frac{1}{3}
-   \]
-
-The final answer is $\frac{1}{3}$.
----
-PROCESSED:
-To evaluate the integral $\int_0^1 x^2 \, dx$, follow these steps:
-
-1. **Find the antiderivative**: The antiderivative of $x^2$ is $\frac{x^3}{3}$.
-
-2. **Evaluate the definite integral**:
-$
-\left[ \frac{x^3}{3} \right]_0^1 = \frac{1^3}{3} - \frac{0^3}{3}
-$
-
-3. **Simplify**:
-$
-= \frac{1}{3} - 0 = \frac{1}{3}
-$
-
-The final answer is $\frac{1}{3}$.
-===
----
-ORIGINAL:
-The Second Law of Thermodynamics states that the total entropy of an isolated system can never decrease over time. It can remain constant in ideal cases where the system is in a state of equilibrium or undergoes a reversible process. In all natural processes, the entropy of the system and its surroundings tends to increase, leading to the irreversibility of natural processes.
-
-**Example involving heat engines:**
-
-A heat engine operates between two reservoirs: a hot reservoir at temperature $T_H$ and a cold reservoir at temperature $T_C$. According to the Second Law, it is impossible for any heat engine to convert all the heat absorbed from the hot reservoir into work. Some energy must be expelled to the cold reservoir, increasing the total entropy of the system. This is why no heat engine can be 100% efficient. The efficiency $\eta$ of a heat engine is given by:
-
-$$
-\eta = 1 - \frac{T_C}{T_H}
-$$
-
-where $T_H$ and $T_C$ are the absolute temperatures of the hot and cold reservoirs, respectively. This equation shows that efficiency depends on the temperature difference between the two reservoirs.
----
-PROCESSED:
-The Second Law of Thermodynamics states that the total entropy of an isolated system can never decrease over time. It can remain constant in ideal cases where the system is in a state of equilibrium or undergoes a reversible process. In all natural processes, the entropy of the system and its surroundings tends to increase, leading to the irreversibility of natural processes.
-
-**Example involving heat engines:**
-
-A heat engine operates between two reservoirs: a hot reservoir at temperature $T_H$ and a cold reservoir at temperature $T_C$. According to the Second Law, it is impossible for any heat engine to convert all the heat absorbed from the hot reservoir into work. Some energy must be expelled to the cold reservoir, increasing the total entropy of the system. This is why no heat engine can be 100% efficient. The efficiency $\eta$ of a heat engine is given by:
-$
-\eta = 1 - \frac{T_C}{T_H}
-$
-
-where $T_H$ and $T_C$ are the absolute temperatures of the hot and cold reservoirs, respectively. This equation shows that efficiency depends on the temperature difference between the two reservoirs.
-===
----
-ORIGINAL:
-To balance the chemical equation:
-
-1. **Count the atoms of each element** on both sides of the equation.
-2. **Balance the carbon atoms**: There are 2 carbon atoms in \( \text{C}_2\text{H}_6 \), so place a coefficient of 2 in front of \( \text{CO}_2 \).
-
-   \[
-   \text{C}_2\text{H}_6 + \text{O}_2 \rightarrow 2\text{CO}_2 + \text{H}_2\text{O}
-   \]
-
-3. **Balance the hydrogen atoms**: There are 6 hydrogen atoms in \( \text{C}_2\text{H}_6 \), so place a coefficient of 3 in front of \( \text{H}_2\text{O} \).
-
-   \[
-   \text{C}_2\text{H}_6 + \text{O}_2 \rightarrow 2\text{CO}_2 + 3\text{H}_2\text{O}
-   \]
-
-4. **Balance the oxygen atoms**: There are 4 oxygen atoms in \( 2\text{CO}_2 \) and 3 oxygen atoms in \( 3\text{H}_2\text{O} \), totaling 7 oxygen atoms. Place a coefficient of \(\frac{7}{2}\) in front of \( \text{O}_2 \).
-
-   \[
-   \text{C}_2\text{H}_6 + \frac{7}{2}\text{O}_2 \rightarrow 2\text{CO}_2 + 3\text{H}_2\text{O}
-   \]
-
-5. **Clear the fraction** by multiplying the entire equation by 2:
-
-   \[
-   2\text{C}_2\text{H}_6 + 7\text{O}_2 \rightarrow 4\text{CO}_2 + 6\text{H}_2\text{O}
-   \]
-
-The balanced equation is:
-
-\[
-2\text{C}_2\text{H}_6 + 7\text{O}_2 \rightarrow 4\text{CO}_2 + 6\text{H}_2\text{O}
-\]
----
-PROCESSED:
-To balance the chemical equation:
-
-1. **Count the atoms of each element** on both sides of the equation.
-2. **Balance the carbon atoms**: There are 2 carbon atoms in $\text{C}_2\text{H}_6$, so place a coefficient of 2 in front of $\text{CO}_2$.
-$
-\text{C}_2\text{H}_6 + \text{O}_2 \rightarrow 2\text{CO}_2 + \text{H}_2\text{O}
-$
-
-3. **Balance the hydrogen atoms**: There are 6 hydrogen atoms in $\text{C}_2\text{H}_6$, so place a coefficient of 3 in front of $\text{H}_2\text{O}$.
-$
-\text{C}_2\text{H}_6 + \text{O}_2 \rightarrow 2\text{CO}_2 + 3\text{H}_2\text{O}
-$
-
-4. **Balance the oxygen atoms**: There are 4 oxygen atoms in $2\text{CO}_2$ and 3 oxygen atoms in $3\text{H}_2\text{O}$, totaling 7 oxygen atoms. Place a coefficient of $\frac{7}{2}$ in front of $\text{O}_2$.
-$
-\text{C}_2\text{H}_6 + \frac{7}{2}\text{O}_2 \rightarrow 2\text{CO}_2 + 3\text{H}_2\text{O}
-$
-
-5. **Clear the fraction** by multiplying the entire equation by 2:
-$
-2\text{C}_2\text{H}_6 + 7\text{O}_2 \rightarrow 4\text{CO}_2 + 6\text{H}_2\text{O}
-$
-
-The balanced equation is:
-$
-2\text{C}_2\text{H}_6 + 7\text{O}_2 \rightarrow 4\text{CO}_2 + 6\text{H}_2\text{O}
-$
-===
----
-ORIGINAL:
-The given differential equation is 
-
-\[
-\frac{dy}{dx} + y = e^x
-\]
-
-This is a first-order linear differential equation. To solve it, we use an integrating factor. The standard form is 
-
-\[
-\frac{dy}{dx} + P(x)y = Q(x)
-\]
-
-where \(P(x) = 1\) and \(Q(x) = e^x\).
-
-The integrating factor \(\mu(x)\) is given by 
-
-\[
-\mu(x) = e^{\int P(x) \, dx} = e^{\int 1 \, dx} = e^x
-\]
-
-Multiply the entire differential equation by the integrating factor:
-
-\[
-e^x \frac{dy}{dx} + e^x y = e^{2x}
-\]
-
-The left side is the derivative of \(e^x y\):
-
-\[
-\frac{d}{dx}(e^x y) = e^{2x}
-\]
-
-Integrate both sides with respect to \(x\):
-
-\[
-e^x y = \int e^{2x} \, dx = \frac{1}{2} e^{2x} + C
-\]
-
-where \(C\) is the constant of integration. Solve for \(y\):
-
-\[
-y = \frac{1}{2} e^x + Ce^{-x}
-\]
-
-Thus, the general solution is 
-
-\[
-y = \frac{1}{2} e^x + Ce^{-x}
-\]
----
-PROCESSED:
-The given differential equation is
-$
-\frac{dy}{dx} + y = e^x
-$
-
-This is a first-order linear differential equation. To solve it, we use an integrating factor. The standard form is
-$
-\frac{dy}{dx} + P(x)y = Q(x)
-$
-
-where $P(x) = 1$ and $Q(x) = e^x$.
-
-The integrating factor $\mu(x)$ is given by
-$
-\mu(x) = e^{\int P(x) \, dx} = e^{\int 1 \, dx} = e^x
-$
-
-Multiply the entire differential equation by the integrating factor:
-$
-e^x \frac{dy}{dx} + e^x y = e^{2x}
-$
-
-The left side is the derivative of $e^x y$:
-$
-\frac{d}{dx}(e^x y) = e^{2x}
-$
-
-Integrate both sides with respect to $x$:
-$
-e^x y = \int e^{2x} \, dx = \frac{1}{2} e^{2x} + C
-$
-
-where $C$ is the constant of integration. Solve for $y$:
-$
-y = \frac{1}{2} e^x + Ce^{-x}
-$
-
-Thus, the general solution is
-$
-y = \frac{1}{2} e^x + Ce^{-x}
-$
-===
----
-ORIGINAL:
-To find the pH of a 0.01 M HCl solution, follow these steps:
-
-1. **Identify the concentration of $H^+$ ions:**
-
-   Since HCl is a strong acid, it dissociates completely in water:
-
-   $$ \text{HCl} \rightarrow \text{H}^+ + \text{Cl}^- $$
-
-   Therefore, the concentration of $H^+$ ions is the same as the concentration of HCl, which is 0.01 M.
-
-2. **Calculate the pH:**
-
-   The pH is calculated using the formula:
-
-   $$ \text{pH} = -\log [\text{H}^+] $$
-
-   Substitute the concentration of $H^+$:
-
-   $$ \text{pH} = -\log (0.01) $$
-
-   $$ \text{pH} = 2 $$
-
-Thus, the pH of the 0.01 M HCl solution is 2.
----
-PROCESSED:
-To find the pH of a 0.01 M HCl solution, follow these steps:
-
-1. **Identify the concentration of $H^+$ ions:**
-
-   Since HCl is a strong acid, it dissociates completely in water:
-$
-\text{HCl} \rightarrow \text{H}^+ + \text{Cl}^-
-$
-
-   Therefore, the concentration of $H^+$ ions is the same as the concentration of HCl, which is 0.01 M.
-
-2. **Calculate the pH:**
-
-   The pH is calculated using the formula:
-$
-\text{pH} = -\log [\text{H}^+]
-$
-
-   Substitute the concentration of $H^+$:
-$
-\text{pH} = -\log (0.01)
-$
-\text{pH} = 2
-$
-
-Thus, the pH of the 0.01 M HCl solution is 2.
-===
----
-ORIGINAL:
-To calculate the maximum height reached by the projectile, we can use the following kinematic equation:
-
-\[
-v_y^2 = v_{0y}^2 - 2g h
-\]
-
-At maximum height, the vertical velocity $v_y = 0$. Therefore, the equation becomes:
-
-\[
-0 = v_{0y}^2 - 2g h
-\]
-
-Solving for $h$, we have:
-
-\[
-h = \frac{v_{0y}^2}{2g}
-\]
-
-First, we need to find the initial vertical velocity $v_{0y}$:
-
-\[
-v_{0y} = v_0 \sin \theta
-\]
-
-Given $v_0 = 20 \, \text{m/s}$ and $\theta = 30^\circ$, we find:
-
-\[
-v_{0y} = 20 \sin 30^\circ = 20 \times 0.5 = 10 \, \text{m/s}
-\]
-
-Now, substitute $v_{0y}$ and $g = 9.8 \, \text{m/s}^2$ into the equation for $h$:
-
-\[
-h = \frac{10^2}{2 \times 9.8} = \frac{100}{19.6} \approx 5.10 \, \text{m}
-\]
-
-Thus, the maximum height reached is approximately $5.10 \, \text{m}$.
----
-PROCESSED:
-To calculate the maximum height reached by the projectile, we can use the following kinematic equation:
-$
-v_y^2 = v_{0y}^2 - 2g h
-$
-
-At maximum height, the vertical velocity $v_y = 0$. Therefore, the equation becomes:
-$
-0 = v_{0y}^2 - 2g h
-$
-
-Solving for $h$, we have:
-$
-h = \frac{v_{0y}^2}{2g}
-$
-
-First, we need to find the initial vertical velocity $v_{0y}$:
-$
-v_{0y} = v_0 \sin \theta
-$
-
-Given $v_0 = 20 \, \text{m/s}$ and $\theta = 30^\circ$, we find:
-$
-v_{0y} = 20 \sin 30^\circ = 20 \times 0.5 = 10 \, \text{m/s}
-$
-
-Now, substitute $v_{0y}$ and $g = 9.8 \, \text{m/s}^2$ into the equation for $h$:
-$
-h = \frac{10^2}{2 \times 9.8} = \frac{100}{19.6} \approx 5.10 \, \text{m}
-$
-
-Thus, the maximum height reached is approximately $5.10 \, \text{m}$.
-===
----
-ORIGINAL:
-Heisenberg's Uncertainty Principle states that it is impossible to simultaneously know both the exact position and exact momentum of a particle. The more precisely one is known, the less precisely the other can be known.
-
-The mathematical expression for the uncertainty principle is:
-
-$$
-\Delta x \cdot \Delta p \geq \frac{\hbar}{2}
-$$
-
-where:
-- $\Delta x$ is the uncertainty in position,
-- $\Delta p$ is the uncertainty in momentum,
-- $\hbar$ is the reduced Planck's constant, $\hbar = \frac{h}{2\pi}$.
-
-Significance: This principle is fundamental in quantum mechanics, highlighting the intrinsic limitations of measurement at the quantum level and challenging classical notions of determinism.
----
-PROCESSED:
-Heisenberg's Uncertainty Principle states that it is impossible to simultaneously know both the exact position and exact momentum of a particle. The more precisely one is known, the less precisely the other can be known.
-
-The mathematical expression for the uncertainty principle is:
-$
-\Delta x \cdot \Delta p \geq \frac{\hbar}{2}
-$
-
-where:
-- $\Delta x$ is the uncertainty in position,
-- $\Delta p$ is the uncertainty in momentum,
-- $\hbar$ is the reduced Planck's constant, $\hbar = \frac{h}{2\pi}$.
-
-Significance: This principle is fundamental in quantum mechanics, highlighting the intrinsic limitations of measurement at the quantum level and challenging classical notions of determinism.
-===
----
-ORIGINAL:
-To find the eigenvalues of the matrix 
-
-\[
-\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}
-\]
-
-we need to solve the characteristic equation:
-
-\[
-\det(A - \lambda I) = 0
-\]
-
-where \( A = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix} \) and \( I \) is the identity matrix. Thus,
-
-\[
-A - \lambda I = \begin{pmatrix} 2 - \lambda & 1 \\ 1 & 2 - \lambda \end{pmatrix}
-\]
-
-The determinant is:
-
-\[
-\det(A - \lambda I) = (2 - \lambda)(2 - \lambda) - (1)(1)
-\]
-
-Simplifying:
-
-\[
-= (2 - \lambda)^2 - 1
-\]
-
-\[
-= 4 - 4\lambda + \lambda^2 - 1
-\]
-
-\[
-= \lambda^2 - 4\lambda + 3
-\]
-
-Set the determinant to zero:
-
-\[
-\lambda^2 - 4\lambda + 3 = 0
-\]
-
-Solve the quadratic equation using the quadratic formula:
-
-\[
-\lambda = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
-\]
-
-where \( a = 1 \), \( b = -4 \), and \( c = 3 \):
-
-\[
-\lambda = \frac{4 \pm \sqrt{(-4)^2 - 4 \cdot 1 \cdot 3}}{2 \cdot 1}
-\]
-
-\[
-= \frac{4 \pm \sqrt{16 - 12}}{2}
-\]
-
-\[
-= \frac{4 \pm \sqrt{4}}{2}
-\]
-
-\[
-= \frac{4 \pm 2}{2}
-\]
-
-The solutions are:
-
-\[
-\lambda_1 = \frac{4 + 2}{2} = 3
-\]
-
-\[
-\lambda_2 = \frac{4 - 2}{2} = 1
-\]
-
-Thus, the eigenvalues are \( \lambda_1 = 3 \) and \( \lambda_2 = 1 \).
----
-PROCESSED:
-To find the eigenvalues of the matrix
-$
-\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}
-$
-
-we need to solve the characteristic equation:
-$
-\det(A - \lambda I) = 0
-$
-
-where $A = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}$ and $I$ is the identity matrix. Thus,
-$
-A - \lambda I = \begin{pmatrix} 2 - \lambda & 1 \\ 1 & 2 - \lambda \end{pmatrix}
-$
-
-The determinant is:
-$
-\det(A - \lambda I) = (2 - \lambda)(2 - \lambda) - (1)(1)
-$
-
-Simplifying:
-$
-= (2 - \lambda)^2 - 1
-$
-= 4 - 4\lambda + \lambda^2 - 1
-$
-= \lambda^2 - 4\lambda + 3
-$
-
-Set the determinant to zero:
-$
-\lambda^2 - 4\lambda + 3 = 0
-$
-
-Solve the quadratic equation using the quadratic formula:
-$
-\lambda = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
-$
-
-where $a = 1$, $b = -4$, and $c = 3$:
-$
-\lambda = \frac{4 \pm \sqrt{(-4)^2 - 4 \cdot 1 \cdot 3}}{2 \cdot 1}
-$
-= \frac{4 \pm \sqrt{16 - 12}}{2}
-$
-= \frac{4 \pm \sqrt{4}}{2}
-$
-= \frac{4 \pm 2}{2}
-$
-
-The solutions are:
-$
-\lambda_1 = \frac{4 + 2}{2} = 3
-$
-\lambda_2 = \frac{4 - 2}{2} = 1
-$
-
-Thus, the eigenvalues are $\lambda_1 = 3$ and $\lambda_2 = 1$.
-===
----
-ORIGINAL:
-The equilibrium constant expression ($K_{eq}$) for the reaction is:
-
-$$
-K_{eq} = \frac{[NH_3]^2}{[N_2][H_2]^3}
-$$
----
-PROCESSED:
-The equilibrium constant expression ($K_{eq}$) for the reaction is:
-$
-K_{eq} = \frac{[NH_3]^2}{[N_2][H_2]^3}
-$
-===
----
-ORIGINAL:
-To calculate the acceleration of the block, we need to consider the forces acting on it.
-
-1. **Calculate the force of friction:**
-
-   The force of friction $f_k$ is given by:
-
-   $$ f_k = \mu_k \cdot N $$
-
-   where $\mu_k = 0.2$ is the coefficient of kinetic friction, and $N$ is the normal force. For a horizontal surface, the normal force $N$ is equal to the gravitational force on the block:
-
-   $$ N = m \cdot g = 5 \, \text{kg} \cdot 9.8 \, \text{m/s}^2 = 49 \, \text{N} $$
-
-   Therefore, the force of friction is:
-
-   $$ f_k = 0.2 \cdot 49 \, \text{N} = 9.8 \, \text{N} $$
-
-2. **Calculate the net force:**
-
-   The net force $F_{\text{net}}$ acting on the block is the applied force minus the force of friction:
-
-   $$ F_{\text{net}} = F_{\text{applied}} - f_k = 20 \, \text{N} - 9.8 \, \text{N} = 10.2 \, \text{N} $$
-
-3. **Calculate the acceleration:**
-
-   Using Newton's second law, $F = m \cdot a$, we can solve for the acceleration $a$:
-
-   $$ a = \frac{F_{\text{net}}}{m} = \frac{10.2 \, \text{N}}{5 \, \text{kg}} = 2.04 \, \text{m/s}^2 $$
-
-Thus, the acceleration of the block is $2.04 \, \text{m/s}^2$.
----
-PROCESSED:
-To calculate the acceleration of the block, we need to consider the forces acting on it.
-
-1. **Calculate the force of friction:**
-
-   The force of friction $f_k$ is given by:
-$
-f_k = \mu_k \cdot N
-$
-
-   where $\mu_k = 0.2$ is the coefficient of kinetic friction, and $N$ is the normal force. For a horizontal surface, the normal force $N$ is equal to the gravitational force on the block:
-$
-N = m \cdot g = 5 \, \text{kg} \cdot 9.8 \, \text{m/s}^2 = 49 \, \text{N}
-$
-
-   Therefore, the force of friction is:
-$
-f_k = 0.2 \cdot 49 \, \text{N} = 9.8 \, \text{N}
-$
-
-2. **Calculate the net force:**
-
-   The net force $F_{\text{net}}$ acting on the block is the applied force minus the force of friction:
-$
-F_{\text{net}} = F_{\text{applied}} - f_k = 20 \, \text{N} - 9.8 \, \text{N} = 10.2 \, \text{N}
-$
-
-3. **Calculate the acceleration:**
-
-   Using Newton's second law, $F = m \cdot a$, we can solve for the acceleration $a$:
-$
-a = \frac{F_{\text{net}}}{m} = \frac{10.2 \, \text{N}}{5 \, \text{kg}} = 2.04 \, \text{m/s}^2
-$
-
-Thus, the acceleration of the block is $2.04 \, \text{m/s}^2$.
-===
----
-ORIGINAL:
-To find the eigenvalues of the matrix 
-
-\[
-\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}
-\]
-
-we need to solve the characteristic equation:
-
-1. **Set up the characteristic equation**:  
-   The characteristic equation is given by $\det(A - \lambda I) = 0$, where $A$ is the matrix and $I$ is the identity matrix.
-
-2. **Subtract $\lambda$ from the diagonal elements**:  
-   \[
-   A - \lambda I = \begin{pmatrix} 2 - \lambda & 1 \\ 1 & 2 - \lambda \end{pmatrix}
-   \]
-
-3. **Calculate the determinant**:  
-   \[
-   \det(A - \lambda I) = (2 - \lambda)(2 - \lambda) - (1)(1)
-   \]
-   \[
-   = (2 - \lambda)^2 - 1
-   \]
-   \[
-   = 4 - 4\lambda + \lambda^2 - 1
-   \]
-   \[
-   = \lambda^2 - 4\lambda + 3
-   \]
-
-4. **Solve the characteristic equation**:  
-   \[
-   \lambda^2 - 4\lambda + 3 = 0
-   \]
-
-5. **Factor the quadratic equation**:  
-   \[
-   (\lambda - 3)(\lambda - 1) = 0
-   \]
-
-6. **Find the eigenvalues**:  
-   The solutions to the equation are $\lambda = 3$ and $\lambda = 1$.
-
-Thus, the eigenvalues of the matrix are $\lambda = 3$ and $\lambda = 1$.
----
-PROCESSED:
-To find the eigenvalues of the matrix
-$
-\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}
-$
-
-we need to solve the characteristic equation:
-
-1. **Set up the characteristic equation**:  
-   The characteristic equation is given by $\det(A - \lambda I) = 0$, where $A$ is the matrix and $I$ is the identity matrix.
-
-2. **Subtract $\lambda$ from the diagonal elements**:
-$
-A - \lambda I = \begin{pmatrix} 2 - \lambda & 1 \\ 1 & 2 - \lambda \end{pmatrix}
-$
-
-3. **Calculate the determinant**:
-$
-\det(A - \lambda I) = (2 - \lambda)(2 - \lambda) - (1)(1)
-$
-= (2 - \lambda)^2 - 1
-$
-= 4 - 4\lambda + \lambda^2 - 1
-$
-= \lambda^2 - 4\lambda + 3
-$
-
-4. **Solve the characteristic equation**:
-$
-\lambda^2 - 4\lambda + 3 = 0
-$
-
-5. **Factor the quadratic equation**:
-$
-(\lambda - 3)(\lambda - 1) = 0
-$
-
-6. **Find the eigenvalues**:  
-   The solutions to the equation are $\lambda = 3$ and $\lambda = 1$.
-
-Thus, the eigenvalues of the matrix are $\lambda = 3$ and $\lambda = 1$.
-===
----
-ORIGINAL:
-To find the eigenvalues of the matrix 
-
-\[
-\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}
-\]
-
-we need to solve the characteristic equation:
-
-\[
-\det\left(\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix} - \lambda \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}\right) = 0
-\]
-
-This simplifies to:
-
-\[
-\det\begin{pmatrix} 2 - \lambda & 1 \\ 1 & 2 - \lambda \end{pmatrix} = 0
-\]
-
-The determinant is calculated as:
-
-\[
-(2 - \lambda)(2 - \lambda) - (1)(1) = (2 - \lambda)^2 - 1
-\]
-
-Expanding this, we get:
-
-\[
-(2 - \lambda)^2 - 1 = 4 - 4\lambda + \lambda^2 - 1 = \lambda^2 - 4\lambda + 3
-\]
-
-Set the equation to zero:
-
-\[
-\lambda^2 - 4\lambda + 3 = 0
-\]
-
-To find the eigenvalues, solve this quadratic equation using the quadratic formula:
-
-\[
-\lambda = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
-\]
-
-where \(a = 1\), \(b = -4\), and \(c = 3\). Plugging in these values:
-
-\[
-\lambda = \frac{4 \pm \sqrt{(-4)^2 - 4 \cdot 1 \cdot 3}}{2 \cdot 1}
-\]
-
-\[
-\lambda = \frac{4 \pm \sqrt{16 - 12}}{2}
-\]
-
-\[
-\lambda = \frac{4 \pm \sqrt{4}}{2}
-\]
-
-\[
-\lambda = \frac{4 \pm 2}{2}
-\]
-
-This gives the solutions:
-
-\[
-\lambda = \frac{6}{2} = 3 \quad \text{and} \quad \lambda = \frac{2}{2} = 1
-\]
-
-Thus, the eigenvalues are \(\lambda = 3\) and \(\lambda = 1\).
----
-PROCESSED:
-To find the eigenvalues of the matrix
-$
-\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}
-$
-
-we need to solve the characteristic equation:
-$
-\det(\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix} - \lambda \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}) = 0
-$
-
-This simplifies to:
-$
-\det\begin{pmatrix} 2 - \lambda & 1 \\ 1 & 2 - \lambda \end{pmatrix} = 0
-$
-
-The determinant is calculated as:
-$
-(2 - \lambda)(2 - \lambda) - (1)(1) = (2 - \lambda)^2 - 1
-$
-
-Expanding this, we get:
-$
-(2 - \lambda)^2 - 1 = 4 - 4\lambda + \lambda^2 - 1 = \lambda^2 - 4\lambda + 3
-$
-
-Set the equation to zero:
-$
-\lambda^2 - 4\lambda + 3 = 0
-$
-
-To find the eigenvalues, solve this quadratic equation using the quadratic formula:
-$
-\lambda = {-b \pm \sqrt{b^2 - 4ac}}{2a}
-$
-
-where $a = 1$, $b = -4$, and $c = 3$. Plugging in these values:
-$
-\lambda = {4 \pm \sqrt{(-4)^2 - 4  1  3}}{2  1}
-$
-\lambda = {4 \pm \sqrt{16 - 12}}{2}
-$
-\lambda = {4 \pm \sqrt{4}}{2}
-$
-\lambda = {4 \pm 2}{2}
-$
-
-This gives the solutions:
-$
-\lambda = {6}{2} = 3 \quad {and} \quad \lambda = {2}{2} = 1
-$
-
-Thus, the eigenvalues are $\lambda = 3$ and $\lambda = 1$.
-===
----
-ORIGINAL:
-```csharp
-using System;
-using System.Threading;
-
-public class SafeMessageBox<M> where M : class
-{
-    private class MsgHolder
-    {
-        internal readonly M msg;
-        internal int lives;
-
-        public MsgHolder(M message, int lvs)
-        {
-            msg = message;
-            lives = lvs;
-        }
-    }
-
-    private volatile MsgHolder msgHolder = null;
-
-    public void Publish(M m, int lvs)
-    {
-        Interlocked.Exchange(ref msgHolder, new MsgHolder(m, lvs));
-    }
-
-    public M TryConsume()
-    {
-        MsgHolder holder = msgHolder;
-        if (holder != null && Interlocked.CompareExchange(ref holder.lives, holder.lives - 1, holder.lives) > 0)
-        {
-            return holder.msg;
-        }
-        return null;
-    }
-}
-```
----
-PROCESSED:
-```csharp
-using System;
-using System.Threading;
-
-public class SafeMessageBox<M> where M : class
-{
-    private class MsgHolder
-    {
-        internal readonly M msg;
-        internal int lives;
-
-        public MsgHolder(M message, int lvs)
-        {
-            msg = message;
-            lives = lvs;
-        }
-    }
-
-    private volatile MsgHolder msgHolder = null;
-
-    public void Publish(M m, int lvs)
-    {
-        Interlocked.Exchange(ref msgHolder, new MsgHolder(m, lvs));
-    }
-
-    public M TryConsume()
-    {
-        MsgHolder holder = msgHolder;
-        if (holder != null && Interlocked.CompareExchange(ref holder.lives, holder.lives - 1, holder.lives) > 0)
-        {
-            return holder.msg;
-        }
-        return null;
-    }
-}
-```
-===
----
-ORIGINAL:
 ```java
 import java.util.Optional;
 import java.util.concurrent.locks.Condition;
@@ -915,9 +20,9 @@ public class BroadcastBox<E> {
             }
             this.message = message;
             hasMessage.signalAll();
-            int delivered = waitingThreads;
+            int deliveredThreads = waitingThreads;
             waitingThreads = 0;
-            return delivered;
+            return deliveredThreads;
         } finally {
             lock.unlock();
         }
@@ -965,9 +70,9 @@ public class BroadcastBox<E> {
             }
             this.message = message;
             hasMessage.signalAll();
-            int delivered = waitingThreads;
+            int deliveredThreads = waitingThreads;
             waitingThreads = 0;
-            return delivered;
+            return deliveredThreads;
         } finally {
             lock.unlock();
         }
@@ -996,150 +101,6 @@ public class BroadcastBox<E> {
 ===
 ---
 ORIGINAL:
-```java
-import java.util.Optional;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.CancellationException;
-
-public class TransferQueueWithShutdown<E> {
-    private final LinkedBlockingQueue<E> queue = new LinkedBlockingQueue<>();
-    private final AtomicBoolean isShutdown = new AtomicBoolean(false);
-
-    public TransferQueueWithShutdown() {}
-
-    public void put(E message) throws CancellationException {
-        if (isShutdown.get()) {
-            throw new CancellationException("Queue is in shutdown mode.");
-        }
-        queue.offer(message);
-    }
-
-    public Optional<E> take(long timeout) throws InterruptedException, CancellationException {
-        if (isShutdown.get() && queue.isEmpty()) {
-            throw new CancellationException("Queue is in shutdown mode and empty.");
-        }
-        E message = queue.poll(timeout, TimeUnit.MILLISECONDS);
-        return Optional.ofNullable(message);
-    }
-
-    public void startShutdown() {
-        isShutdown.set(true);
-    }
-
-    public boolean waitShutdownCompleted(long timeout) throws InterruptedException {
-        long startTime = System.currentTimeMillis();
-        while (!queue.isEmpty()) {
-            if (System.currentTimeMillis() - startTime > timeout) {
-                return false;
-            }
-            Thread.sleep(10); // Small delay to prevent busy waiting
-        }
-        return true;
-    }
-}
-```
----
-PROCESSED:
-```java
-import java.util.Optional;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.CancellationException;
-
-public class TransferQueueWithShutdown<E> {
-    private final LinkedBlockingQueue<E> queue = new LinkedBlockingQueue<>();
-    private final AtomicBoolean isShutdown = new AtomicBoolean(false);
-
-    public TransferQueueWithShutdown() {}
-
-    public void put(E message) throws CancellationException {
-        if (isShutdown.get()) {
-            throw new CancellationException("Queue is in shutdown mode.");
-        }
-        queue.offer(message);
-    }
-
-    public Optional<E> take(long timeout) throws InterruptedException, CancellationException {
-        if (isShutdown.get() && queue.isEmpty()) {
-            throw new CancellationException("Queue is in shutdown mode and empty.");
-        }
-        E message = queue.poll(timeout, TimeUnit.MILLISECONDS);
-        return Optional.ofNullable(message);
-    }
-
-    public void startShutdown() {
-        isShutdown.set(true);
-    }
-
-    public boolean waitShutdownCompleted(long timeout) throws InterruptedException {
-        long startTime = System.currentTimeMillis();
-        while (!queue.isEmpty()) {
-            if (System.currentTimeMillis() - startTime > timeout) {
-                return false;
-            }
-            Thread.sleep(10); // Small delay to prevent busy waiting
-        }
-        return true;
-    }
-}
-```
-===
----
-ORIGINAL:
-```csharp
-public async Task<T> ComputeAsync<T>(T[] elems, T initial)
-{
-    T acc = initial;
-    var tasks = elems.Select(async elem =>
-    {
-        var a = await AAsync(elem);
-        var b = await BAsync(elem);
-        var c = await CAsync(elem);
-        var d = await DAsync(b, c);
-        return (a, d);
-    });
-
-    var results = await Task.WhenAll(tasks);
-
-    foreach (var (a, d) in results)
-    {
-        acc = await EAsync(d, acc);
-    }
-
-    return acc;
-}
-```
----
-PROCESSED:
-```csharp
-public async Task<T> ComputeAsync<T>(T[] elems, T initial)
-{
-    T acc = initial;
-    var tasks = elems.Select(async elem =>
-    {
-        var a = await AAsync(elem);
-        var b = await BAsync(elem);
-        var c = await CAsync(elem);
-        var d = await DAsync(b, c);
-        return (a, d);
-    });
-
-    var results = await Task.WhenAll(tasks);
-
-    foreach (var (a, d) in results)
-    {
-        acc = await EAsync(d, acc);
-    }
-
-    return acc;
-}
-```
-===
----
-ORIGINAL:
 ```csharp
 using System;
 using System.Threading;
@@ -1175,7 +136,7 @@ public class CountdownLatch
 
     public Task WaitZeroAsync(CancellationToken ct)
     {
-        return _tcs.Task.ContinueWith(t => t, ct, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
+        return _tcs.Task.ContinueWith(t => t, ct);
     }
 }
 ```
@@ -1216,8 +177,57 @@ public class CountdownLatch
 
     public Task WaitZeroAsync(CancellationToken ct)
     {
-        return _tcs.Task.ContinueWith(t => t, ct, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
+        return _tcs.Task.ContinueWith(t => t, ct);
     }
+}
+```
+===
+---
+ORIGINAL:
+```csharp
+public async Task<T> ComputeAsync<T>(T[] elems, T initial)
+{
+    T acc = initial;
+    var tasks = elems.Select(async elem =>
+    {
+        var a = await AAsync(elem);
+        var b = await BAsync(elem);
+        var c = await CAsync(elem);
+        var d = await DAsync(b, c);
+        return (a, d);
+    });
+
+    foreach (var task in tasks)
+    {
+        var (a, d) = await task;
+        acc = await EAsync(d, acc);
+    }
+
+    return acc;
+}
+```
+---
+PROCESSED:
+```csharp
+public async Task<T> ComputeAsync<T>(T[] elems, T initial)
+{
+    T acc = initial;
+    var tasks = elems.Select(async elem =>
+    {
+        var a = await AAsync(elem);
+        var b = await BAsync(elem);
+        var c = await CAsync(elem);
+        var d = await DAsync(b, c);
+        return (a, d);
+    });
+
+    foreach (var task in tasks)
+    {
+        var (a, d) = await task;
+        acc = await EAsync(d, acc);
+    }
+
+    return acc;
 }
 ```
 ===
@@ -1236,7 +246,7 @@ public class SafeMessageBox<M> where M : class
 
         public MsgHolder(M message, int lives)
         {
-            msg = message;
+            this.msg = message;
             this.lives = lives;
         }
     }
@@ -1245,14 +255,22 @@ public class SafeMessageBox<M> where M : class
 
     public void Publish(M m, int lvs)
     {
-        Interlocked.Exchange(ref msgHolder, new MsgHolder(m, lvs));
+        msgHolder = new MsgHolder(m, lvs);
     }
 
     public M TryConsume()
     {
         MsgHolder currentHolder = msgHolder;
-        if (currentHolder != null && Interlocked.CompareExchange(ref currentHolder.lives, currentHolder.lives - 1, currentHolder.lives) > 0)
+        if (currentHolder != null && currentHolder.lives > 0)
         {
+            int originalLives;
+            do
+            {
+                originalLives = currentHolder.lives;
+                if (originalLives == 0)
+                    return null;
+            } while (Interlocked.CompareExchange(ref currentHolder.lives, originalLives - 1, originalLives) != originalLives);
+
             return currentHolder.msg;
         }
         return null;
@@ -1274,7 +292,7 @@ public class SafeMessageBox<M> where M : class
 
         public MsgHolder(M message, int lives)
         {
-            msg = message;
+            this.msg = message;
             this.lives = lives;
         }
     }
@@ -1283,14 +301,22 @@ public class SafeMessageBox<M> where M : class
 
     public void Publish(M m, int lvs)
     {
-        Interlocked.Exchange(ref msgHolder, new MsgHolder(m, lvs));
+        msgHolder = new MsgHolder(m, lvs);
     }
 
     public M TryConsume()
     {
         MsgHolder currentHolder = msgHolder;
-        if (currentHolder != null && Interlocked.CompareExchange(ref currentHolder.lives, currentHolder.lives - 1, currentHolder.lives) > 0)
+        if (currentHolder != null && currentHolder.lives > 0)
         {
+            int originalLives;
+            do
+            {
+                originalLives = currentHolder.lives;
+                if (originalLives == 0)
+                    return null;
+            } while (Interlocked.CompareExchange(ref currentHolder.lives, originalLives - 1, originalLives) != originalLives);
+
             return currentHolder.msg;
         }
         return null;
@@ -1300,8 +326,408 @@ public class SafeMessageBox<M> where M : class
 ===
 ---
 ORIGINAL:
+```java
+import java.util.Optional;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class BroadcastBox<E> {
+    private E message;
+    private boolean hasMessage = false;
+    private final Lock lock = new ReentrantLock();
+    private final Condition messageAvailable = lock.newCondition();
+    private int waitingThreads = 0;
+
+    public int deliverToAll(E message) {
+        lock.lock();
+        try {
+            if (waitingThreads == 0) {
+                return 0;
+            }
+            this.message = message;
+            hasMessage = true;
+            messageAvailable.signalAll();
+            int deliveredCount = waitingThreads;
+            waitingThreads = 0;
+            return deliveredCount;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public Optional<E> receive(long timeout) throws InterruptedException {
+        lock.lock();
+        try {
+            waitingThreads++;
+            if (!hasMessage) {
+                if (!messageAvailable.await(timeout, java.util.concurrent.TimeUnit.MILLISECONDS)) {
+                    waitingThreads--;
+                    return Optional.empty();
+                }
+            }
+            hasMessage = false;
+            return Optional.of(message);
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+```
+---
+PROCESSED:
+```java
+import java.util.Optional;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class BroadcastBox<E> {
+    private E message;
+    private boolean hasMessage = false;
+    private final Lock lock = new ReentrantLock();
+    private final Condition messageAvailable = lock.newCondition();
+    private int waitingThreads = 0;
+
+    public int deliverToAll(E message) {
+        lock.lock();
+        try {
+            if (waitingThreads == 0) {
+                return 0;
+            }
+            this.message = message;
+            hasMessage = true;
+            messageAvailable.signalAll();
+            int deliveredCount = waitingThreads;
+            waitingThreads = 0;
+            return deliveredCount;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public Optional<E> receive(long timeout) throws InterruptedException {
+        lock.lock();
+        try {
+            waitingThreads++;
+            if (!hasMessage) {
+                if (!messageAvailable.await(timeout, java.util.concurrent.TimeUnit.MILLISECONDS)) {
+                    waitingThreads--;
+                    return Optional.empty();
+                }
+            }
+            hasMessage = false;
+            return Optional.of(message);
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+```
+===
+---
+ORIGINAL:
 ```csharp
-using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+public class CountdownLatch
+{
+    private int _counter;
+    private readonly TaskCompletionSource<bool> _tcs = new TaskCompletionSource<bool>();
+
+    public CountdownLatch(int initialValue)
+    {
+        _counter = initialValue;
+        if (_counter == 0)
+        {
+            _tcs.SetResult(true);
+        }
+    }
+
+    public void Countdown()
+    {
+        if (Interlocked.Decrement(ref _counter) == 0)
+        {
+            _tcs.SetResult(true);
+        }
+    }
+
+    public Task WaitZeroAsync()
+    {
+        return _tcs.Task;
+    }
+
+    public async Task WaitZeroAsync(CancellationToken ct)
+    {
+        using (ct.Register(() => _tcs.TrySetCanceled()))
+        {
+            await _tcs.Task.ConfigureAwait(false);
+        }
+    }
+}
+```
+---
+PROCESSED:
+```csharp
+using System.Threading;
+using System.Threading.Tasks;
+
+public class CountdownLatch
+{
+    private int _counter;
+    private readonly TaskCompletionSource<bool> _tcs = new TaskCompletionSource<bool>();
+
+    public CountdownLatch(int initialValue)
+    {
+        _counter = initialValue;
+        if (_counter == 0)
+        {
+            _tcs.SetResult(true);
+        }
+    }
+
+    public void Countdown()
+    {
+        if (Interlocked.Decrement(ref _counter) == 0)
+        {
+            _tcs.SetResult(true);
+        }
+    }
+
+    public Task WaitZeroAsync()
+    {
+        return _tcs.Task;
+    }
+
+    public async Task WaitZeroAsync(CancellationToken ct)
+    {
+        using (ct.Register(() => _tcs.TrySetCanceled()))
+        {
+            await _tcs.Task.ConfigureAwait(false);
+        }
+    }
+}
+```
+===
+---
+ORIGINAL:
+```csharp
+public async Task<T> ComputeAsync<T>(T[] elems, T initial)
+{
+    T acc = initial;
+    var tasks = elems.Select(async elem =>
+    {
+        var aResult = await AAsync(elem);
+        var bResult = await BAsync(elem);
+        var cResult = await CAsync(elem);
+        var dResult = await DAsync(bResult, cResult);
+        return (aResult, dResult);
+    });
+
+    var results = await Task.WhenAll(tasks);
+
+    foreach (var (aResult, dResult) in results)
+    {
+        acc = await EAsync(dResult, acc);
+    }
+
+    return acc;
+}
+```
+---
+PROCESSED:
+```csharp
+public async Task<T> ComputeAsync<T>(T[] elems, T initial)
+{
+    T acc = initial;
+    var tasks = elems.Select(async elem =>
+    {
+        var aResult = await AAsync(elem);
+        var bResult = await BAsync(elem);
+        var cResult = await CAsync(elem);
+        var dResult = await DAsync(bResult, cResult);
+        return (aResult, dResult);
+    });
+
+    var results = await Task.WhenAll(tasks);
+
+    foreach (var (aResult, dResult) in results)
+    {
+        acc = await EAsync(dResult, acc);
+    }
+
+    return acc;
+}
+```
+===
+---
+ORIGINAL:
+Para determinar a percentagem em massa do isótopo cobre-63, siga os passos abaixo:
+
+1. **Calcular a massa do isótopo cobre-63:**
+
+   A massa do isótopo cobre-63 é dada por:
+
+   $$ \text{Massa do cobre-63} = \text{Número de mols} \times \text{Massa isotópica relativa} $$
+
+   $$ \text{Massa do cobre-63} = 4,653 \, \text{mol} \times 62,93 \, \text{g/mol} $$
+
+   $$ \text{Massa do cobre-63} = 292,73 \, \text{g} $$
+
+2. **Calcular a massa total do cobre na medalha:**
+
+   A massa total do cobre na medalha é a soma das massas dos isótopos cobre-63 e cobre-65. No entanto, como não temos a quantidade de cobre-65, assumimos que a massa total do cobre é a massa do cobre-63, já que a questão não fornece mais dados.
+
+3. **Calcular a percentagem em massa do isótopo cobre-63:**
+
+   $$ \text{Percentagem em massa do cobre-63} = \left( \frac{\text{Massa do cobre-63}}{\text{Massa total do cobre}} \right) \times 100\% $$
+
+   $$ \text{Percentagem em massa do cobre-63} = \left( \frac{292,73 \, \text{g}}{292,73 \, \text{g}} \right) \times 100\% $$
+
+   $$ \text{Percentagem em massa do cobre-63} = 100\% $$
+
+Portanto, a percentagem em massa do isótopo cobre-63 na medalha é 100%.
+---
+PROCESSED:
+Para determinar a percentagem em massa do isótopo cobre-63, siga os passos abaixo:
+
+1. **Calcular a massa do isótopo cobre-63:**
+
+   A massa do isótopo cobre-63 é dada por:
+$
+{Massa do cobre-63} = {Número de mols} \times {Massa isotópica relativa}
+$
+{Massa do cobre-63} = 4,653 \, {mol} \times 62,93 \, {g/mol}
+$
+{Massa do cobre-63} = 292,73 \, {g}
+$
+
+2. **Calcular a massa total do cobre na medalha:**
+
+   A massa total do cobre na medalha é a soma das massas dos isótopos cobre-63 e cobre-65. No entanto, como não temos a quantidade de cobre-65, assumimos que a massa total do cobre é a massa do cobre-63, já que a questão não fornece mais dados.
+
+3. **Calcular a percentagem em massa do isótopo cobre-63:**
+$
+{Percentagem em massa do cobre-63} = ( {{Massa do cobre-63}}{{Massa total do cobre}} ) \times 100\%
+$
+{Percentagem em massa do cobre-63} = ( {292,73 \, {g}}{292,73 \, {g}} ) \times 100\%
+$
+{Percentagem em massa do cobre-63} = 100\%
+$
+
+Portanto, a percentagem em massa do isótopo cobre-63 na medalha é 100%.
+===
+---
+ORIGINAL:
+Para determinar a potência mínima necessária, precisamos calcular a energia total requerida para aquecer e fundir a prata, e depois dividir essa energia pelo tempo.
+
+**Dados fornecidos:**
+
+- Massa de prata, $m = 1.40 \, \text{kg}$
+- Capacidade térmica mássica, $c = 235 \, \text{J kg}^{-1} \text{K}^{-1}$
+- Ponto de fusão, $T_f = 961.8 \, \text{°C}$
+- Variação de entalpia mássica de fusão, $\Delta H_f = 105 \, \text{kJ kg}^{-1} = 105,000 \, \text{J kg}^{-1}$
+- Tempo, $t = 600 \, \text{s}$
+- Temperatura inicial, $T_i = 25.0 \, \text{°C}$
+
+**Passos de cálculo:**
+
+1. **Calcular a energia necessária para aquecer a prata até o ponto de fusão:**
+
+   \[
+   Q_1 = m \cdot c \cdot (T_f - T_i)
+   \]
+
+   \[
+   Q_1 = 1.40 \, \text{kg} \cdot 235 \, \text{J kg}^{-1} \text{K}^{-1} \cdot (961.8 - 25.0) \, \text{K}
+   \]
+
+   \[
+   Q_1 = 1.40 \cdot 235 \cdot 936.8 = 308,140.4 \, \text{J}
+   \]
+
+2. **Calcular a energia necessária para fundir a prata:**
+
+   \[
+   Q_2 = m \cdot \Delta H_f
+   \]
+
+   \[
+   Q_2 = 1.40 \, \text{kg} \cdot 105,000 \, \text{J kg}^{-1} = 147,000 \, \text{J}
+   \]
+
+3. **Calcular a energia total necessária:**
+
+   \[
+   Q_{\text{total}} = Q_1 + Q_2
+   \]
+
+   \[
+   Q_{\text{total}} = 308,140.4 \, \text{J} + 147,000 \, \text{J} = 455,140.4 \, \text{J}
+   \]
+
+4. **Calcular a potência mínima necessária:**
+
+   \[
+   P = \frac{Q_{\text{total}}}{t}
+   \]
+
+   \[
+   P = \frac{455,140.4 \, \text{J}}{600 \, \text{s}} = 758.57 \, \text{W}
+   \]
+
+A potência mínima necessária é aproximadamente $758.57 \, \text{W}$.
+---
+PROCESSED:
+Para determinar a potência mínima necessária, precisamos calcular a energia total requerida para aquecer e fundir a prata, e depois dividir essa energia pelo tempo.
+
+**Dados fornecidos:**
+
+- Massa de prata, $m = 1.40 \, {kg}$
+- Capacidade térmica mássica, $c = 235 \, {J kg}^{-1} {K}^{-1}$
+- Ponto de fusão, $T_f = 961.8 \, {°C}$
+- Variação de entalpia mássica de fusão, $\Delta H_f = 105 \, {kJ kg}^{-1} = 105,000 \, {J kg}^{-1}$
+- Tempo, $t = 600 \, {s}$
+- Temperatura inicial, $T_i = 25.0 \, {°C}$
+
+**Passos de cálculo:**
+
+1. **Calcular a energia necessária para aquecer a prata até o ponto de fusão:**
+$
+Q_1 = m  c  (T_f - T_i)
+$
+Q_1 = 1.40 \, {kg}  235 \, {J kg}^{-1} {K}^{-1}  (961.8 - 25.0) \, {K}
+$
+Q_1 = 1.40  235  936.8 = 308,140.4 \, {J}
+$
+
+2. **Calcular a energia necessária para fundir a prata:**
+$
+Q_2 = m  \Delta H_f
+$
+Q_2 = 1.40 \, {kg}  105,000 \, {J kg}^{-1} = 147,000 \, {J}
+$
+
+3. **Calcular a energia total necessária:**
+$
+Q_{{total}} = Q_1 + Q_2
+$
+Q_{{total}} = 308,140.4 \, {J} + 147,000 \, {J} = 455,140.4 \, {J}
+$
+
+4. **Calcular a potência mínima necessária:**
+$
+P = {Q_{{total}}}{t}
+$
+P = {455,140.4 \, {J}}{600 \, {s}} = 758.57 \, {W}
+$
+
+A potência mínima necessária é aproximadamente $758.57 \, {W}$.
+===
+---
+ORIGINAL:
+```csharp
 using System.Threading;
 
 public class SafeMessageBox<M> where M : class
@@ -1311,10 +737,10 @@ public class SafeMessageBox<M> where M : class
         internal readonly M msg;
         internal int lives;
 
-        public MsgHolder(M message, int lives)
+        public MsgHolder(M message, int lvs)
         {
             msg = message;
-            this.lives = lives;
+            lives = lvs;
         }
     }
 
@@ -1339,7 +765,6 @@ public class SafeMessageBox<M> where M : class
 ---
 PROCESSED:
 ```csharp
-using System;
 using System.Threading;
 
 public class SafeMessageBox<M> where M : class
@@ -1349,10 +774,10 @@ public class SafeMessageBox<M> where M : class
         internal readonly M msg;
         internal int lives;
 
-        public MsgHolder(M message, int lives)
+        public MsgHolder(M message, int lvs)
         {
             msg = message;
-            this.lives = lives;
+            lives = lvs;
         }
     }
 
@@ -1374,4 +799,88 @@ public class SafeMessageBox<M> where M : class
     }
 }
 ```
+===
+---
+ORIGINAL:
+Para determinar o volume mínimo da solução de HCl necessário, siga os passos abaixo:
+
+1. **Reação do ouro com água régia:**
+
+   A reação do ouro com água régia (mistura de HCl e HNO₃) pode ser representada por:
+
+   $$ \text{Au} + 3 \text{HCl} + \text{HNO}_3 \rightarrow \text{H[AuCl}_4] + 2 \text{H}_2\text{O} $$
+
+   Isso indica que 1 mol de Au reage com 3 mol de HCl.
+
+2. **Cálculo dos mols de ouro:**
+
+   Massa molar do ouro (Au) = 197 g/mol
+
+   Mols de Au = \(\frac{60,0 \, \text{g}}{197 \, \text{g/mol}} \approx 0,304 \, \text{mol}\)
+
+3. **Cálculo dos mols de HCl necessários:**
+
+   De acordo com a estequiometria, são necessários 3 mols de HCl para cada mol de Au:
+
+   Mols de HCl = \(0,304 \, \text{mol Au} \times 3 \approx 0,912 \, \text{mol HCl}\)
+
+4. **Cálculo da massa de HCl necessária:**
+
+   Massa de HCl = \(0,912 \, \text{mol} \times 36,46 \, \text{g/mol} \approx 33,25 \, \text{g}\)
+
+5. **Cálculo do volume da solução de HCl:**
+
+   A solução de HCl tem 37% em massa de HCl, então:
+
+   Massa da solução = \(\frac{33,25 \, \text{g}}{0,37} \approx 89,86 \, \text{g}\)
+
+6. **Cálculo do volume da solução:**
+
+   Densidade da solução = 1,19 g/cm³
+
+   Volume da solução = \(\frac{89,86 \, \text{g}}{1,19 \, \text{g/cm}^3} \approx 75,5 \, \text{cm}^3\)
+
+Portanto, o volume mínimo da solução de HCl necessário é aproximadamente 75,5 cm³.
+---
+PROCESSED:
+Para determinar o volume mínimo da solução de HCl necessário, siga os passos abaixo:
+
+1. **Reação do ouro com água régia:**
+
+   A reação do ouro com água régia (mistura de HCl e HNO₃) pode ser representada por:
+$
+{Au} + 3 {HCl} + {HNO}_3 \rightarrow {H[AuCl}_4] + 2 {H}_2{O}
+$
+
+   Isso indica que 1 mol de Au reage com 3 mol de HCl.
+
+2. **Cálculo dos mols de ouro:**
+
+   Massa molar do ouro (Au) = 197 g/mol
+
+   Mols de Au = $\frac{60,0 \, {g}}{197 \, {g/mol}} \approx 0,304 \, {mol}$
+
+3. **Cálculo dos mols de HCl necessários:**
+
+   De acordo com a estequiometria, são necessários 3 mols de HCl para cada mol de Au:
+
+   Mols de HCl = $0,304 \, {mol Au} \times 3 \approx 0,912 \, {mol HCl}$
+
+4. **Cálculo da massa de HCl necessária:**
+
+   Massa de HCl = $0,912 \, {mol} \times 36,46 \, {g/mol} \approx 33,25 \, {g}$
+
+5. **Cálculo do volume da solução de HCl:**
+
+   A solução de HCl tem 37% em massa de HCl, então:
+
+   Massa da solução = $\frac{33,25 \, {g}}{0,37} \approx 89,86 \, {g}$
+
+6. **Cálculo do volume da solução:**
+
+   Densidade da solução = 1,19 g/cm³
+
+   Volume da solução = $\frac{89,86 \, {g}}{1,19 \, {g/cm}^3} \approx 75,5 \, {cm}^3$
+
+Portanto, o volume mínimo da solução de HCl necessário é aproximadamente 75,5 cm³.
 ===

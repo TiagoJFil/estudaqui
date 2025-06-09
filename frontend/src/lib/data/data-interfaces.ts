@@ -10,6 +10,7 @@ export interface PDFInfo {
     storageRef: string;
     userId: string;
     examInfo?: ExamJSON;
+    createdAt: Date; 
 }
 
 //collections

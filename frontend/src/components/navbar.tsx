@@ -35,82 +35,23 @@ export default function Navbar() {
   }, [credits, status])
 
   return (
-    <nav className="border-b bg-white shadow-sm">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-purple-600 text-white rounded-lg flex items-center justify-center">
-              <svg
-                viewBox="0 0 24 24"
-                className="w-6 h-6"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M12 14l9-5-9-5-9 5 9 5z"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M12 14l9-5-9-5-9 5 9 5z"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <span className="text-xl font-semibold">Examify</span>
+    <nav className="flex flex-col items-center pt-8 pb-4 px-2 w-full h-full bg-gradient-to-b from-[#232946] via-[#3b4371] to-[#4f5fa3]">
+      <div className="flex flex-col items-center w-full mb-8">
+        {/* Logo and app name at the top, horizontally aligned and top-aligned, centered as a group */}
+        <div className="flex flex-row items-center gap-2 justify-center w-full">
+          <div className="flex items-center justify-center">
+            <svg width="32" height="32" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="2" width="24" height="24" rx="7" fill="url(#paint0_linear_1_2)"/>
+              <path d="M9 14.5C9 12.0147 11.0147 10 13.5 10C15.9853 10 18 12.0147 18 14.5C18 16.9853 15.9853 19 13.5 19C11.0147 19 9 16.9853 9 14.5Z" fill="white"/>
+              <defs>
+                <linearGradient id="paint0_linear_1_2" x1="2" y1="2" x2="26" y2="26" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#6366F1"/>
+                  <stop offset="1" stopColor="#A21CAF"/>
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
-        </div>
-
-        <div className="flex items-center gap-4">
-          {status === "loading" ? (
-            <Skeleton className="h-6 w-20" />
-          ) : (
-            <div className="text-lg font-bold text-gray-600">
-              Credits: {credits}
-            </div>
-          )}
-
-          <Button
-            onClick={() => router.push("/buy")}
-            className="hover:bg-gray-200 hover:text-black transition-colors"
-          >
-            Buy More
-          </Button>
-
-          {status === "loading" ? (
-            <div className="flex items-center gap-2">
-              <Skeleton className="h-6 w-24" />
-              <Skeleton className="h-8 w-8 rounded-full" />
-              <Skeleton className="h-8 w-20" />
-            </div>
-          ) : session ? (
-            <>
-              <span className="text-sm font-medium text-gray-700">
-                {session.user?.name}
-              </span>
-              {session.user?.image && (
-                <Image
-                  src={session.user.image}
-                  alt="User Profile"
-                  width={32}
-                  height={32}
-                  className="rounded-full"
-                />
-              )}
-              <Button
-                variant="outline"
-                className="hover:bg-gray-50"
-                onClick={() => signOut()}
-              >
-                Sign Out
-              </Button>
-            </>
-          ) : (
-            <AuthDropDown onSignIn={(platform) => { signIn(platform) }} />
-          )}
+          <span className="text-3xl font-extrabold text-white tracking-tight font-sans select-none" style={{letterSpacing: '-0.03em'}}>Examify</span>
         </div>
       </div>
     </nav>
