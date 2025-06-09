@@ -1,6 +1,6 @@
 // services/examService.ts
-import { addExamInfoToPDF, savePDF } from "@/lib/data/data-service";
-import { llm } from "./LLMFacade";
+import { addExamInfoToPDF, getPDFInfo, savePDF } from "@/lib/data/data-service";
+import { llm } from "../lib/llm/LLMFacade";
 import pdfParse from "pdf-parse";
 import { hashTextSHA256 } from "@/lib/utils";
 import preprocessMathBlocks from "@/components/exam/preprocess-math-blocks";
@@ -13,10 +13,13 @@ export interface ExamQuestion {
   questionType: "openEnded" | "multipleChoice" | "other";
   responses?: string[] | null;
   correctResponse?: string | null;
+  suggestedAnswer?: string | null;
 }
 
 export interface ExamJSON {
+  examId: string;
   questions: ExamQuestion[];
+  uploadDate?: Date; // Optional field for upload date
 }
 
 /**
@@ -47,7 +50,7 @@ export async function upload(pdfFile: File,userID: string): Promise<ExamJSON> {
     addExamInfoToPDF(pdfTextHash, result);
   }
 
-  return savedPdfInfo.examInfo as ExamJSON;
+  return {questions: savedPdfInfo.examInfo.questions, examId: pdfTextHash} as ExamJSON;
 }
 
 /**
@@ -69,4 +72,25 @@ export async function getSuggestedAnswer(question: string, additionalContent: st
     // Ignore logging errors
   }
   return answer.trim();
+}
+
+/**
+ * Fetch an exam by its ID from your data source (DB, file, etc).
+ * @param examId The exam's unique identifier
+ * @returns The exam JSON object or null if not found
+ */
+export async function getExamById(examId: string) {
+
+  if (!examId || examId.trim() === "") {
+    throw new Error("Exam ID cannot be empty");
+  }
+
+  const pdfInfo = await getPDFInfo(examId);
+  if (pdfInfo && pdfInfo.examInfo) {
+    return { questions: pdfInfo.examInfo.questions, examId: examId } as ExamJSON;
+  }
+
+  console.warn(`Exam with ID ${examId} not found or has no exam info.`);
+
+  return null;
 }

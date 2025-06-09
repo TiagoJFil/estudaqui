@@ -8,7 +8,9 @@ export interface UserI {
 export interface PDFInfo {
     filename: string;
     storageRef: string;
+    userId: string;
     examInfo?: ExamJSON;
+    createdAt: Date; 
 }
 
 export interface PaymentInfo {

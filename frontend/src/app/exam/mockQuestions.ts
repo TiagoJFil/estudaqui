@@ -1,11 +1,6 @@
-"use client"
+import { MultipleChoiceQuestion, OpenEndedQuestion } from "../types";
 
-import {ExamCarousel} from "@/components/exam/exam-carousel";
-import { useState } from "react";
-import { ExamQuestion, MultipleChoiceQuestion, OpenEndedQuestion } from "../types";
-import { API } from "@/lib/frontend/api-service";
-
-const mockQuestions: (MultipleChoiceQuestion | OpenEndedQuestion)[] = [
+export const mockQuestions: (MultipleChoiceQuestion | OpenEndedQuestion)[] = [
   // Multiple Choice Questions
   {
     question: "What is the capital of France?",
@@ -122,9 +117,9 @@ const mockQuestions: (MultipleChoiceQuestion | OpenEndedQuestion)[] = [
   {
     question: `Evaluate the integral:
 
-\\[
+\[
 \int_0^1 x^2 \, dx
-\\]
+\]
 `,
     supplementalContent: "Show all steps and provide the final answer.",
     suggestedAnswer: null,
@@ -137,9 +132,9 @@ const mockQuestions: (MultipleChoiceQuestion | OpenEndedQuestion)[] = [
   {
     question: `Balance the following chemical equation:
 
-\\[
+\[
 \ce{C2H6 + O2 -> CO2 + H2O}
-\\]
+\]
 `,
     supplementalContent: "Provide the balanced equation and explain your reasoning.",
     suggestedAnswer: null,
@@ -147,9 +142,9 @@ const mockQuestions: (MultipleChoiceQuestion | OpenEndedQuestion)[] = [
   {
     question: `Solve the differential equation:
 
-\\[
+\[
 \frac{dy}{dx} + y = e^x
-\\]
+\]
 `,
     supplementalContent: "Find the general solution.",
     suggestedAnswer: null,
@@ -172,9 +167,9 @@ const mockQuestions: (MultipleChoiceQuestion | OpenEndedQuestion)[] = [
   {
     question: `Find the eigenvalues of the matrix:
 
-\\[
+\[
 \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}
-\\]
+\]
 `,
     supplementalContent: "Show all steps in your calculation.",
     suggestedAnswer: null,
@@ -182,9 +177,9 @@ const mockQuestions: (MultipleChoiceQuestion | OpenEndedQuestion)[] = [
   {
     question: `Write the equilibrium constant expression ($K_{eq}$) for the reaction:
 
-\\[
+\[
 \ce{N2(g) + 3H2(g) <=> 2NH3(g)}
-\\]
+\]
 `,
     supplementalContent: "Express your answer in terms of concentrations.",
     suggestedAnswer: null,
@@ -195,54 +190,3 @@ const mockQuestions: (MultipleChoiceQuestion | OpenEndedQuestion)[] = [
     suggestedAnswer: null,
   } as OpenEndedQuestion,
 ];
-
-export default function ExamPage() {
-
-    const [questions, setQuestions] = useState<(MultipleChoiceQuestion | OpenEndedQuestion)[]>(mockQuestions);
-
-    const onAiAnswerRequest = async (question: OpenEndedQuestion) => {
-        setQuestions(prevQuestions =>
-            prevQuestions.map(q =>
-                q.question === question.question
-                    ? { ...q, isAiSuggestionLoading: true, aiSuggestionError: false }
-                    : q
-            )
-        );
-        try {
-            console.debug("Requesting AI answer for question:", question);
-            const answer: string = await API.getSuggestedAnswerFromApi(question.question, question.supplementalContent);
-            console.debug("Successfully received AI answer:", answer);
-            setQuestions(prevQuestions =>
-                prevQuestions.map(q =>
-                    q.question === question.question
-                        ? { ...q, suggestedAnswer: answer, isAiSuggestionLoading: false, aiSuggestionError: false }
-                        : q
-                )
-            );
-        } catch (error) {
-            console.error("Error getting AI answer:", error);
-            setQuestions(prevQuestions =>
-                prevQuestions.map(q =>
-                    q.question === question.question
-                        ? { ...q, isAiSuggestionLoading: false, aiSuggestionError: true }
-                        : q
-                )
-            );
-        }
-    };
-    
-
-    return (
-        <div className="min-h-screen h-screen w-full flex flex-col items-center justify-center">
-            <div className="w-full h-full flex-1 max-w-screen-md px-4 flex items-center justify-center">
-                <ExamCarousel
-                    props={{
-                        questions: questions,
-                        onAiAnswerRequest: onAiAnswerRequest,
-                        // isAiSuggestedAnswerLoading: aiSuggestedAnswerLoading
-                    }}
-                />
-            </div>
-        </div>
-    )
-}

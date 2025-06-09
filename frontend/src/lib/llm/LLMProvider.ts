@@ -18,3 +18,5 @@ export interface LLMProvider {
    */
   getSuggestedAnswer(question: string, additionalContent: string | null): Promise<string>;
 }
+
+export type { ExamJSON };
