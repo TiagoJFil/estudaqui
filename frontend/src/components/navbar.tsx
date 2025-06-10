@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button"
 import { useSession, signIn, signOut } from "next-auth/react"
 import Image from "next/image"
 import { AuthDropDown } from "./auth-drop-down"
-import { useEffect, useState } from "react"
+import React, { use, useEffect, useState } from "react"
 import { API } from "@/lib/frontend/api-service"
 import { useUserContext } from "@/context/user-context"
 import { useRouter } from "next/navigation"
 import { Skeleton } from "@/components/ui/skeleton"
 import { convertDbDateToDate } from "@/lib/utils"
-
+import { MdDelete, MdModeEdit } from "react-icons/md";
 
 function AppIcon () {
   return (
@@ -42,16 +42,116 @@ function AppIcon () {
   )
 }
 
-function UploadHistory({ onSelectExam }: { onSelectExam: (examId: string) => void }) {
-  const { data: session } = useSession();
-  const [uploads, setUploads] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+function UploadRow({ upload, onSelectExam }: { upload: any, onSelectExam: (id: string) => void }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(upload.filename);
+  const [isDeleted, setIsDeleted] = useState(false);
 
+  if (isDeleted) return null;
+  const handleEditStart = () => {
+    setIsEditing(true);
+    setEditValue(upload.filename);
+  };
+
+  const handleEditSubmit = () => {
+    // TODO: Call API to update name here if needed
+    upload.filename = editValue; // Update locally for now
+    setIsEditing(false);
+  };
+
+  const handleEditCancel = () => {
+    setEditValue(upload.filename);
+    setIsEditing(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleEditSubmit();
+    } else if (e.key === "Escape") {
+      handleEditCancel();
+    }
+  };
+
+  const handleEditButtonClick = () => {
+    if (isEditing) {
+      handleEditSubmit();
+    } else {
+      handleEditStart();
+    }
+  };
+
+  const handleDelete = () => {
+    setIsDeleted(true);
+  };
+  return (
+    <div className="flex items-center group hover:bg-white/10 rounded px-2 py-1">
+      {/* Filename or input */}
+      {isEditing ? (
+        <input
+          className="flex-1 text-xs text-gray-900 rounded px-1 py-0.5 bg-gray-100 focus:outline-none"
+          value={editValue}
+          autoFocus
+          onChange={(e) => setEditValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          style={{ minWidth: 0 }}
+        />
+      ) : (
+        <button
+          className="flex-1 text-left text-xs text-gray-100 truncate"
+          title={upload.filename}
+          onClick={() => onSelectExam(upload.id)}
+        >
+          {upload.filename} <span className="text-gray-400">({new Date(convertDbDateToDate(upload.createdAt)).toLocaleDateString()})</span>
+        </button>
+      )}
+      
+      {/* Edit icon */}
+      <button
+        className={`ml-2 mr-2 opacity-0 group-hover:opacity-100 transition-opacity ${
+          isEditing 
+            ? "text-green-400 hover:text-green-300" 
+            : "text-gray-400 hover:text-blue-400"
+        }`}
+        title={isEditing ? "Save changes" : "Edit name"}
+        onClick={handleEditButtonClick}
+        tabIndex={0}
+        aria-label={isEditing ? "Save exam name" : "Edit exam name"}
+      >
+        <MdModeEdit/>
+      </button>
+      
+      {/* Delete icon */}
+      <button
+        className="text-gray-400 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+        title="Archive chat"
+        onClick={handleDelete}
+        tabIndex={0}
+        aria-label="Archive chat"
+      >
+        <MdDelete/>
+      </button>
+    </div>
+  );
+}
+
+function UploadHistory({ onSelectExam, onAnalyzeNewExam }: { onSelectExam: (examId: string) => void, onAnalyzeNewExam: () => void }) {
+  const { data: session, status } = useSession();
+  const [uploads, setUploads] = useState<any[]>([]);
+  const [loading, setLoading] = useState(status === "loading");
+
+  
   useEffect(() => {
-    if (!session) return;
+    console.log("UploadHistory useEffect - Session Status:", status);
+    if(status === "loading") {
+      setLoading(true);
+      return;
+    }
+    if (!session || !session.user || !session.user.email) {
+      setLoading(false);
+      return;
+    }
     const getUploads = async () => {
       try {
-        setLoading(true);
         const data = await API.getUserUploads();
         setUploads(Array.isArray(data) ? data : []);
       } catch (error) {
@@ -59,31 +159,60 @@ function UploadHistory({ onSelectExam }: { onSelectExam: (examId: string) => voi
       } finally {
         setLoading(false);
       }
-    }
+    };
     getUploads();
-  }, [session]);
+  }, [status]);
 
-  if (!session) return null;
+
+  // Filter and sort uploads by date
+  const now = new Date();
+  const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
+  const recent = uploads.filter(u => now.getTime() - new Date(convertDbDateToDate(u.createdAt)).getTime() < oneWeekMs);
+  const older = uploads.filter(u => now.getTime() - new Date(convertDbDateToDate(u.createdAt)).getTime() >= oneWeekMs);
 
   return (
     <div className="w-full mt-4">
-      <div className="text-xs text-gray-200 font-semibold mb-2 pl-2">Your Uploads</div>
+      <div className="flex items-center justify-between mb-2 pl-2">
+        <div className="text-xs text-gray-200 font-semibold">Your Uploads</div>
+        <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-xs font-semibold" onClick={onAnalyzeNewExam}>
+          + Analyze New Exam
+        </Button>
+      </div>
       <div className="flex flex-col gap-1 max-h-64 overflow-y-auto">
         {loading ? (
           <div className="text-xs text-gray-300 px-2">Loading...</div>
         ) : uploads.length === 0 ? (
           <div className="text-xs text-gray-300 px-2">No uploads yet.</div>
         ) : (
-          uploads.map(upload => (
-            <button
-              key={upload.id}
-              className="text-left px-2 py-1 rounded hover:bg-white/10 text-xs text-gray-100 truncate"
-              title={upload.filename}
-              onClick={() => onSelectExam(upload.id)}
-            >
-              {upload.filename} <span className="text-gray-400">({new Date(convertDbDateToDate(uploads[0].createdAt)).toLocaleDateString()})</span>
-            </button>
-          ))
+          <>
+            {recent.length > 0 && (
+              <>
+                <div className="text-[11px] text-gray-400 font-semibold px-2 mt-1 mb-1">Recent</div>
+                {recent.map(upload => (
+                  <UploadRow
+                    key={upload.id}
+                    upload={upload}
+                    onSelectExam={onSelectExam}
+                  />
+                ))}
+              </>
+            )}
+            {recent.length > 0 && older.length > 0 && (
+              <div className="border-t border-gray-700 my-2" />
+            )}
+            {older.length > 0 && (
+              <>
+                <div className="text-[11px] text-gray-400 font-semibold px-2 mt-1 mb-1">Older than a week</div>
+                {older.map(upload => (
+                  <UploadRow
+                    key={upload.id}
+                    upload={upload}
+                    onSelectExam={onSelectExam}
+                  />
+                ))}
+              </>
+            )}
+          </>
         )}
       </div>
     </div>
@@ -98,7 +227,7 @@ export default function Navbar() {
 
   useEffect(() => {
     console.log("Session Status:", status)
-    if (status === "loading") {
+    if (isLoading) {
       return
     }
     if (!session || !session.user || !session.user.email) {
@@ -140,7 +269,10 @@ export default function Navbar() {
           <span className="text-3xl font-extrabold text-white tracking-tight font-sans select-none" style={{letterSpacing: '-0.03em'}}>Studaki</span>
         </div>
       </div>
-      <UploadHistory onSelectExam={(examId) => router.push(`/exam/${examId}`)} />
+      <UploadHistory 
+        onSelectExam={(examId) => router.push(`/exam/${examId}`)}
+        onAnalyzeNewExam={() => router.push('/exam/new')}
+      />
     </nav>
-  )
+  );
 }

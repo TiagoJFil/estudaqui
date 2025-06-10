@@ -16,10 +16,8 @@ export default function ExamPage() {
 
     const isLoading = questions === null;
 
-    console.log("ExamPage useEffect triggered with examId:", examId);
 
     useEffect(() => {
-        console.log("ExamPage useEffect triggered with examId:", examId);
         if (!examId) return;
         const data = localStorage.getItem(`examData_${examId}`);
         if (data) {
@@ -35,7 +33,6 @@ export default function ExamPage() {
                 // Ignore parse errors, fallback to fetch
             }
         }
-        console.log("Fetching exam data from API for examId:", examId);
         API.getExamById(examId)
             .then((examJson) => {
                 if (examJson?.questions && Array.isArray(examJson.questions)) {
