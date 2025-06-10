@@ -1,11 +1,12 @@
 "use client"
 
-import {ExamCarousel} from "@/components/exam/ExamCarousel";
-import { getSuggestedAnswerFromApi, getExamById } from "@/lib/api-service";
+
 import { useState, useEffect } from "react";
-import { MultipleChoiceQuestion, OpenEndedQuestion } from "../../types";
+import { MultipleChoiceQuestion, OpenEndedQuestion } from "../../../lib/frontend/types";
 import { useParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { API } from "@/lib/frontend/api-service";
+import { ExamCarousel } from "@/components/exam/exam-carousel";
 
 export default function ExamPage() {
     const params = useParams();
@@ -35,10 +36,11 @@ export default function ExamPage() {
             }
         }
         console.log("Fetching exam data from API for examId:", examId);
-        getExamById(examId)
+        API.getExamById(examId)
             .then((examJson) => {
                 if (examJson?.questions && Array.isArray(examJson.questions)) {
                     console.log("Successfully fetched exam data:", examJson);
+                    
                     setQuestions(examJson.questions);
                 }
             })
@@ -55,7 +57,7 @@ export default function ExamPage() {
         );
         try {
             console.debug("Requesting AI answer for question:", question);
-            const answer: string = await getSuggestedAnswerFromApi(question.question, question.supplementalContent);
+            const answer: string = await API.getSuggestedAnswerFromApi(question.question, question.supplementalContent);
             console.debug("Successfully received AI answer:", answer);
             setQuestions(prevQuestions =>
                 prevQuestions ? prevQuestions.map(q =>

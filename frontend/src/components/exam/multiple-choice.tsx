@@ -1,4 +1,4 @@
-import { ExamQuestion, MultipleChoiceQuestion } from "@/app/types";
+import { MultipleChoiceQuestion } from "@/lib/frontend/types";
 import { Check, X } from "lucide-react";
 import { useState } from "react";
 import clsx from "clsx";

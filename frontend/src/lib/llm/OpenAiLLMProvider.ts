@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 import { SUGGESTED_ANSWER_SYSTEM_PROMPT, EXAM_PARSER_SYSTEM_PROMPT } from "./prompts";
-import { ExamJSON } from "@/lib/llm/exam-service";
 import { LLMProvider } from "./LLMProvider";
+import { ExamJSON } from "./types";
 
 export class OpenAiLLMProvider implements LLMProvider {
   private openAI = new OpenAI();

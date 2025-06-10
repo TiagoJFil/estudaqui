@@ -9,6 +9,7 @@ import { API } from "@/lib/frontend/api-service"
 import { useUserContext } from "@/context/user-context"
 import { useRouter } from "next/navigation"
 import { Skeleton } from "@/components/ui/skeleton"
+import { convertDbDateToDate } from "@/lib/utils"
 
 
 function AppIcon () {
@@ -39,6 +40,54 @@ function AppIcon () {
       <span className="text-xl font-semibold">Studaki</span>
     </div>
   )
+}
+
+function UploadHistory({ onSelectExam }: { onSelectExam: (examId: string) => void }) {
+  const { data: session } = useSession();
+  const [uploads, setUploads] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!session) return;
+    const getUploads = async () => {
+      try {
+        setLoading(true);
+        const data = await API.getUserUploads();
+        setUploads(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Failed to fetch uploads:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    getUploads();
+  }, [session]);
+
+  if (!session) return null;
+
+  return (
+    <div className="w-full mt-4">
+      <div className="text-xs text-gray-200 font-semibold mb-2 pl-2">Your Uploads</div>
+      <div className="flex flex-col gap-1 max-h-64 overflow-y-auto">
+        {loading ? (
+          <div className="text-xs text-gray-300 px-2">Loading...</div>
+        ) : uploads.length === 0 ? (
+          <div className="text-xs text-gray-300 px-2">No uploads yet.</div>
+        ) : (
+          uploads.map(upload => (
+            <button
+              key={upload.id}
+              className="text-left px-2 py-1 rounded hover:bg-white/10 text-xs text-gray-100 truncate"
+              title={upload.filename}
+              onClick={() => onSelectExam(upload.id)}
+            >
+              {upload.filename} <span className="text-gray-400">({new Date(convertDbDateToDate(uploads[0].createdAt)).toLocaleDateString()})</span>
+            </button>
+          ))
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default function Navbar() {
@@ -91,6 +140,7 @@ export default function Navbar() {
           <span className="text-3xl font-extrabold text-white tracking-tight font-sans select-none" style={{letterSpacing: '-0.03em'}}>Studaki</span>
         </div>
       </div>
+      <UploadHistory onSelectExam={(examId) => router.push(`/exam/${examId}`)} />
     </nav>
   )
 }

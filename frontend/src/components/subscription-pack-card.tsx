@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card } from '@/components/ui/card'
-import { PackType } from '@/lib/interfaces'
+import { PackType } from '@/lib/frontend/types'
 
 interface SubscriptionPackCardProps {
   pack: PackType

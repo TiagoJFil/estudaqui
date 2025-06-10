@@ -1,7 +1,7 @@
 import { COLLECTIONS, UserI, PDFInfo } from "./data-interfaces";
 import { db, storage } from "@/lib/data/firebase";
 import { getDefaultUserInfo } from "./default-values";
-import { ExamJSON } from "@/lib/llm/exam-service";
+import { ExamJSON } from "../llm/types";
 
 export async function createOrGetAccount(email: string | null | undefined) {
   if (!email) {
@@ -165,4 +165,30 @@ export async function registerPayment(
 
   const paymentsRef = db.collection(COLLECTIONS.PAYMENTS);
   await paymentsRef.add(paymentInfoWithStringDates);
+}
+
+// Save a reference to the user's uploads subcollection
+export async function addUserUpload(userId: string, fileId: string, filename: string) {
+  const uploadsCollection = db.collection(`users/${userId}/uploads`);
+  await uploadsCollection.doc(fileId).set({
+    filename,
+    createdAt: new Date(),
+  }, { merge: true });
+}
+
+// Get all uploads for a user, joined with file info
+export async function getUserUploads(userId: string) {
+  const uploadsCollection = db.collection(`users/${userId}/uploads`);
+  const uploadsSnapshot = await uploadsCollection.orderBy("createdAt", "desc").get();
+  return Promise.all(
+    uploadsSnapshot.docs.map(async (doc) => {
+      const fileId = doc.id;
+      const fileDoc = await db.collection(COLLECTIONS.FILES).doc(fileId).get();
+      return {
+        id: fileId,
+        ...doc.data(),
+        file: fileDoc.exists ? fileDoc.data() : null,
+      };
+    })
+  );
 }

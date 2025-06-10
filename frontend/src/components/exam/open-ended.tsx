@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
-import { OpenEndedQuestion } from "@/app/types";
+import { OpenEndedQuestion } from "@/lib/frontend/types";
 import { Bot, Loader2 } from "lucide-react";
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';

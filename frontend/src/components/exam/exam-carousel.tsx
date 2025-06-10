@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import clsx from "clsx";
 
 import QuestionCard from "./question-card";
-import { OpenEndedQuestion, MultipleChoiceQuestion } from "@/app/types";
+import { OpenEndedQuestion, MultipleChoiceQuestion } from "@/lib/frontend/types";
 import { dotBase, arrowBase } from "./exam-class-names";
 
 export interface ExamCarouselProps {

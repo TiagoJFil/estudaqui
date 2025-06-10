@@ -1,3 +1,15 @@
+"use client"
+
+import {PackInfo} from "@/lib/data/data-interfaces";
+
+//export packinfo as PackType
+export type PackType = PackInfo 
+
+export type ExamJson = {
+    examId: string;
+    questions: Array<OpenEndedQuestion | MultipleChoiceQuestion>;
+};
+
 export interface ExamQuestion {
   question: string;
   questionType: "openEnded" | "multipleChoice" | "other";

@@ -1,5 +1,4 @@
-import { ExamJSON } from "@/lib/llm/exam-service";
-
+import { ExamJSON } from "../llm/types";
 
 export interface UserI {
     credits: number;

@@ -1,4 +1,4 @@
-import { MultipleChoiceQuestion, OpenEndedQuestion } from "../types";
+import { MultipleChoiceQuestion, OpenEndedQuestion } from "../../lib/frontend/types";
 
 export const mockQuestions: (MultipleChoiceQuestion | OpenEndedQuestion)[] = [
   // Multiple Choice Questions

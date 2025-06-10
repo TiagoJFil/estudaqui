@@ -1,5 +1,5 @@
 import React from "react";
-import { OpenEndedQuestion, MultipleChoiceQuestion, isMultipleChoiceQuestion, isOpenEndedQuestion } from "@/app/types";
+import { OpenEndedQuestion, MultipleChoiceQuestion, isMultipleChoiceQuestion, isOpenEndedQuestion } from "@/lib/frontend/types";
 import MultipleChoice from "./multiple-choice";
 import OpenEnded from "./open-ended";
 import ReactMarkdown from 'react-markdown';

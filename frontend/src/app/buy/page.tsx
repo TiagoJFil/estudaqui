@@ -9,8 +9,8 @@ import InstantPackCard from '@/components/instant-pack-card'
 import SubscriptionPackCard from '@/components/subscription-pack-card'
 import PaymentModal from '@/components/payment-modal'
 import { PACKS } from '@/lib/contants'
-import { PackType } from '@/lib/interfaces'
 import { useSession } from 'next-auth/react'
+import { PackType } from '@/lib/frontend/types'
 
 
 

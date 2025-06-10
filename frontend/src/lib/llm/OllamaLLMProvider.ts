@@ -1,5 +1,5 @@
-import { ExamJSON } from "@/lib/llm/exam-service";
 import { LLMProvider } from "./LLMProvider";
+import { ExamJSON } from "./types";
 
 export class OllamaLLMProvider implements LLMProvider {
 

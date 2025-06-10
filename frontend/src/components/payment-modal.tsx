@@ -10,11 +10,11 @@ import { CustomModal } from "./custom-modal"
 import { useSession } from "next-auth/react"
 import { SolanaPayQR } from "./solana-qr"
 import { useUserContext } from "@/context/user-context"
-import { PackType } from "@/lib/interfaces"
 import { handleCryptoPayment, handleQRPayment } from "@/lib/frontend/payment-service"
 import { CheckCircle } from "lucide-react"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
+import { PackType } from "@/lib/frontend/types"
 
 
 

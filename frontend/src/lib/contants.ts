@@ -1,6 +1,6 @@
 
 import { Wallet, Smartphone, CreditCard } from "lucide-react";
-import { PackType } from "./interfaces";
+import { PackType } from "./frontend/types";
 
 export const paymentMethods = [
   { id: "crypto", label: "Pay with Crypto Wallet", icon: Wallet },

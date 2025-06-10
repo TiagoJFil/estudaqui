@@ -63,6 +63,13 @@ export const NEXT_PUBLIC_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt
 export const MEMO_PROGRAM_ID = "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr";
 
 
+export function convertDbDateToDate(createdAt: { _seconds : number} ){
+    if (!createdAt || typeof createdAt._seconds !== 'number') {
+        throw new Error("Invalid date format");
+    }
+    return new Date(createdAt._seconds * 1000);
+}
+
 Transaction.prototype.addMemo = function (memo: string) {
     if (!memo || memo.length === 0) {
         throw new Error("Memo cannot be empty");

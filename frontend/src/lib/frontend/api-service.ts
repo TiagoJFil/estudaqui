@@ -1,3 +1,7 @@
+"use client"
+
+import { ExamJson } from "@/lib/frontend/types";
+
 async function uploadFilesToServer(uploadedFiles: File[]): Promise<any> {
     const formData = new FormData();
     uploadedFiles.forEach((file) => formData.append("files", file));
@@ -107,7 +111,20 @@ async function getSuggestedAnswerFromApi(question: string, additionalContent: st
         throw error;
     }
 }
+async function getExamById(examId: string): Promise<ExamJson> {
+    const response = await fetch(`/api/v1/exam/${encodeURIComponent(examId)}`);
+    if (!response.ok) throw new Error("Failed to fetch exam");
+    return await response.json();
+}
 
+// Fetch the current user's uploads from the API
+async function getUserUploads(): Promise<any[]> {
+    const response = await fetch("/api/v1/user-uploads");
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+}
 
 export class API {
     static async uploadFiles(uploadedFiles: File[]): Promise<any> {
@@ -135,5 +152,11 @@ export class API {
         additionalContent: string | null
     ): Promise<string> {
         return getSuggestedAnswerFromApi(question, additionalContent);
+    }
+    static async getExamById(examId: string): Promise<ExamJson> {
+        return getExamById(examId);
+    }
+    static async getUserUploads(): Promise<any[]> {
+        return getUserUploads();
     }
 }

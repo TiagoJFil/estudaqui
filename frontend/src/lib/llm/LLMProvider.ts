@@ -1,4 +1,4 @@
-import { ExamJSON } from "@/lib/llm/exam-service";
+import { ExamJSON } from "./types";
 
 export interface ChatMessage {
   role: "user" | "system" | "assistant";
@@ -18,5 +18,3 @@ export interface LLMProvider {
    */
   getSuggestedAnswer(question: string, additionalContent: string | null): Promise<string>;
 }
-
-export type { ExamJSON };

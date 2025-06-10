@@ -1,26 +1,12 @@
 // services/examService.ts
-import { addExamInfoToPDF, getPDFInfo, savePDF } from "@/lib/data/data-service";
+import { addExamInfoToPDF, getPDFInfo, savePDF, addUserUpload } from "@/lib/data/data-service";
 import pdfParse from "pdf-parse";
 import { hashTextSHA256 } from "@/lib/utils";
 import preprocessMathBlocks from "@/components/exam/preprocess-math-blocks";
 import fs from "fs";
 import path from "path";
 import { llm } from "./LLMFacade";
-
-export interface ExamQuestion {
-  question: string;
-  supplementalContent?: string | null; // Optional field for additional context
-  questionType: "openEnded" | "multipleChoice" | "other";
-  responses?: string[] | null;
-  correctResponse?: string | null;
-  suggestedAnswer?: string | null;
-}
-
-export interface ExamJSON {
-  examId: string;
-  questions: ExamQuestion[];
-  uploadDate?: Date; // Optional field for upload date
-}
+import { ExamJSON } from "./types";
 
 /**
  * Extracts text from a PDF file buffer using pdf-parse
@@ -35,22 +21,23 @@ async function extractTextFromPDF(arrayBuffer: ArrayBuffer): Promise<string> {
  * Uploads a PDF file, extracts content, and returns structured exam JSON
  * @param pdfFile PDF file as File
  */
-export async function upload(pdfFile: File,userID: string): Promise<ExamJSON> {
+export async function upload(pdfFile: File, userID: string): Promise<ExamJSON> {
   const arrayBuffer = await pdfFile.arrayBuffer();
   if (!arrayBuffer || arrayBuffer.byteLength === 0) {
     throw new Error("Invalid PDF file");
   }
 
   const rawText = await extractTextFromPDF(arrayBuffer);
-  const pdfTextHash = await hashTextSHA256(rawText)
-  const savedPdfInfo = await savePDF(pdfFile,userID,pdfTextHash)
-  if(!savedPdfInfo.examInfo){
+  const pdfTextHash = await hashTextSHA256(rawText);
+  const savedPdfInfo = await savePDF(pdfFile, userID, pdfTextHash);
+  if (!savedPdfInfo.examInfo) {
     const result = await llm.analyzeExam(rawText);
     savedPdfInfo.examInfo = result;
     addExamInfoToPDF(pdfTextHash, result);
   }
-
-  return {questions: savedPdfInfo.examInfo.questions, examId: pdfTextHash} as ExamJSON;
+  // Track this upload for the user
+  await addUserUpload(userID, pdfTextHash, pdfFile.name);
+  return { questions: savedPdfInfo.examInfo.questions, examId: pdfTextHash } as ExamJSON;
 }
 
 /**

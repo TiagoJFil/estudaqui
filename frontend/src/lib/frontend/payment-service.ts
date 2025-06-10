@@ -1,3 +1,5 @@
+"use client"
+
 import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, createTransferInstruction } from "@solana/spl-token"
 import { Connection, PublicKey, Transaction } from "@solana/web3.js"
 import { NEXT_PUBLIC_USDC_MINT, getSimpleCryptoPaymentIDMemo } from "../utils"
