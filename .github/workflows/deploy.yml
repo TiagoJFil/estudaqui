@@ -25,6 +25,7 @@ jobs:
 
       - name: Build the project
         run: |
+          cd frontend
           bun run build
 
       - name: Deploy via SSH
