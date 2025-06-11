@@ -28,7 +28,7 @@ export default function CreditsAndSignIn() {
       }
       setIsLoading(false);
     }).catch(() => {});
-  }, [credits, status]);
+  }, [status]);
 
   return (
     <div className="flex items-center gap-4">

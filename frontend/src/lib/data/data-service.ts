@@ -181,7 +181,7 @@ export async function getUserUploads(userId: string) {
   const uploadsCollection = db.collection(`users/${userId}/uploads`);
   const uploadsSnapshot = await uploadsCollection.orderBy("createdAt", "desc").get();
   return Promise.all(
-    uploadsSnapshot.docs.map(async (doc) => {
+    uploadsSnapshot.docs.map(async (doc: { id: any; data: () => any; }) => {
       const fileId = doc.id;
       const fileDoc = await db.collection(COLLECTIONS.FILES).doc(fileId).get();
       return {
@@ -191,4 +191,34 @@ export async function getUserUploads(userId: string) {
       };
     })
   );
+}
+
+export class HistoryService {
+
+  static async updateExamName(userId: string, examId: string, newName: string): Promise<void> {
+    if (!userId || !examId || !newName) {
+      throw new Error("Invalid parameters provided for updating exam name");
+    }
+    const uploadsCollection = db.collection(`users/${userId}/uploads`);
+    const examDocRef = uploadsCollection.doc(examId);
+    const examDocSnapshot = await examDocRef.get();
+    if (!examDocSnapshot.exists) {
+      throw new Error("Exam not found");
+    }
+    await examDocRef.set({ filename: newName }, { merge: true });
+
+  }
+
+  static async deleteExam(userId: string, examId: string): Promise<void> {
+    if (!userId || !examId) {
+      throw new Error("Invalid parameters provided for deleting exam");
+    }
+    const uploadsCollection = db.collection(`users/${userId}/uploads`);
+    const examDocRef = uploadsCollection.doc(examId);
+    const examDocSnapshot = await examDocRef.get();
+    if (!examDocSnapshot.exists) {
+      throw new Error("Exam not found");
+    }
+    await examDocRef.delete();
+  }
 }

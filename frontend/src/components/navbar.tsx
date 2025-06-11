@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { useSession, signIn, signOut } from "next-auth/react"
 import Image from "next/image"
 import { AuthDropDown } from "./auth-drop-down"
-import React, { use, useEffect, useState } from "react"
+import React, { use, useEffect, useRef, useState } from "react"
 import { API } from "@/lib/frontend/api-service"
 import { useUserContext } from "@/context/user-context"
 import { useRouter } from "next/navigation"
@@ -46,6 +46,7 @@ function UploadRow({ upload, onSelectExam }: { upload: any, onSelectExam: (id: s
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(upload.filename);
   const [isDeleted, setIsDeleted] = useState(false);
+  const isDeleting = useRef(false);
 
   if (isDeleted) return null;
   const handleEditStart = () => {
@@ -53,10 +54,18 @@ function UploadRow({ upload, onSelectExam }: { upload: any, onSelectExam: (id: s
     setEditValue(upload.filename);
   };
 
-  const handleEditSubmit = () => {
-    // TODO: Call API to update name here if needed
-    upload.filename = editValue; // Update locally for now
+  const handleEditSubmit = async () => {
+    if (editValue.trim() === "") {
+      alert("Filename cannot be empty");
+      return;
+    }
+    if (editValue === upload.filename) {
+      setIsEditing(false);
+      return; 
+    }
+    upload.filename = editValue;
     setIsEditing(false);
+    await API.updateHistoryExam(upload.id, editValue)
   };
 
   const handleEditCancel = () => {
@@ -79,12 +88,44 @@ function UploadRow({ upload, onSelectExam }: { upload: any, onSelectExam: (id: s
       handleEditStart();
     }
   };
+  const handleDelete = async () => {
+    if (isDeleting.current) return;
+    isDeleting.current = true;
+    if (!confirm("Are you sure you want to archive this exam? This action cannot be undone.")) {
+      isDeleting.current = false;
+      return;
+    }
+    try {
+      await API.deleteHistoryExam(upload.id);
+      console.log("Exam deleted successfully");
+    } catch (error) {
+      console.error("Failed to delete exam:", error);
+      alert("Failed to archive exam. Please try again later.");
+      return;
+    }finally {
+      isDeleting.current = false;
+    }
 
-  const handleDelete = () => {
     setIsDeleted(true);
   };
+
+  const containerRef = useRef<HTMLDivElement>(null);
+useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isEditing && containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        handleEditSubmit();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isEditing, editValue]);
+
+
   return (
-    <div className="flex items-center group hover:bg-white/10 rounded px-2 py-1">
+    <div ref={containerRef}   className="flex items-center group hover:bg-white/10 rounded px-2 py-1">
       {/* Filename or input */}
       {isEditing ? (
         <input
@@ -115,6 +156,7 @@ function UploadRow({ upload, onSelectExam }: { upload: any, onSelectExam: (id: s
         title={isEditing ? "Save changes" : "Edit name"}
         onClick={handleEditButtonClick}
         tabIndex={0}
+        
         aria-label={isEditing ? "Save exam name" : "Edit exam name"}
       >
         <MdModeEdit/>
@@ -125,6 +167,7 @@ function UploadRow({ upload, onSelectExam }: { upload: any, onSelectExam: (id: s
         className="text-gray-400 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
         title="Archive chat"
         onClick={handleDelete}
+        disabled={isDeleting.current}
         tabIndex={0}
         aria-label="Archive chat"
       >
@@ -221,7 +264,6 @@ function UploadHistory({ onSelectExam, onAnalyzeNewExam }: { onSelectExam: (exam
 
 export default function Navbar() {
   const { data: session, status } = useSession()
-  const { credits, setCredits } = useUserContext();
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(status === "loading")
 
@@ -234,15 +276,6 @@ export default function Navbar() {
         setIsLoading(false)
       return
     }
-    API.getUserInfo().then((userInfo) => {
-      if (userInfo && userInfo.credits) {
-        setCredits(userInfo.credits)
-        setIsLoading(false)
-      }
-    }).catch((error) => {
-      console.error("Failed to fetch user info:", error)
-      alert("Failed to fetch user information")
-    })
   }, [status])
 
   const handleSignIn = async (platform:string) => {
@@ -271,7 +304,7 @@ export default function Navbar() {
       </div>
       <UploadHistory 
         onSelectExam={(examId) => router.push(`/exam/${examId}`)}
-        onAnalyzeNewExam={() => router.push('/exam/new')}
+        onAnalyzeNewExam={() => router.push('/')}
       />
     </nav>
   );

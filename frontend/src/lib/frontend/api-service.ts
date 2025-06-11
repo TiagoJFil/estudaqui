@@ -126,9 +126,50 @@ async function getUserUploads(): Promise<any[]> {
     return await response.json();
 }
 
+async function updateHistoryExam(
+    examId: string,
+    name: string
+): Promise<any> {
+    const response = await fetch(`/api/v1/history/exam/${encodeURIComponent(examId)}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name }),
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+}
+
+export async function deleteHistoryExam(examId: string): Promise<any> {
+    const response = await fetch(`/api/v1/history/exam/${encodeURIComponent(examId)}`, {
+        method: "DELETE",
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+}
+
 export class API {
     static async uploadFiles(uploadedFiles: File[]): Promise<any> {
         return uploadFilesToServer(uploadedFiles);
+    }
+
+    static async updateHistoryExam(
+        examId: string,
+        name: string
+    ): Promise<any> {
+        return updateHistoryExam(examId, name);
+    }
+    static async deleteHistoryExam(examId: string): Promise<any> {
+        return deleteHistoryExam(examId);
     }
 
     static async getUserInfo(): Promise<any> {
