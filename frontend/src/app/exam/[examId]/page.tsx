@@ -1,7 +1,7 @@
 "use client"
 
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MultipleChoiceQuestion, OpenEndedQuestion } from "../../../lib/frontend/types";
 import { useParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -15,33 +15,47 @@ export default function ExamPage() {
     const [error, setError] = useState<string | null>(null);
 
     const isLoading = questions === null;
-
+    const isFetching = useRef(false);
 
     useEffect(() => {
         if (!examId) return;
-        const data = localStorage.getItem(`examData_${examId}`);
-        if (data) {
-            try {
-                localStorage.removeItem(`examData_${examId}`);
-                console.log("Loaded exam data from localStorage:", data);
-                const parsed = JSON.parse(data);
-                if (parsed.questions && Array.isArray(parsed.questions)) {
-                    setQuestions(parsed.questions);
-                    return;
-                }
-            } catch (e) {
-                // Ignore parse errors, fallback to fetch
-            }
+        if ( questions !== null || isFetching.current) {
+            console.warn("Exam questions already loaded, skipping fetch for examId:", examId);
+            return;
         }
-        API.getExamById(examId)
-            .then((examJson) => {
-                if (examJson?.questions && Array.isArray(examJson.questions)) {
-                    console.log("Successfully fetched exam data:", examJson);
-                    
-                    setQuestions(examJson.questions);
+
+        const processEffect = async () => {
+            isFetching.current = true;
+            console.log("Loading exam with ID:", examId);
+
+            const data = localStorage.getItem(`examData_${examId}`);
+            if (data) {
+                try {
+                    localStorage.removeItem(`examData_${examId}`);
+                    console.log("Loaded exam data from localStorage:", data);
+                    const parsed = JSON.parse(data);
+                    if (parsed.questions && Array.isArray(parsed.questions)) {
+                        setQuestions(parsed.questions);
+                        isFetching.current = false;
+                        return;
+                    }
+                } catch (e) {
+                    // Ignore parse errors, fallback to fetch
                 }
-            })
-            .catch(() => setError("Could not load exam data."));
+            }
+            console.log("Fetching exam data from API for ID:", examId);
+            const examJson = await API.getExamById(examId)
+            if (!examJson || !examJson.questions || !Array.isArray(examJson.questions)) {
+                setError("Exam not found or invalid format.");
+                isFetching.current = false;
+                return;
+            }
+            console.log("Fetched exam data from API:", examJson);
+            setQuestions(examJson.questions);
+            isFetching.current = false;
+
+        }
+        processEffect();
     }, []);
 
     const onAiAnswerRequest = async (question: OpenEndedQuestion) => {

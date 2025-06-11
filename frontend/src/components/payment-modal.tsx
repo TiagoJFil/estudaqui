@@ -353,12 +353,13 @@ function PaymentDetailsPanel({
   )
 }
 
-function PaymentSummary({ selectedPayment, onConfirm, isProcessing = false, price, useQRCode}: { 
+function PaymentSummary({ selectedPayment, onConfirm, isProcessing = false, price, useQRCode, walletConnected}: { 
   selectedPayment: string; 
   onConfirm: () => void; 
   isProcessing?: boolean; 
   price: number;
   useQRCode: boolean;
+  walletConnected: boolean;
 }) {
   const isCrypto = selectedPayment === "crypto"
 
@@ -420,13 +421,17 @@ function PaymentSummary({ selectedPayment, onConfirm, isProcessing = false, pric
             </div>
           </div>
         </div>
-      </div>
-        <button
+      </div>        <button
         onClick={onConfirm}
-        disabled={isProcessing}
+        disabled={isProcessing || (isCrypto && !useQRCode && !walletConnected)}
         className="w-full px-8 py-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold text-xl transition-colors shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isProcessing ? "Processing Payment..." : "Confirm Payment"}
+        {isProcessing 
+          ? "Processing Payment..." 
+          : (isCrypto && !useQRCode && !walletConnected)
+            ? "Connect Wallet to Continue"
+            : "Confirm Payment"
+        }
       </button>
       </>
       )}
@@ -634,13 +639,13 @@ const paymentFlowStartedRef = React.useRef(false);
       timerTIMEOUT={TIMEOUT}
     />
   )}
-</div>
-              <PaymentSummary 
+</div>            <PaymentSummary 
               selectedPayment={selectedPayment} 
               onConfirm={handleConfirmPayment}
               isProcessing={isProcessing}
               price={price}
               useQRCode={useQRCode}
+              walletConnected={connected}
             />
             
           </div>

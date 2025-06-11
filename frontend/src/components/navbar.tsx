@@ -7,7 +7,7 @@ import { AuthDropDown } from "./auth-drop-down"
 import React, { use, useEffect, useRef, useState } from "react"
 import { API } from "@/lib/frontend/api-service"
 import { useUserContext } from "@/context/user-context"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { Skeleton } from "@/components/ui/skeleton"
 import { convertDbDateToDate } from "@/lib/utils"
 import { MdDelete, MdModeEdit } from "react-icons/md";
@@ -42,12 +42,16 @@ function AppIcon () {
   )
 }
 
-function UploadRow({ upload, onSelectExam }: { upload: any, onSelectExam: (id: string) => void }) {
+function UploadRow({ upload, onSelectExam, currentPath }: { upload: any, onSelectExam: (id: string) => void, currentPath: string }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(upload.filename);
   const [isDeleted, setIsDeleted] = useState(false);
   const isDeleting = useRef(false);
-
+  const isSelectingExam = useRef(false);
+  
+  // Check if we're currently on an exam page
+  const isOnExamPage = currentPath === `/exam/${upload.id}`;
+  
   if (isDeleted) return null;
   const handleEditStart = () => {
     setIsEditing(true);
@@ -123,9 +127,10 @@ useEffect(() => {
     };
   }, [isEditing, editValue]);
 
-
   return (
-    <div ref={containerRef}   className="flex items-center group hover:bg-white/10 rounded px-2 py-1">
+    <div ref={containerRef} className={`flex items-center group rounded px-2 py-1 ${
+      isOnExamPage ? 'opacity-60' : 'hover:bg-white/10'
+    }`}>
       {/* Filename or input */}
       {isEditing ? (
         <input
@@ -136,11 +141,19 @@ useEffect(() => {
           onKeyDown={handleKeyDown}
           style={{ minWidth: 0 }}
         />
-      ) : (
-        <button
-          className="flex-1 text-left text-xs text-gray-100 truncate"
-          title={upload.filename}
-          onClick={() => onSelectExam(upload.id)}
+      ) : (        <button
+          className={`flex-1 text-left text-xs text-gray-100 truncate ${
+            isOnExamPage ? 'cursor-default opacity-60' : 'cursor-pointer hover:text-white'
+          }`}
+          title={isOnExamPage ? "Currently viewing this exam" : upload.filename}
+          onClick={() => {
+            if (isSelectingExam.current || isOnExamPage) return;  
+            isSelectingExam.current = true;
+            onSelectExam(upload.id)
+            setTimeout(() => {
+              isSelectingExam.current = false;  
+            }, 500); 
+          }}
         >
           {upload.filename} <span className="text-gray-400">({new Date(convertDbDateToDate(upload.createdAt)).toLocaleDateString()})</span>
         </button>
@@ -153,6 +166,7 @@ useEffect(() => {
             ? "text-green-400 hover:text-green-300" 
             : "text-gray-400 hover:text-blue-400"
         }`}
+        style={{ cursor: 'pointer' }}
         title={isEditing ? "Save changes" : "Edit name"}
         onClick={handleEditButtonClick}
         tabIndex={0}
@@ -169,6 +183,7 @@ useEffect(() => {
         onClick={handleDelete}
         disabled={isDeleting.current}
         tabIndex={0}
+        style={{ cursor: 'pointer' }}
         aria-label="Archive chat"
       >
         <MdDelete/>
@@ -181,6 +196,7 @@ function UploadHistory({ onSelectExam, onAnalyzeNewExam }: { onSelectExam: (exam
   const { data: session, status } = useSession();
   const [uploads, setUploads] = useState<any[]>([]);
   const [loading, setLoading] = useState(status === "loading");
+  const pathname = usePathname();
 
   
   useEffect(() => {
@@ -217,7 +233,7 @@ function UploadHistory({ onSelectExam, onAnalyzeNewExam }: { onSelectExam: (exam
     <div className="w-full mt-4">
       <div className="flex items-center justify-between mb-2 pl-2">
         <div className="text-xs text-gray-200 font-semibold">Your Uploads</div>
-        <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-xs font-semibold" onClick={onAnalyzeNewExam}>
+        <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-xs font-semibold" style={{ cursor: 'pointer' }} onClick={onAnalyzeNewExam}>
           + Analyze New Exam
         </Button>
       </div>
@@ -230,12 +246,13 @@ function UploadHistory({ onSelectExam, onAnalyzeNewExam }: { onSelectExam: (exam
           <>
             {recent.length > 0 && (
               <>
-                <div className="text-[11px] text-gray-400 font-semibold px-2 mt-1 mb-1">Recent</div>
+                <div className="text-[11px] text-gray-400 font-semibold px-2 mt-1 mb-1">Recent</div>                
                 {recent.map(upload => (
                   <UploadRow
                     key={upload.id}
                     upload={upload}
                     onSelectExam={onSelectExam}
+                    currentPath={pathname || ''}
                   />
                 ))}
               </>
@@ -245,12 +262,13 @@ function UploadHistory({ onSelectExam, onAnalyzeNewExam }: { onSelectExam: (exam
             )}
             {older.length > 0 && (
               <>
-                <div className="text-[11px] text-gray-400 font-semibold px-2 mt-1 mb-1">Older than a week</div>
+                <div className="text-[11px] text-gray-400 font-semibold px-2 mt-1 mb-1">Older than a week</div>               
                 {older.map(upload => (
                   <UploadRow
                     key={upload.id}
                     upload={upload}
                     onSelectExam={onSelectExam}
+                    currentPath={pathname || ''}
                   />
                 ))}
               </>
@@ -286,7 +304,7 @@ export default function Navbar() {
     <nav className="flex flex-col items-center pt-8 pb-4 px-2 w-full h-full bg-gradient-to-b from-[#232946] via-[#3b4371] to-[#4f5fa3]">
       <div className="flex flex-col items-center w-full mb-8">
         {/* Logo and app name at the top, horizontally aligned and top-aligned, centered as a group */}
-        <div className="flex flex-row items-center gap-2 justify-center w-full">
+        <div className="flex flex-row items-center gap-2 justify-center w-full" onClick={() => router.push('/')} style={{ cursor: 'pointer' }}>
           <div className="flex items-center justify-center">
             <svg width="32" height="32" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect x="2" y="2" width="24" height="24" rx="7" fill="url(#paint0_linear_1_2)"/>
