@@ -6,6 +6,14 @@ import { NEXT_PUBLIC_USDC_MINT, getSimpleCryptoPaymentIDMemo } from "../utils"
 import { API } from "./api-service"
 
 
+
+export async function handleMBWayPayment(
+){
+  
+}
+
+
+
 export async function handleQRPayment(
     packID: string,
     userID: string,
@@ -20,7 +28,7 @@ export async function handleQRPayment(
     const usdcMint = new PublicKey(NEXT_PUBLIC_USDC_MINT)
     const amountUSD = packPrice
     const amountInLowestAmt = Math.round(amountUSD * 1_000_000)
-      const paymentID = await getSimpleCryptoPaymentIDMemo(userID, packID)
+    const paymentID = await getSimpleCryptoPaymentIDMemo(userID, packID)
     
     // Start polling for payment
     const startTime = Date.now()
@@ -82,9 +90,6 @@ export async function handleQRPayment(
                 ix.parsed === qrMemo
               )
             })
-           // console.log("Transaction memo:", tx.transaction.message.instructions)
-           // console.log("Has correct transfer:", hasCorrectTransfer)
-            console.log("Has correct memo:", hasCorrectMemo)
 
             // If both conditions are met, payment found
             if (hasCorrectTransfer && hasCorrectMemo) {
@@ -119,8 +124,6 @@ export async function handleQRPayment(
         setError(error instanceof Error ? error : new Error(String(error)))
       }
     }
-console.log("pooling here")
-    // Start polling after a short delay
     return setInterval(pollForPayment, POLL_INTERVAL)
 }
 

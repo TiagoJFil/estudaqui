@@ -199,7 +199,8 @@ function PaymentDetailsPanel({
   }
 
   const renderPaymentForm = () => {
-    switch (selectedId) {      case "crypto":
+    switch (selectedId) {     
+       case "crypto":
         return (
           <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">            {useQRCode ? (
               // QR Code Payment View
@@ -269,50 +270,58 @@ function PaymentDetailsPanel({
                   }
                 </button>
               </>
-            )}
-          </div>
+            )}          </div>
         )
         
-      case "visa":
-      case "mastercard":
+      case "card":
         return (
           <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-            <h4 className="font-semibold mb-6 text-2xl text-gray-800">Card Information</h4>
+            <h4 className="font-semibold mb-6 text-2xl text-gray-800">Card Payment</h4>
             <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <FormInput 
-                  label="Card Number" 
-                  placeholder="1234 5678 9012 3456" 
-                />
-                <div className="grid grid-cols-2 gap-4">
-                  <FormInput 
-                    label="Expiry Date" 
-                    placeholder="MM/YY" 
-                    gridSpan="half"
-                  />
-                  <FormInput 
-                    label="CVV" 
-                    placeholder="123" 
-                    gridSpan="half"
-                  />
+              <div className="text-center">
+                <p className="text-gray-600 text-lg mb-6">
+                  You will be redirected to our secure payment processor to complete your card payment.
+                </p>
+                <div className="flex justify-center mb-6">
+                  <div className="flex items-center gap-3 bg-gray-50 px-6 py-3 rounded-lg border">
+                    <img
+                      className="h-8 w-auto object-contain"
+                      src="https://js.stripe.com/v3/fingerprinted/img/visa-fb36094822f73d7bc581f6c0bad1c201.svg"
+                      alt="Visa"
+                    />
+                    <img
+                      className="h-8 w-auto object-contain"
+                      src="https://js.stripe.com/v3/fingerprinted/img/mastercard-86e9a2b929496a34918767093c470935.svg"
+                      alt="Mastercard"
+                    />
+                    <img
+                      className="h-8 w-auto object-contain"
+                      src="https://js.stripe.com/v3/fingerprinted/img/amex-b933c9009eeaf8cfd07e789c549b8c57.svg"
+                      alt="American Express"
+                    />
+                    <span className="text-sm text-gray-500 ml-2">& more</span>
+                  </div>
                 </div>
+                <button
+                  className="w-full px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-lg transition-colors shadow-md"
+                  onClick={() => {
+                    // This will be handled by the main payment confirmation
+                    console.log("Continue to Stripe")
+                  }}
+                >
+                  Continue to Stripe
+                </button>
               </div>
               
-              <FormInput 
-                label="Cardholder Name" 
-                placeholder="John Doe" 
+              <InfoPanel 
+                icon={() => (
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                  </svg>
+                )}
+                title="Secure Payment"
+                description="Your payment information is encrypted and processed securely. We never store your card details on our servers."
               />
-              
-              <div className="flex items-center gap-3 pt-2">
-                <input 
-                  type="checkbox" 
-                  id="save-card"
-                  className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
-                />
-                <label htmlFor="save-card" className="text-gray-700 font-medium">
-                  Save this card for future payments
-                </label>
-              </div>
             </div>
           </div>
         )
@@ -480,16 +489,9 @@ const router = useRouter()
     alert("An error occurred while processing your payment. Please try again.")
     setIsProcessing(false)
   }
-
   const handleConfirmPayment = async () => {
     switch (selectedPayment) {
-      case "visa":
-        // Handle card payment (not implemented)
-        console.log("Proceeding with card payment for", selectedPayment)
-        alert("This payment method is not yet implemented")
-        onClose()
-        break
-      case "mastercard":
+      case "card":
         // Handle card payment (not implemented)
         console.log("Proceeding with card payment for", selectedPayment)
         alert("This payment method is not yet implemented")
@@ -536,8 +538,7 @@ const paymentFlowStartedRef = React.useRef(false);
 
   React.useEffect(() => {
     const handlePaymentCheck = async () => {
-      if(useQRCode && orderID && !checkerTimeoutRef.current && isOpen && !paymentFlowStartedRef.current) { 
-        console.log("Using QR code payment flow")
+      if(useQRCode && orderID && !checkerTimeoutRef.current && isOpen && !paymentFlowStartedRef.current && selectedPayment === "crypto") { 
       paymentFlowStartedRef.current = true;
           
         const timeout = await handleQRPayment(
@@ -562,11 +563,10 @@ const paymentFlowStartedRef = React.useRef(false);
         checkerTimeoutRef.current = null
       }
     };
-  }, [useQRCode,orderID,isOpen])
+  }, [useQRCode,orderID,isOpen,selectedPayment])
 
   React.useEffect(() => {
     if (!isOpen && checkerTimeoutRef.current) {
-      console.log("Modal closed, clearing timeout for QR code payment");
       clearInterval(checkerTimeoutRef.current);
       checkerTimeoutRef.current = null; 
     paymentFlowStartedRef.current = false;

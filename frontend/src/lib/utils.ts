@@ -52,7 +52,7 @@ export async function getQRCryptoPaymentIDMemo(userID:string, packID:string,orde
     return (await hashAndEncodeBase58(`${userID}-${packID}`)) + ";" + orderID;
 }
 
-export const MAX_FILE_SIZE_MB = 10;
+export const MAX_FILE_SIZE_MB = 20;
 
 export const VALID_FILE_TYPES = {
     'application/pdf': ['.pdf'],
