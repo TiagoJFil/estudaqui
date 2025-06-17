@@ -1,14 +1,13 @@
-
 //get necessary user data
 
 import { NextResponse } from "next/server";
 import { getUserIdentifierServerside } from "@/lib/utils";
-import { getUser } from "@/lib/data/data-service";
+import { UserService } from "@/lib/backend/data/data-service";
 
 export async function GET() {
   try {
     const userID = await getUserIdentifierServerside();
-    const userInfo = await getUser(userID);
+    const userInfo = await UserService.getUser(userID);
 
     if (!userInfo) {
       return NextResponse.json(

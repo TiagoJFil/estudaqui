@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import TwitterProvider from "next-auth/providers/twitter";
-import { createOrGetAccount } from "@/lib/data/data-service";
+import { UserService } from "@/lib/backend/data/data-service";
 
 export default NextAuth({
   providers: [
@@ -31,7 +31,7 @@ export default NextAuth({
       }
 
 
-      const userAccount = await createOrGetAccount(mail);
+      const userAccount = await UserService.createOrGetAccount(mail);
       if (userAccount) {
         return true; // Allow sign-in
       } else {

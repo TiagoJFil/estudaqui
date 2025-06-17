@@ -1,6 +1,6 @@
 "use client"
 
-import {PackInfo} from "@/lib/data/data-interfaces";
+import {PackInfo} from "@/lib/backend/data/data-interfaces";
 
 //export packinfo as PackType
 export type PackType = PackInfo 
