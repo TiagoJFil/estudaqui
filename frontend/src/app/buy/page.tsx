@@ -20,10 +20,9 @@ const BuyPage = () => {
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const { data: session, status } = useSession()
 
-
   // Launch checkout modal
   const openCheckout = (pack: PackType) => {
-    if (status === 'loading') return // Prevent action when session is loading
+    if (status === 'loading' || !session) return // Prevent action when session is loading or no session
     setSelectedPack(pack)
     setCheckoutOpen(true)
   }
@@ -37,13 +36,17 @@ const BuyPage = () => {
               key={pack.name} 
               pack={pack as any} 
               onBuyClick={() => openCheckout(pack)}
-              disabled={status === 'loading'}
+              disabled={status === 'loading' || !session}
+              isLoading={status === 'loading'}
+              hasSession={!!session}
             />
           ) : (
             <SubscriptionPackCard 
               key={pack.name} 
               pack={pack as any}
-              disabled={status === 'loading'}
+              disabled={status === 'loading' || !session}
+              isLoading={status === 'loading'}
+              hasSession={!!session}
             />
           )
         )}
