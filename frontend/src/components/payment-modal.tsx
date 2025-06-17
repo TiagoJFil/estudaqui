@@ -173,10 +173,11 @@ function PaymentDetailsPanel({
   pack,
   userID,
   getOrderID,
-  timerTIMEOUT
+  timerTIMEOUT,
+  onConfirm
   
    }: { useQRCode: boolean; setUseQRCode: (value: boolean) => void;
-     selectedId: string; pack : PackType, userID: string,timerTIMEOUT: number,
+     selectedId: string; pack : PackType, userID: string,timerTIMEOUT: number,onConfirm: () => void,
       getOrderID: () => string }) {
 
   const price = pack!.priceUSD
@@ -305,8 +306,7 @@ function PaymentDetailsPanel({
                 <button
                   className="w-full px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-lg transition-colors shadow-md"
                   onClick={() => {
-                    // This will be handled by the main payment confirmation
-                    console.log("Continue to Stripe")
+                    onConfirm()
                   }}
                 >
                   Continue to Stripe
@@ -492,10 +492,12 @@ const router = useRouter()
   const handleConfirmPayment = async () => {
     switch (selectedPayment) {
       case "card":
-        // Handle card payment (not implemented)
-        console.log("Proceeding with card payment for", selectedPayment)
-        alert("This payment method is not yet implemented")
-        onClose()
+        const userIDBase64 = btoa(session!.user!.email!)
+        const urlSafeBase64 = userIDBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        const stripeID = pack.stripeID
+
+        window.location.href = `https://buy.stripe.com/${stripeID}?client_reference_id=${urlSafeBase64}`;
+        setIsProcessing(true)
         break
       case "mbway":
         // Handle MB Way payment (not implemented)
@@ -637,6 +639,7 @@ const paymentFlowStartedRef = React.useRef(false);
       userID={session!.user!.email!}
       getOrderID={generateOrderID}
       timerTIMEOUT={TIMEOUT}
+      onConfirm={handleConfirmPayment}
     />
   )}
 </div>            <PaymentSummary 

@@ -30,6 +30,7 @@ export interface PackInfo {
     subscriptionPeriod?: "monthly" | "yearly"; // Optional for packs that are not subscriptions
     extraCredits?: number; 
     active: boolean;
+    stripeID: string;
     imageUrl?: string; // Optional
 }
 

@@ -1,15 +1,22 @@
 import { headers } from "next/headers"
 import Stripe from "stripe"
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2023-10-16",
-})
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
 
+const payments = {
+  "plink_1RYy5UCls50jHir3ESdel7xA" : "standard"
+}
+
+
 export async function POST(req: Request) {
   const body = await req.text()
-  const signature = headers().get("stripe-signature")
+  console.log(body)
+  if (!body) {
+    return new Response("No body found", { status: 400 })
+  }
+  const signature = req.headers.get("stripe-signature")
 
   if (!signature) {
     return new Response("No signature found", { status: 400 })
@@ -17,14 +24,25 @@ export async function POST(req: Request) {
 
   try {
     const event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
-    console.log(event)
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session
+        console.log("session",session)
+        const clientReferenceId = session.client_reference_id!
+        const decodedClientReferenceId = Buffer.from(clientReferenceId, 'base64').toString('utf-8')
+        console.log("Decoded client reference ID:", decodedClientReferenceId)
+        const payment_link = session.payment_link
+        if( !payment_link) {
+          console.error("Payment link not found in session:", session.id)
+          return new Response("Payment link not found", { status: 400 })
+        }
+
+        const paymentType = payments.plink_1RYy5UCls50jHir3ESdel7xA
+
+        console.log("Payment link:", paymentType)
 
         // Handle successful payment
         console.log("Payment successful for session:", session.id)
-        console.log("Mode:", session.mode) // 'payment' for one-time, 'subscription' for recurring
 
         // Simulate sending an order confirmation email
         console.log("Sending confirmation email to:", session.customer_details?.email)
