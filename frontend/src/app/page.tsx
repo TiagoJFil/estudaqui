@@ -3,7 +3,7 @@
 import { useSession, signIn } from "next-auth/react";
 import { AuthDropDown } from "@/components/auth-drop-down";
 import {  useState } from "react"
-import { Upload } from "lucide-react"
+import { Upload, Loader2, CheckCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import FileUpload from "@/components/file-upload"
 import { useUserContext } from "@/context/user-context"
@@ -18,6 +18,8 @@ export default function Home() {
     const [output, setOutput] = useState("");
     const { credits, setCredits } = useUserContext();
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
     const [showFileUploadOverlay, setShowFileUploadOverlay] = useState(false);
 
   // Function to append files preventing duplicates based on name, size, and lastModified
@@ -50,19 +52,26 @@ export default function Home() {
             alert("No files uploaded")
             return
         }
+        setIsProcessing(true);
         try {
             const examJson = await API.uploadFiles(uploadedFiles);
             if (!examJson || Object.keys(examJson).length === 0) {
                 alert("No exam data found in the uploaded files")
+                setIsProcessing(false);
                 return
             }
             setOutput(JSON.stringify(examJson, null, 2));
             setCredits(credits - 1);
             localStorage.setItem("examData", JSON.stringify(examJson));
-            router.push("/exam/" + examJson.examId);
-        } catch (error) {
+            setIsSuccess(true);
+            // Redirect after brief confirmation
+            setTimeout(() => {
+                router.push("/exam/" + examJson.examId);
+            }, 2000);
+         } catch (error) {
             alert("Failed to process request")
-        }
+            setIsProcessing(false);
+         }
     }
 
     const onFileRemove = (index: number) => {
@@ -104,13 +113,27 @@ export default function Home() {
                                     size="lg"
                                     className={cn(
                                         "bg-teal-500 hover:bg-teal-600 text-white font-semibold px-6 py-2 rounded-lg shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed",
-                                        uploadedFiles.length === 0 && "opacity-60 cursor-not-allowed"
+                                        (uploadedFiles.length === 0 || isProcessing || isSuccess) && "opacity-60 cursor-not-allowed"
                                     )}
-                                    disabled={uploadedFiles.length === 0}
+                                    disabled={uploadedFiles.length === 0 || isProcessing || isSuccess}
                                     aria-label="Process uploaded files"
                                 >
-                                    <Upload className="h-5 w-5 mr-2" />
-                                    Process PDF
+                                    {isSuccess ? (
+                                        <>
+                                            <CheckCircle className="h-5 w-5 mr-2 text-green-100 animate-pulse" />
+                                            Published! Redirecting...
+                                        </>
+                                    ) : isProcessing ? (
+                                        <>
+                                            <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                                            Processing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Upload className="h-5 w-5 mr-2" />
+                                            Process PDF
+                                        </>
+                                    )}
                                 </Button>
                             )}
                         </div>

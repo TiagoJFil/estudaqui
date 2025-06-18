@@ -50,6 +50,21 @@ function UploadRow({ upload, onSelectExam, currentPath }: { upload: any, onSelec
   const [isDeleted, setIsDeleted] = useState(false);
   const isDeleting = useRef(false);
   const isSelectingExam = useRef(false);
+  const router = useRouter();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isEditing && containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        handleEditSubmit();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isEditing, editValue]);
   
   // Check if we're currently on an exam page
   const isOnExamPage = currentPath === `/exam/${upload.id}`;
@@ -102,32 +117,21 @@ function UploadRow({ upload, onSelectExam, currentPath }: { upload: any, onSelec
       return;
     }
     try {
+      
       await API.deleteHistoryExam(upload.id);
-      console.log("Exam deleted successfully");
+      
     } catch (error) {
       console.error("Failed to delete exam:", error);
       alert("Failed to archive exam. Please try again later.");
       return;
-    }finally {
+    } finally {
       isDeleting.current = false;
     }
-
+    if (isOnExamPage) {
+        router.push('/');
+      }
     setIsDeleted(true);
   };
-
-  const containerRef = useRef<HTMLDivElement>(null);
-useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (isEditing && containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        handleEditSubmit();
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isEditing, editValue]);
 
   return (
     <div ref={containerRef} className={`flex items-center group rounded px-2 py-1 ${
@@ -200,7 +204,19 @@ function UploadHistory({ onSelectExam, onAnalyzeNewExam, isCollapsed }: { onSele
   const [loading, setLoading] = useState(status === "loading");
   const pathname = usePathname();
 
-  
+  // Fetch uploads helper
+  const fetchUploads = async () => {
+    setLoading(true);
+    try {
+      const data = await API.getUserUploads();
+      setUploads(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to fetch uploads:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     console.log("UploadHistory useEffect - Session Status:", status);
     if(status === "loading") {
@@ -211,19 +227,16 @@ function UploadHistory({ onSelectExam, onAnalyzeNewExam, isCollapsed }: { onSele
       setLoading(false);
       return;
     }
-    const getUploads = async () => {
-      try {
-        const data = await API.getUserUploads();
-        setUploads(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error("Failed to fetch uploads:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    getUploads();
+    // Fetch uploads when session is available
+    fetchUploads();
   }, [status]);
-
+  
+  // Refresh uploads when navigating to an exam page
+  useEffect(() => {
+    if (pathname && pathname.startsWith('/exam/')) {
+      fetchUploads();
+    }
+  }, [pathname]);
 
   // Filter and sort uploads by date
   const now = new Date();
@@ -358,23 +371,24 @@ export default function Navbar() {
               <path d="M9 14.5C9 12.0147 11.0147 10 13.5 10C15.9853 10 18 12.0147 18 14.5C18 16.9853 15.9853 19 13.5 19C11.0147 19 9 16.9853 9 14.5Z" fill="white"/>
               <defs>
                 <linearGradient id="paint0_linear_1_2" x1="2" y1="2" x2="26" y2="26" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#6366F1"/>
-                  <stop offset="1" stopColor="#A21CAF"/>
+                  <stop stopColor="#6366F1" />
+                  <stop offset="1" stopColor="#A21CAF" />
                 </linearGradient>
               </defs>
             </svg>
           </div>
           {!isCollapsed && (
-            <span className="text-3xl font-extrabold text-white tracking-tight font-sans select-none" style={{letterSpacing: '-0.03em'}}>Studaki</span>
+            <span className="text-3xl font-extrabold text-white tracking-tight font-sans select-none" style={{letterSpacing: '-0.03em'}}>
+              Studaki
+            </span>
           )}
         </div>
+        <UploadHistory
+          onSelectExam={(examId) => router.push(`/exam/${examId}`)}
+          onAnalyzeNewExam={() => router.push('/')}
+          isCollapsed={isCollapsed}
+        />
       </div>
-      
-      <UploadHistory 
-        onSelectExam={(examId) => router.push(`/exam/${examId}`)}
-        onAnalyzeNewExam={() => router.push('/')}
-        isCollapsed={isCollapsed}
-      />
     </nav>
-  );
+  )
 }
