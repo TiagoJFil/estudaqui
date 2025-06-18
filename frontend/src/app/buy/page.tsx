@@ -1,5 +1,5 @@
 import { PackService } from "@/lib/backend/data/data-service";
-import BuyClientPage from "@/pages/buy-client-page";
+import BuyClientPage from "@/components/pages/buy-client-page";
 
 
 export default async function BuyPage() {

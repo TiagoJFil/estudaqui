@@ -24,24 +24,6 @@ async function uploadFilesToServer(uploadedFiles: File[]): Promise<any> {
     }
 }
 
-async function getUserInfo(): Promise<any> {
-    try {
-        const response = await fetch("/api/v1/user", {
-            method: "GET",
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data; // Return user info
-    } catch (error) {
-        console.error("Error fetching user info:", error);
-        throw error;
-    }
-}
-
 async function getActivePacks(): Promise<any> {
     try {
         const response = await fetch("/api/v1/active-packs", {
@@ -172,9 +154,6 @@ export class API {
         return deleteHistoryExam(examId);
     }
 
-    static async getUserInfo(): Promise<any> {
-        return getUserInfo();
-    }
 
     static async getActivePacks(): Promise<any> {
         return getActivePacks();

@@ -24,7 +24,7 @@ export default function CreditsAndSignIn() {
       return;
     }
     console.log("Session data:", session);
-    setCredits(session.user.credits)
+    setCredits(session.user.credits!)
     setIsLoading(false);
   }, [status]);
 
