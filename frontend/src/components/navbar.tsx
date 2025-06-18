@@ -7,10 +7,12 @@ import { AuthDropDown } from "./auth-drop-down"
 import React, { use, useEffect, useRef, useState } from "react"
 import { API } from "@/lib/frontend/api-service"
 import { useUserContext } from "@/context/user-context"
+import { useSidebar } from "@/context/sidebar-context"
 import { useRouter, usePathname } from "next/navigation"
 import { Skeleton } from "@/components/ui/skeleton"
 import { convertDbDateToDate } from "@/lib/utils"
 import { MdDelete, MdModeEdit } from "react-icons/md";
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 function AppIcon () {
   return (
@@ -192,7 +194,7 @@ useEffect(() => {
   );
 }
 
-function UploadHistory({ onSelectExam, onAnalyzeNewExam }: { onSelectExam: (examId: string) => void, onAnalyzeNewExam: () => void }) {
+function UploadHistory({ onSelectExam, onAnalyzeNewExam, isCollapsed }: { onSelectExam: (examId: string) => void, onAnalyzeNewExam: () => void, isCollapsed?: boolean }) {
   const { data: session, status } = useSession();
   const [uploads, setUploads] = useState<any[]>([]);
   const [loading, setLoading] = useState(status === "loading");
@@ -231,51 +233,84 @@ function UploadHistory({ onSelectExam, onAnalyzeNewExam }: { onSelectExam: (exam
 
   return (
     <div className="w-full mt-4">
-      <div className="flex items-center justify-between mb-2 pl-2">
-        <div className="text-xs text-gray-200 font-semibold">Your Uploads</div>
-        <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-xs font-semibold" style={{ cursor: 'pointer' }} onClick={onAnalyzeNewExam}>
-          + Analyze New Exam
-        </Button>
-      </div>
-      <div className="flex flex-col gap-1 max-h-64 overflow-y-auto">
-        {loading ? (
-          <div className="text-xs text-gray-300 px-2">Loading...</div>
-        ) : uploads.length === 0 ? (
-          <div className="text-xs text-gray-300 px-2">No uploads yet.</div>
-        ) : (
-          <>
-            {recent.length > 0 && (
+      {!isCollapsed && (
+        <>
+          <div className="flex items-center justify-between mb-2 pl-2">
+            <div className="text-xs text-gray-200 font-semibold">Your Uploads</div>
+            <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-xs font-semibold" style={{ cursor: 'pointer' }} onClick={onAnalyzeNewExam}>
+              + Analyze New Exam
+            </Button>
+          </div>
+          <div className="flex flex-col gap-1 max-h-64 overflow-y-auto">
+            {loading ? (
+              <div className="text-xs text-gray-300 px-2">Loading...</div>
+            ) : uploads.length === 0 ? (
+              <div className="text-xs text-gray-300 px-2">No uploads yet.</div>
+            ) : (
               <>
-                <div className="text-[11px] text-gray-400 font-semibold px-2 mt-1 mb-1">Recent</div>                
-                {recent.map(upload => (
-                  <UploadRow
-                    key={upload.id}
-                    upload={upload}
-                    onSelectExam={onSelectExam}
-                    currentPath={pathname || ''}
-                  />
-                ))}
+                {recent.length > 0 && (
+                  <>
+                    <div className="text-[11px] text-gray-400 font-semibold px-2 mt-1 mb-1">Recent</div>                
+                    {recent.map(upload => (
+                      <UploadRow
+                        key={upload.id}
+                        upload={upload}
+                        onSelectExam={onSelectExam}
+                        currentPath={pathname || ''}
+                      />
+                    ))}
+                  </>
+                )}
+                {recent.length > 0 && older.length > 0 && (
+                  <div className="border-t border-gray-700 my-2" />
+                )}
+                {older.length > 0 && (
+                  <>
+                    <div className="text-[11px] text-gray-400 font-semibold px-2 mt-1 mb-1">Older than a week</div>               
+                    {older.map(upload => (
+                      <UploadRow
+                        key={upload.id}
+                        upload={upload}
+                        onSelectExam={onSelectExam}
+                        currentPath={pathname || ''}
+                      />
+                    ))}
+                  </>
+                )}
               </>
             )}
-            {recent.length > 0 && older.length > 0 && (
-              <div className="border-t border-gray-700 my-2" />
-            )}
-            {older.length > 0 && (
-              <>
-                <div className="text-[11px] text-gray-400 font-semibold px-2 mt-1 mb-1">Older than a week</div>               
-                {older.map(upload => (
-                  <UploadRow
-                    key={upload.id}
-                    upload={upload}
-                    onSelectExam={onSelectExam}
-                    currentPath={pathname || ''}
-                  />
-                ))}
-              </>
-            )}
-          </>
-        )}
-      </div>
+          </div>
+        </>
+      )}
+      
+      {isCollapsed && (
+        <div className="flex flex-col items-center gap-2">
+          {/* New Exam Button */}
+          <Button
+            onClick={onAnalyzeNewExam}
+            variant="ghost"
+            size="icon"
+            className="text-white hover:bg-white/10 w-10 h-10"
+            title="Analyze New Exam"
+          >
+            <span className="text-2xl">+</span>
+          </Button>
+          
+          {/* Recent files as icons */}
+          {uploads.slice(0, 5).map((upload, index) => (
+            <Button
+              key={upload.id}
+              onClick={() => onSelectExam(upload.id)}
+              variant="ghost"
+              size="icon"
+              className="text-white hover:bg-white/10 w-10 h-10"
+              title={upload.filename}
+            >
+              <span className="text-sm">📄</span>
+            </Button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -284,6 +319,7 @@ export default function Navbar() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(status === "loading")
+  const { isCollapsed, toggleCollapse } = useSidebar()
 
   useEffect(() => {
     console.log("Session Status:", status)
@@ -301,8 +337,19 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="flex flex-col items-center pt-8 pb-4 px-2 w-full h-full bg-gradient-to-b from-[#232946] via-[#3b4371] to-[#4f5fa3]">
-      <div className="flex flex-col items-center w-full mb-8">
+    <nav className="flex flex-col items-center pt-8 pb-4 px-2 w-full h-full bg-gradient-to-b from-[#232946] via-[#3b4371] to-[#4f5fa3] relative">
+      {/* Collapse/Expand Button - stays on the right when collapsed */}
+      <Button
+        onClick={toggleCollapse}
+        variant="ghost"
+        size="icon"
+        className="absolute top-4 right-4 text-white hover:bg-white/10 z-10 transition-all duration-500 ease-in-out"
+        title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+      >
+        {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+      </Button>
+
+      <div className="flex flex-col items-center w-full mb-8 mt-8">
         {/* Logo and app name at the top, horizontally aligned and top-aligned, centered as a group */}
         <div className="flex flex-row items-center gap-2 justify-center w-full" onClick={() => router.push('/')} style={{ cursor: 'pointer' }}>
           <div className="flex items-center justify-center">
@@ -317,12 +364,16 @@ export default function Navbar() {
               </defs>
             </svg>
           </div>
-          <span className="text-3xl font-extrabold text-white tracking-tight font-sans select-none" style={{letterSpacing: '-0.03em'}}>Studaki</span>
+          {!isCollapsed && (
+            <span className="text-3xl font-extrabold text-white tracking-tight font-sans select-none" style={{letterSpacing: '-0.03em'}}>Studaki</span>
+          )}
         </div>
       </div>
+      
       <UploadHistory 
         onSelectExam={(examId) => router.push(`/exam/${examId}`)}
         onAnalyzeNewExam={() => router.push('/')}
+        isCollapsed={isCollapsed}
       />
     </nav>
   );

@@ -1,5 +1,5 @@
 
-import { getExamById } from "@/lib/llm/exam-service";
+import { getExamById } from "@/lib/backend/llm/exam-service";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET /api/v1/exam/[examId]

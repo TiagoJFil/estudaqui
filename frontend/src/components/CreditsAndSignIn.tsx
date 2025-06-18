@@ -17,17 +17,15 @@ export default function CreditsAndSignIn() {
   const router = useRouter();
 
   useEffect(() => {
+    console.log("Session status:", status);
     if (status === "loading") return;
     if (!session || !session.user || !session.user.email) {
       setIsLoading(false);
       return;
     }
-    API.getUserInfo().then((userInfo) => {
-      if (userInfo && userInfo.credits !== undefined) {
-        setCredits(userInfo.credits);
-      }
-      setIsLoading(false);
-    }).catch(() => {});
+    console.log("Session data:", session);
+    setCredits(session.user.credits)
+    setIsLoading(false);
   }, [status]);
 
   return (

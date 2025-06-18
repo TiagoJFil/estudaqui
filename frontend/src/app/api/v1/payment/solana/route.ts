@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { getSimpleCryptoPaymentIDMemo, getUserIdentifierServerside, NEXT_PUBLIC_USDC_MINT } from '@/lib/utils'
-import { addCreditsToUser, registerPayment } from '@/lib/data/data-service'
+import { PackService, PackServiceI, UserService } from '@/lib/backend/data/data-service'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { getPackInfoById } from '@/lib/payments/pack-service'
 
 // Configuration via environment variables
 const RPC_ENDPOINT = process.env.NEXT_PUBLIC_SOLANA_RPC_ENDPOINT!
@@ -29,7 +28,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Transaction not found or failed' }, { status: 404 })
     }
 
-    const packInfo = await getPackInfoById(packID)
+    const packInfo = await PackService.getPackInfoById(packID)
     if (!packInfo) {
       return NextResponse.json({ error: 'Invalid pack ID' }, { status: 400 })
     }
@@ -69,7 +68,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Valid USDC transfer not detected' }, { status: 400 })
     }
 
-    await registerPayment({
+    await UserService.registerPayment({
       userID: user,
       packID,
       method: 'solana',
@@ -77,7 +76,7 @@ export async function POST(request: NextRequest) {
       transactionId: signature,
     })
 
-    await addCreditsToUser(user, packInfo.credits)
+    await UserService.addCredits(user, packInfo.credits)
 
     return NextResponse.json({ success: true })
   } catch (err: any) {

@@ -1,5 +1,5 @@
 // services/examService.ts
-import { addExamInfoToPDF, getPDFInfo, savePDF, addUserUpload } from "@/lib/data/data-service";
+import { FileService, UploadService } from "@/lib/backend/data/data-service";
 import pdfParse from "pdf-parse";
 import { hashTextSHA256 } from "@/lib/utils";
 import preprocessMathBlocks from "@/components/exam/preprocess-math-blocks";
@@ -29,14 +29,14 @@ export async function upload(pdfFile: File, userID: string): Promise<ExamJSON> {
 
   const rawText = await extractTextFromPDF(arrayBuffer);
   const pdfTextHash = await hashTextSHA256(rawText);
-  const savedPdfInfo = await savePDF(pdfFile, userID, pdfTextHash);
+  const savedPdfInfo = await FileService.savePDF(pdfFile, userID, pdfTextHash);
   if (!savedPdfInfo.examInfo) {
     const result = await llm.analyzeExam(rawText);
     savedPdfInfo.examInfo = result;
-    addExamInfoToPDF(pdfTextHash, result);
+    await FileService.addExamInfo(pdfTextHash, result);
   }
   // Track this upload for the user
-  await addUserUpload(userID, pdfTextHash, pdfFile.name);
+  await UploadService.addUserUpload(userID, pdfTextHash, pdfFile.name);
   return { questions: savedPdfInfo.examInfo.questions, examId: pdfTextHash } as ExamJSON;
 }
 
@@ -72,7 +72,7 @@ export async function getExamById(examId: string) {
     throw new Error("Exam ID cannot be empty");
   }
 
-  const pdfInfo = await getPDFInfo(examId);
+  const pdfInfo = await FileService.getPDFInfo(examId);
   if (pdfInfo && pdfInfo.examInfo) {
     return { questions: pdfInfo.examInfo.questions, examId: examId } as ExamJSON;
   }

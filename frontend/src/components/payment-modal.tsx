@@ -120,29 +120,37 @@ function CreditCardItem({ label }: { label: string }) {
   )
 }
 
-function PaymentOptionItem({ id, label, icon: Icon, selected, onSelect }: { 
+function PaymentOptionItem({ id, label, icon: Icon, selected, onSelect, discount = 0 }: { 
   id: string; 
   label: string; 
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>; 
   selected: boolean; 
   onSelect: (id: string) => void 
+  discount?: number;
 }) {
   return (
     <button
       onClick={() => onSelect(id)}
-      className={`w-full p-4 text-left rounded-lg border cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all ${
+      className={`relative w-full p-4 text-left rounded-lg border cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all ${
         selected ? "bg-purple-100 border-purple-600 shadow-sm" : "border-gray-300 hover:border-gray-400"
       }`}
     >
-      {id === "card" ? (
-        <div className="flex items-center gap-3">
-          <Icon className="w-6 h-6 flex-shrink-0" />
-          <CreditCardItem label={label} />
-        </div>      ) : (
+      
+     {id === "card" ? (
+       <div className="flex items-center gap-3">
+         <Icon className="w-6 h-6 flex-shrink-0" />
+         <CreditCardItem label={label} />
+       </div>      ) : (
         <div className="flex items-center gap-3">
           <Icon className="w-6 h-6" />
           <span className="font-medium">{label}</span>
         </div>
+      )}
+      {/* Discount badge */}
+      {discount > 0 && (
+        <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">
+          {Math.round(discount * 100)}% off
+        </span>
       )}
     </button>
   )
@@ -152,7 +160,7 @@ function PaymentOptionsList({ selectedId, onSelect }: { selectedId: string; onSe
   return (
     <div className="flex flex-col gap-4">
       <h3 className="font-semibold text-gray-800 mb-2 text-lg">Payment Methods</h3>
-      {paymentMethods.map(({ id, label, icon }) => (
+      {paymentMethods.map(({ id, label, icon, discount }) => (
         <PaymentOptionItem
           key={id}
           id={id}
@@ -160,6 +168,7 @@ function PaymentOptionsList({ selectedId, onSelect }: { selectedId: string; onSe
           icon={icon}
           selected={selectedId === id}
           onSelect={onSelect}
+          discount={discount}
         />
       ))}
 </div>
@@ -173,10 +182,11 @@ function PaymentDetailsPanel({
   pack,
   userID,
   getOrderID,
-  timerTIMEOUT
+  timerTIMEOUT,
+  onConfirm
   
    }: { useQRCode: boolean; setUseQRCode: (value: boolean) => void;
-     selectedId: string; pack : PackType, userID: string,timerTIMEOUT: number,
+     selectedId: string; pack : PackType, userID: string,timerTIMEOUT: number,onConfirm: () => void,
       getOrderID: () => string }) {
 
   const price = pack!.priceUSD
@@ -305,8 +315,7 @@ function PaymentDetailsPanel({
                 <button
                   className="w-full px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-lg transition-colors shadow-md"
                   onClick={() => {
-                    // This will be handled by the main payment confirmation
-                    console.log("Continue to Stripe")
+                    onConfirm()
                   }}
                 >
                   Continue to Stripe
@@ -378,11 +387,19 @@ function PaymentSummary({ selectedPayment, onConfirm, isProcessing = false, pric
         <>
         <h3 className="font-semibold mb-6 text-2xl text-gray-800">Payment Status</h3>
         <div className="space-y-4 mb-8">
-          <StatusBadge 
+          {
+            isCrypto ? (
+              <StatusBadge 
             label="Amount" 
             value={`${price} USDC`} 
             variant="success" 
+          />)
+           : <StatusBadge 
+            label="Amount" 
+            value={`${price} €`} 
+            variant="success" 
           />
+          }
           <StatusBadge 
             label="Status" 
             value={isProcessing ? "Processing..." : "Pending"} 
@@ -492,10 +509,12 @@ const router = useRouter()
   const handleConfirmPayment = async () => {
     switch (selectedPayment) {
       case "card":
-        // Handle card payment (not implemented)
-        console.log("Proceeding with card payment for", selectedPayment)
-        alert("This payment method is not yet implemented")
-        onClose()
+        const userIDBase64 = btoa(session!.user!.email!)
+        const urlSafeBase64 = userIDBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        const stripeLinkID = pack.stripeLinkID
+
+        window.location.href = `https://buy.stripe.com/${stripeLinkID}?client_reference_id=${urlSafeBase64}`;
+        setIsProcessing(true)
         break
       case "mbway":
         // Handle MB Way payment (not implemented)
@@ -637,6 +656,7 @@ const paymentFlowStartedRef = React.useRef(false);
       userID={session!.user!.email!}
       getOrderID={generateOrderID}
       timerTIMEOUT={TIMEOUT}
+      onConfirm={handleConfirmPayment}
     />
   )}
 </div>            <PaymentSummary 

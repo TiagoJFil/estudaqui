@@ -2,6 +2,7 @@ import { ExamJSON } from "../llm/types";
 
 export interface UserI {
     credits: number;
+    name?: string | null
 }
 
 export interface PDFInfo {
@@ -30,6 +31,8 @@ export interface PackInfo {
     subscriptionPeriod?: "monthly" | "yearly"; // Optional for packs that are not subscriptions
     extraCredits?: number; 
     active: boolean;
+    stripeID: string;
+    stripeLinkID: string;
     imageUrl?: string; // Optional
 }
 
