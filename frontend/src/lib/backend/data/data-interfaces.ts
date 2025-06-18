@@ -2,6 +2,7 @@ import { ExamJSON } from "../llm/types";
 
 export interface UserI {
     credits: number;
+    name?: string | null
 }
 
 export interface PDFInfo {

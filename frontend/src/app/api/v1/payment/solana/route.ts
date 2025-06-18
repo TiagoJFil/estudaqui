@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { getSimpleCryptoPaymentIDMemo, getUserIdentifierServerside, NEXT_PUBLIC_USDC_MINT } from '@/lib/utils'
-import { PackService, UserService } from '@/lib/backend/data/data-service'
+import { packService, PackService, UserService } from '@/lib/backend/data/data-service'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 
 // Configuration via environment variables
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Transaction not found or failed' }, { status: 404 })
     }
 
-    const packInfo = await PackService.getPackInfoById(packID)
+    const packInfo = await packService.getPackInfoById(packID)
     if (!packInfo) {
       return NextResponse.json({ error: 'Invalid pack ID' }, { status: 400 })
     }

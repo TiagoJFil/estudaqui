@@ -1,8 +1,11 @@
 import NextAuth from "next-auth";
+import type { NextAuthOptions, Session, User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import TwitterProvider from "next-auth/providers/twitter";
 import { UserService } from "@/lib/backend/data/data-service";
+
+// Extend the Session and User types to include credits
 
 export default NextAuth({
   providers: [
@@ -21,23 +24,37 @@ export default NextAuth({
     }),
   ],  callbacks: {
     async signIn({ user, account }) {
-      console.log("User signing in:", user);
-      //if twitter use name
-      console.log("Account info:", account);
-      
-      let mail = user.email;
-      if (user.email === null || user.email === undefined && user.name !== null && account?.provider === "twitter") {
-        mail = user.name + "@twitter.com";
+      let uid = user.email;
+      if ((user.email === null || user.email === undefined) && user.name !== null && account?.provider === "twitter") {
+        uid = user.id + "@twitter.com";
+        user.email = uid; 
       }
-
-
-      const userAccount = await UserService.createOrGetAccount(mail);
+      if (!uid) {
+        console.error("No user identifier found for sign-in");
+        return false; // Deny sign-in if no identifier is available
+      }
+      const userAccount = await UserService.createOrGetAccount(uid as string,user.name);
       if (userAccount) {
         return true; // Allow sign-in
       } else {
         return false; // Deny sign-in
       }
     },
+    async session({ session, user, token }) {
+      // Attach user information to the session
+      let userID = session?.user?.email
+      if (!userID) {
+        console.error("No user identifier found in session: ", session);
+        return session; //(should never happen) Return session without user info if no identifier is available
+      }
+
+        const userInfo = await UserService.getUser(userID);
+        if (userInfo && session?.user) {
+          session.user.credits = userInfo.credits;
+        }
+      
+      return session;
+    }
   },
   pages: {
     signIn: "/", 

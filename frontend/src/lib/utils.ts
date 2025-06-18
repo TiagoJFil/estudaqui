@@ -4,19 +4,10 @@ import { getServerSession } from "next-auth";
 import bs58 from "bs58"
 import { PublicKey, Transaction } from "@solana/web3.js";
 
-// Extend Transaction type to include addMemo method
-declare module "@solana/web3.js" {
-  interface Transaction {
-    addMemo(memo: string): this;
-  }
-}
-
-
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-
 
 export async function hashTextSHA256(text: string): Promise<string> {
   const encoder = new TextEncoder();

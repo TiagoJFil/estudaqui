@@ -5,15 +5,16 @@ import { ExamJSON } from "../llm/types";
 
 export class UserService {
 
-  static async createOrGetAccount(email: string | null | undefined): Promise<UserI | void> {
-    if (!email) {
-      console.error("No email provided for user account creation");
+  static async createOrGetAccount(id: string, name: string | null | undefined): Promise<UserI | void> {
+    if (!id) {
+      console.error("No ID provided for user account creation");
       return;
     }
-    const userRef = db.collection(COLLECTIONS.USERS).doc(email);
+    const userRef = db.collection(COLLECTIONS.USERS).doc(id);
     const userSnapshot = await userRef.get();
     if (!userSnapshot.exists) {
       const defaultUser: UserI = getDefaultUserInfo();
+      defaultUser.name = name;
       await userRef.set(defaultUser);
       return defaultUser;
     }
@@ -124,29 +125,41 @@ export class HistoryService {
 }
 
 export class PackService {
-  
-  static async getAllPacks(): Promise<PackInfo[]> {
+  private static instance: PackService;
+  private cache: PackInfo[] | null = null;
+
+  private constructor() {}
+
+  public static getInstance(): PackService {
+    if (!PackService.instance) {
+      PackService.instance = new PackService();
+    }
+    return PackService.instance;
+  }
+
+  public async getAllPacks(): Promise<PackInfo[]> {
+    if (this.cache) {
+      return this.cache;
+    }
     const snapshot = await db.collection(COLLECTIONS.PACKS).where("active", "==", true).get();
     const packs: PackInfo[] = [];
     snapshot.forEach(doc => {
-      const data = doc.data() as PackInfo;
-      packs.push(data);
+      packs.push(doc.data() as PackInfo);
     });
+    this.cache = packs;
     return packs;
   }
 
-  static async getPackInfoById(packId: string): Promise<PackInfo | null> {
-    const packRef = db.collection(COLLECTIONS.PACKS).doc(packId);
-    const doc = await packRef.get();
-    if (!doc.exists) {
-      console.warn(`Pack with ID ${packId} not found.`);
+  public async getPackInfoById(packId: string): Promise<PackInfo | null> {
+    const packs = await this.getAllPacks();
+    const pack = packs.find(p => p.id === packId);
+    if (!pack) {
+      console.warn(`Pack with ID ${packId} not found`);
       return null;
     }
-    const packData = doc.data() as PackInfo;
-    if(packData?.active === false) {
-      console.warn(`Pack with ID ${packId} is not active.`);
-      return null;
-    }
-    return packData
+    return pack;
   }
 }
+
+// export a singleton instance
+export const packService = PackService.getInstance();
