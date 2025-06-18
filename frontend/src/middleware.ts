@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
 // Allow all /api/auth/* requests without auth
-const authBypassPrefixes = ['/api/auth/', "/api/v1/webhook"];
+const authBypassPrefixes = ['/api/auth/', "/api/v1/payment/stripe/webhook"];
 const protectedApiPrefixes = ['/api/'];
 
 export async function middleware(req: NextRequest) {

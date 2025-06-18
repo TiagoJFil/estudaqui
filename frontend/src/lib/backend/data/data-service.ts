@@ -124,17 +124,17 @@ export class HistoryService {
   }
 }
 
-export class PackService {
-  private static instance: PackService;
+export class PackServiceI {
+  private static instance: PackServiceI;
   private cache: PackInfo[] | null = null;
 
   private constructor() {}
 
-  public static getInstance(): PackService {
-    if (!PackService.instance) {
-      PackService.instance = new PackService();
+  public static getInstance(): PackServiceI {
+    if (!PackServiceI.instance) {
+      PackServiceI.instance = new PackServiceI();
     }
-    return PackService.instance;
+    return PackServiceI.instance;
   }
 
   public async getAllPacks(): Promise<PackInfo[]> {
@@ -162,4 +162,4 @@ export class PackService {
 }
 
 // export a singleton instance
-export const packService = PackService.getInstance();
+export const PackService = PackServiceI.getInstance();

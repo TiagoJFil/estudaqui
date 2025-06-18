@@ -2,6 +2,10 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+Starting the stripe webhook (todo on server)
+stripe listen --forward-to localhost:3000/api/v1/payment/stripe/webhook
+
+
 First, run the development server:
 
 ```bash

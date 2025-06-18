@@ -32,6 +32,7 @@ export interface PackInfo {
     extraCredits?: number; 
     active: boolean;
     stripeID: string;
+    stripeLinkID: string;
     imageUrl?: string; // Optional
 }
 

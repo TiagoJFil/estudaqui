@@ -1,18 +1,14 @@
+import { PackService, UserService } from "@/lib/backend/data/data-service"
 import { headers } from "next/headers"
 import Stripe from "stripe"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
-
-const payments = {
-  "plink_1RYy5UCls50jHir3ESdel7xA" : "standard"
-}
-
+const payments = await PackService.getAllPacks()
 
 export async function POST(req: Request) {
   const body = await req.text()
-  console.log(body)
   if (!body) {
     return new Response("No body found", { status: 400 })
   }
@@ -27,19 +23,22 @@ export async function POST(req: Request) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session
-        console.log("session",session)
         const clientReferenceId = session.client_reference_id!
         const decodedClientReferenceId = Buffer.from(clientReferenceId, 'base64').toString('utf-8')
         console.log("Decoded client reference ID:", decodedClientReferenceId)
-        const payment_link = session.payment_link
-        if( !payment_link) {
+        const paymentStripeID = session.payment_link
+        if( !paymentStripeID) {
           console.error("Payment link not found in session:", session.id)
           return new Response("Payment link not found", { status: 400 })
         }
 
-        const paymentType = payments.plink_1RYy5UCls50jHir3ESdel7xA
+        const packBought = payments.find(pack => pack.stripeID === paymentStripeID)
 
-        console.log("Payment link:", paymentType)
+        console.log("Payment link:", packBought)
+        if (!packBought) {
+          console.error("Pack not found for payment link:", paymentStripeID)
+          return new Response("Pack not found", { status: 400 })
+        }
 
         // Handle successful payment
         console.log("Payment successful for session:", session.id)
@@ -47,19 +46,23 @@ export async function POST(req: Request) {
         // Simulate sending an order confirmation email
         console.log("Sending confirmation email to:", session.customer_details?.email)
 
-        // Here you would typically:
-        // 1. Update order status in your database
-        // 2. Send confirmation email
-        // 3. Trigger order fulfillment
-        // 4. Update inventory
+        await UserService.registerPayment({
+          method: "card",
+          userID: decodedClientReferenceId,
+          packID: packBought?.id || "",
+          timestamp: new Date(),
+        })
+        let boughtCredits = packBought!.credits 
+        if(packBought?.extraCredits) {
+          boughtCredits = (packBought.credits || 0) + packBought?.extraCredits
+        }
+        await UserService.addCredits(decodedClientReferenceId, boughtCredits )
 
         break
       }
 
       case "invoice.paid": {
         const invoice = event.data.object as Stripe.Invoice
-        console.log(invoice)
-        console.log("Subscription invoice paid:", invoice.id)
 
         // Handle subscription payment success
         // 1. Update subscription status in your database
@@ -71,7 +74,6 @@ export async function POST(req: Request) {
 
         case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice
-        console.log("Subscription payment failed:", invoice.id)
 
         // Handle subscription payment failure
         // 1. Notify customer
@@ -82,7 +84,6 @@ export async function POST(req: Request) {
 
       case "customer.subscription.deleted": {
         const subscription = event.data.object as Stripe.Subscription
-        console.log("Subscription canceled:", subscription.id)
 
         // Handle subscription cancellation
         // 1. Update user access

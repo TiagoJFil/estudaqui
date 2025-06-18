@@ -8,8 +8,6 @@ import { useSession } from 'next-auth/react'
 import { PackType } from '@/lib/frontend/types'
 
 
-
-
 export const BuyClientPage = (components: { packs: PackType[]}) => {
   const [selectedPack, setSelectedPack] = useState<PackType | null>(null)
   const [checkoutOpen, setCheckoutOpen] = useState(false)
