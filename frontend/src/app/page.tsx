@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation"
 import FileDragDropOverlay from "@/components/file-drag-drop-overlay"
 import { API } from "@/lib/frontend/api-service"
 import { Button } from "@/components/ui/button"
+import UploadProgressOverlay from "@/components/upload-progress-overlay"
 
 export default function Home() {
     const router = useRouter();
@@ -19,6 +20,9 @@ export default function Home() {
     const { credits, setCredits } = useUserContext();
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
     const [showFileUploadOverlay, setShowFileUploadOverlay] = useState(false);
+    const [processing, setProcessing] = useState(false);
+    const [processingMessage, setProcessingMessage] = useState("Uploading exam...");
+    const [processingSuccess, setProcessingSuccess] = useState(false);
 
   // Function to append files preventing duplicates based on name, size, and lastModified
   const appendFiles = (newFiles: File[]) => {
@@ -51,16 +55,25 @@ export default function Home() {
             return
         }
         try {
+            setProcessingMessage("Uploading exam...");
+            setProcessingSuccess(false);
+            setProcessing(true);
             const examJson = await API.uploadFiles(uploadedFiles);
             if (!examJson || Object.keys(examJson).length === 0) {
+                setProcessing(false);
                 alert("No exam data found in the uploaded files")
                 return
             }
             setOutput(JSON.stringify(examJson, null, 2));
             setCredits(credits - 1);
-            localStorage.setItem("examData", JSON.stringify(examJson));
-            router.push("/exam/" + examJson.examId);
+            localStorage.setItem(`examData_${examJson.examId}`, JSON.stringify(examJson));
+            setProcessingMessage("Exam published! Redirecting...");
+            setProcessingSuccess(true);
+            setTimeout(() => {
+                router.push("/exam/" + examJson.examId);
+            }, 1200);
         } catch (error) {
+            setProcessing(false);
             alert("Failed to process request")
         }
     }
@@ -78,6 +91,7 @@ export default function Home() {
 
     return (
         <div className="min-h-auto flex flex-col">
+            <UploadProgressOverlay open={processing} message={processingMessage} success={processingSuccess} />
             <FileDragDropOverlay showOverlay={showFileUploadOverlay} setShowOverlay={setShowFileUploadOverlay} onFileDrop={handleFileDrop} />
             <main className="container mx-auto px-4 py-12 max-w-3xl w-full flex-1">
                 <div className="space-y-8 w-full">
