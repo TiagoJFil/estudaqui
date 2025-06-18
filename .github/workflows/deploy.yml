@@ -13,6 +13,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+          
+      - name: Install dependencies 
+        run: |
+          cd frontend
+          bun install
+
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
@@ -22,12 +33,10 @@ jobs:
           script: |
             cd /home/tiago/projects/services/estudaqui
             ./install-and-restart.sh
-
-#todo check if server is up
       - name: Check server status
         run: |
           sleep 5
-          if ! curl -s --head http://37.27.208.65:3000 | grep "200 OK" > /dev/null; then
+          if ! curl -s --head https://studaki.com | grep "200 OK" > /dev/null; then
             echo "Server is not running!"
             exit 1
           else
