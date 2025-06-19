@@ -1,0 +1,5 @@
+[install]
+ignoreDependencyWarnings = true
+
+[run]
+ignore_deprecation_warnings = true

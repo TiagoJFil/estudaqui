@@ -4,7 +4,7 @@ import { useCallback } from "react"
 import { useDropzone } from "react-dropzone"
 import { Upload, Trash2, FileText, Image, Film, Music } from "lucide-react"
 import { Card } from "@/components/ui/card"
-import { MAX_FILE_SIZE_MB, VALID_FILE_TYPES } from "@/lib/utils"
+import { VALID_FILE_TYPES, MAX_FILE_SIZE_MB } from "@/lib/contants"
 
 type FileUploadProps = {
   uploadedFiles: File[]
@@ -15,10 +15,12 @@ type FileUploadProps = {
 
 export default function FileUpload(
   { uploadedFiles: files, onFilesUploaded: setFiles,onFileRemove , showOverlay }: FileUploadProps
-) {
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    setFiles([...files, ...acceptedFiles])
-  }, [setFiles, files])
+) {  const onDrop = useCallback((acceptedFiles: File[]) => {
+    if (acceptedFiles.length > 0) {
+      // Only use the first file from acceptedFiles
+      setFiles([acceptedFiles[0]])
+    }
+  }, [setFiles])
 
   const removeFile = useCallback((index: number) => {
     console.log(`Removing file at index ${index}:`, files[index])
@@ -32,21 +34,22 @@ export default function FileUpload(
     if (fileType.startsWith('audio/')) return Music
     return FileText
   }
-
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes'
-    const k = 1024
-    const sizes = ['Bytes', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
+  
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: VALID_FILE_TYPES,
     maxSize: MAX_FILE_SIZE_MB * 1024 * 1024,
     disabled: showOverlay, // Disable dropzone if overlay is active
     noClick: false,
-    noKeyboard: true
+    noKeyboard: true,
+    preventDropOnDocument: false // Allow global overlay to handle document-level drops
   })
   return (
     <div className="space-y-4">
@@ -56,15 +59,14 @@ export default function FileUpload(
         className={`p-4 border-2 border-dashed cursor-pointer transition-colors rounded-lg
           ${showOverlay ? 'opacity-50 pointer-events-none' : ''}`} // Add visual feedback when disabled
       >
-        <input {...getInputProps()} />
-        <div className="flex items-center justify-center gap-3 text-gray-500">
+        <input {...getInputProps()} />        <div className="flex items-center justify-center gap-3 text-gray-500">
           <Upload className="h-5 w-5 text-purple-600" />
           <p className="text-sm">
-            {files.length > 0 ? 'Add more files or drag and drop' : 'Upload file'}
+            {files.length > 0 ? 'Replace current file' : 'Upload file'}
           </p>
           {files.length > 0 && (
             <div className="text-sm text-purple-600 ml-2">
-              {files.length} file(s) selected
+              File selected
             </div>
           )}
         </div>

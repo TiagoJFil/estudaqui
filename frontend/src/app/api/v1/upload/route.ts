@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     const userID = await getUserIdentifierServerside();
     const user = await UserService.getUser(userID);
     const formData = await request.formData();
-    const pdfFile = formData.get("files") as File;
+    const pdfFile = formData.get("file") as File;
 
     // Delegate validation, existing upload check, and credit enforcement
     const credits = user?.credits ?? 0;

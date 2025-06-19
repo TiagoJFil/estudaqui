@@ -9,59 +9,81 @@ type FileDragDropOverlayProps = {
 
 export function FileDragDropOverlay({ showOverlay, setShowOverlay,onFileDrop }: FileDragDropOverlayProps) {
   const [dragCounter, setDragCounter] = useState(0); // Track drag events
-
+  
+  // For debugging
+  React.useEffect(() => {
+    console.log(`Overlay state: ${showOverlay ? 'visible' : 'hidden'}, Drag counter: ${dragCounter}`);
+  }, [showOverlay, dragCounter]);
+  
+  // Handle drag enter - increment counter and show overlay
   const handleDragEnter = useCallback((e: DragEvent) => {
     e.preventDefault();
-    setDragCounter((prev) => prev + 1);
+    e.stopPropagation();
+    setDragCounter(prev => prev + 1);
     setShowOverlay(true);
-  }, []);
-
+  }, [setShowOverlay]);
+  // Handle drag over - prevent default to allow drop
   const handleDragOver = useCallback((e: DragEvent) => {
     e.preventDefault();
-  }, []);
+    e.stopPropagation();
+    setShowOverlay(true); // Ensure overlay stays visible
+  }, [setShowOverlay]);
 
+  // Handle drag leave - decrement counter and hide overlay when counter reaches 0
   const handleDragLeave = useCallback((e: DragEvent) => {
     e.preventDefault();
-    setDragCounter((prev) => {
+    e.stopPropagation();
+    setDragCounter(prev => {
       const newCount = prev - 1;
       if (newCount <= 0) {
         setShowOverlay(false);
+        return 0;
       }
       return newCount;
     });
-  }, []);
-
+  }, [setShowOverlay]);  // Handle drop - process the file
   const handleDrop = useCallback((e: DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setDragCounter(0); // Reset drag counter
     setShowOverlay(false);
 
+    // Get the dropped files
     const droppedFiles = Array.from(e.dataTransfer?.files || []);
-    //guarrantee that only pdf and .docx files are accepted
-    const validFiles = droppedFiles.filter(file =>
+    
+    if (droppedFiles.length === 0) return;
+    
+    // Only process the first file if multiple files are dropped
+    const fileToProcess = [droppedFiles[0]];
+    
+    // Guarantee that only pdf and .docx files are accepted
+    const validFiles = fileToProcess.filter(file =>
       isValidFile(file)
     );
-    if (validFiles.length !== droppedFiles.length) {
-      alert("Only PDF and DOCX files are allowed, and file size must be less than 10MB.");
+    
+    if (validFiles.length !== fileToProcess.length) {
+      alert("Only PDF files are allowed, and file size must be less than 20MB.");
       return;
     }
-    if (droppedFiles.length > 0) {
-      onFileDrop(droppedFiles);
+    
+    if (validFiles.length > 0) {
+      onFileDrop(validFiles);
     }
-  }, []);
-
+  }, [setShowOverlay, onFileDrop]);
   // Setup global event listeners once
   React.useEffect(() => {
-    window.addEventListener("dragenter", handleDragEnter);
-    window.addEventListener("dragover", handleDragOver);
-    window.addEventListener("dragleave", handleDragLeave);
-    window.addEventListener("drop", handleDrop);
+    // Add event listeners to the document
+    document.addEventListener("dragenter", handleDragEnter as EventListener);
+    document.addEventListener("dragover", handleDragOver as EventListener);
+    document.addEventListener("dragleave", handleDragLeave as EventListener);
+    document.addEventListener("drop", handleDrop as EventListener);
 
+    // Cleanup
     return () => {
-      window.removeEventListener("dragenter", handleDragEnter);
-      window.removeEventListener("dragover", handleDragOver);
-      window.removeEventListener("dragleave", handleDragLeave);
-      window.removeEventListener("drop", handleDrop);
+      document.removeEventListener("dragenter", handleDragEnter as EventListener);
+      document.removeEventListener("dragover", handleDragOver as EventListener);
+      document.removeEventListener("dragleave", handleDragLeave as EventListener);
+      document.removeEventListener("drop", handleDrop as EventListener);
     };
   }, [handleDragEnter, handleDragOver, handleDragLeave, handleDrop]);
 
@@ -124,7 +146,7 @@ export function FileDragDropOverlay({ showOverlay, setShowOverlay,onFileDrop }: 
           marginBottom: "0.5rem",
           }}
         >
-          Only <span style={{ color: "#38bdf8", fontWeight: 600 }}>PDF</span> and <span style={{ color: "#38bdf8", fontWeight: 600 }}>.DOCX</span> files under 10MB
+          Only <span style={{ color: "#38bdf8", fontWeight: 600 }}>PDF</span> files under 20MB
         </div>
         <div
           style={{
@@ -157,7 +179,8 @@ const overlayStyles: React.CSSProperties = {
   justifyContent: "center",
   zIndex: 9999,
   fontSize: "2rem",
-  pointerEvents: "none", // optional: allows interaction with underlying content
+  pointerEvents: "all", // Changed to "all" to capture all events
+  transition: "opacity 0.2s ease-in-out",
 };
 
 export default FileDragDropOverlay;
