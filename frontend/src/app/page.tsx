@@ -2,7 +2,7 @@
 
 import { useSession, signIn } from "next-auth/react";
 import { AuthDropDown } from "@/components/auth-drop-down";
-import React, { useState, useCallback, useEffect } from "react"
+import React, { useState, useCallback, useEffect, useContext } from "react"
 import { Upload, Loader2, CheckCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import FileUpload from "@/components/file-upload"
@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation"
 import FileDragDropOverlay from "@/components/file-drag-drop-overlay"
 import { API } from "@/lib/frontend/api-service"
 import { Button } from "@/components/ui/button"
+import { FirebaseContext } from "@/context/firebase-tracking-provider"
 
 export default function Home() {
     const router = useRouter();
@@ -21,6 +22,9 @@ export default function Home() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [showFileUploadOverlay, setShowFileUploadOverlay] = useState(false);
+    // Access Firebase analytics from context
+    const analytics = useContext(FirebaseContext);
+
   // Function to handle file uploads, allowing only one file
   const appendFiles = (newFiles: File[]) => {
     // If there are already files uploaded, replace them with the new file
