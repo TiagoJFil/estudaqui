@@ -1,4 +1,4 @@
-import { COLLECTIONS, UserI, PDFInfo, PackInfo } from "./data-interfaces";
+import { COLLECTIONS, UserI, PDFInfo, PackInfo, UserUpload, UserUploadInfo } from "./data-interfaces";
 import { db, storage } from "@/lib/backend/data/firebase";
 import { getDefaultUserInfo } from "./default-values";
 import { ExamJSON } from "../llm/types";
@@ -96,11 +96,11 @@ export class UploadService {
     await db.collection(`users/${userId}/uploads`).doc(fileId).set({ filename, createdAt: new Date() }, { merge: true });
   }
 
-  static async getUserUploads(userId: string): Promise<any[]> {
+  static async getUserUploads(userId: string): Promise<UserUploadInfo[]> {
     const snaps = await db.collection(`users/${userId}/uploads`).orderBy("createdAt", "desc").get();
     return Promise.all(snaps.docs.map(async doc => {
       const fileDoc = await db.collection(COLLECTIONS.FILES).doc(doc.id).get();
-      return { id: doc.id, ...doc.data(), file: fileDoc.exists ? fileDoc.data() : null };
+      return { id: doc.id, ...doc.data(), file: fileDoc.exists ? fileDoc.data() : null } as UserUploadInfo;
     }));
   }
 }

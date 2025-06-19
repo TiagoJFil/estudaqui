@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Connection, PublicKey } from '@solana/web3.js'
-import { getSimpleCryptoPaymentIDMemo, getUserIdentifierServerside, NEXT_PUBLIC_USDC_MINT } from '@/lib/utils'
+import { getSimpleCryptoPaymentIDMemo, getUserIdentifierServerside } from '@/lib/utils'
 import { PackService, PackServiceI, UserService } from '@/lib/backend/data/data-service'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { NEXT_PUBLIC_USDC_MINT } from '@/lib/contants'
 
 // Configuration via environment variables
 const RPC_ENDPOINT = process.env.NEXT_PUBLIC_SOLANA_RPC_ENDPOINT!

@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge"
 import { getServerSession } from "next-auth";
 import bs58 from "bs58"
 import { PublicKey, Transaction } from "@solana/web3.js";
+import { MAX_FILE_SIZE_MB, MEMO_PROGRAM_ID, VALID_FILE_TYPES } from "./contants";
 
 
 export function cn(...inputs: ClassValue[]) {
@@ -43,15 +44,6 @@ export async function getQRCryptoPaymentIDMemo(userID:string, packID:string,orde
     return (await hashAndEncodeBase58(`${userID}-${packID}`)) + ";" + orderID;
 }
 
-export const MAX_FILE_SIZE_MB = 20;
-
-export const VALID_FILE_TYPES = {
-    'application/pdf': ['.pdf'],
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx']
-};
-
-export const NEXT_PUBLIC_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
-export const MEMO_PROGRAM_ID = "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr";
 
 
 export function convertDbDateToDate(createdAt: { _seconds : number} ){

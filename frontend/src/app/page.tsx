@@ -2,7 +2,7 @@
 
 import { useSession, signIn } from "next-auth/react";
 import { AuthDropDown } from "@/components/auth-drop-down";
-import {  useState } from "react"
+import React, { useState, useCallback, useEffect } from "react"
 import { Upload, Loader2, CheckCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import FileUpload from "@/components/file-upload"
@@ -21,40 +21,33 @@ export default function Home() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [showFileUploadOverlay, setShowFileUploadOverlay] = useState(false);
-
-  // Function to append files preventing duplicates based on name, size, and lastModified
+  // Function to handle file uploads, allowing only one file
   const appendFiles = (newFiles: File[]) => {
-    setUploadedFiles((currentFiles) => {
-      // Create a map of existing files for quick lookup
-      const existingFilesMap = new Map<string, File>()
-      currentFiles.forEach(file => {
-        const key = `${file.name}-${file.size}-${file.lastModified}`
-        existingFilesMap.set(key, file)
-      })
-
-      // Filter new files to exclude duplicates
-      const filteredNewFiles = newFiles.filter(file => {
-        const key = `${file.name}-${file.size}-${file.lastModified}`
-        return !existingFilesMap.has(key)
-      })
-
-      // Return combined array of existing files and filtered new files
-      return [...currentFiles, ...filteredNewFiles]
-    })
+    // If there are already files uploaded, replace them with the new file
+    // Otherwise, add the new file (taking only the first one if multiple are provided)
+    setUploadedFiles(currentFiles => {
+      if (newFiles.length === 0) return currentFiles;
+      
+      // Only take the first file from the new files
+      const newFile = newFiles[0];
+        // Replace existing file (if any) with the new one
+      return [newFile];
+    });
   }
-
-    const handleProcess = async () => {
+  
+  const handleProcess = async () => {
         if (!session) {
             alert("You must be signed in to process files.");
             return;
         }
         if (uploadedFiles.length === 0) {
-            alert("No files uploaded")
+            alert("No file uploaded")
             return
         }
         setIsProcessing(true);
         try {
-            const examJsonResponse =  await API.uploadFiles(uploadedFiles);
+            const file = uploadedFiles[0]; 
+            const examJsonResponse =  await API.uploadFile(file);
             const examJson = examJsonResponse.examJson
             if (!examJson || Object.keys(examJson).length === 0) {
                 alert("No exam data found in the uploaded files")
@@ -84,19 +77,30 @@ export default function Home() {
             updatedFiles.splice(index, 1) // Remove file at specified index
             return updatedFiles
         })
-    }
-
-    // Only allow file drop if logged in, otherwise use a no-op
-    const handleFileDrop = session ? appendFiles : () => {};
-
+    }    // Only allow file drop if logged in, otherwise use a no-op
+    const handleFileDrop = useCallback(
+        (files: File[]) => {
+            if (session) {
+                console.log("Files dropped:", files);
+                appendFiles(files);
+            }
+        },
+        [session, appendFiles]
+    );    // Reset drag state when component unmounts
+    useEffect(() => {
+        return () => {
+            // Cleanup function
+            setShowFileUploadOverlay(false);
+        };
+    }, []);
+    
     return (
         <div className="min-h-auto flex flex-col">
             <FileDragDropOverlay showOverlay={showFileUploadOverlay} setShowOverlay={setShowFileUploadOverlay} onFileDrop={handleFileDrop} />
             <main className="container mx-auto px-4 py-12 max-w-3xl w-full flex-1">
                 <div className="space-y-8 w-full">
-                    <div className="bg-white rounded-xl shadow-md p-8 space-y-6 border border-gray-100 w-full">
-                        <h1 className="text-2xl font-bold text-gray-900">Upload Exam (PDF)</h1>
-                        <p className="text-gray-600 text-base">Upload your exam file in PDF format. Drag and drop or use the button below. Duplicate files are automatically ignored. Only PDF files are allowed.</p>
+                    <div className="bg-white rounded-xl shadow-md p-8 space-y-6 border border-gray-100 w-full">                        <h1 className="text-2xl font-bold text-gray-900">Upload Exam (PDF)</h1>
+                        <p className="text-gray-600 text-base">Upload a single exam file in PDF format. Drag and drop or use the button below. Only one PDF file is allowed at a time.</p>
                         {!session ? (
                             <div className="flex flex-col items-center gap-4 py-8">
                                 <div className="text-lg text-gray-700">You must be signed in to upload files.</div>

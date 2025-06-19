@@ -2,9 +2,9 @@
 
 import { ExamJson, ExamJsonResponse } from "@/lib/frontend/types";
 
-async function uploadFilesToServer(uploadedFiles: File[]): Promise<ExamJsonResponse> {
+async function uploadFilesToServer(uploadedFile: File): Promise<ExamJsonResponse> {
     const formData = new FormData();
-    uploadedFiles.forEach((file) => formData.append("files", file));
+    formData.append("file", uploadedFile);
 
     try {
         const response = await fetch("/api/v1/upload", {
@@ -143,8 +143,8 @@ export async function deleteHistoryExam(examId: string): Promise<any> {
 }
 
 export class API {
-    static async uploadFiles(uploadedFiles: File[]): Promise<ExamJsonResponse> {
-        return uploadFilesToServer(uploadedFiles);
+    static async uploadFile(uploadedFile: File): Promise<ExamJsonResponse> {
+        return uploadFilesToServer(uploadedFile);
     }
 
     static async updateHistoryExam(
