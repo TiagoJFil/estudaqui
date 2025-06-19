@@ -2,7 +2,8 @@
 
 import { useSession, signIn } from "next-auth/react";
 import { AuthDropDown } from "@/components/auth-drop-down";
-import {  useState } from "react"
+import { StyledAuthDropDown } from "@/components/styled-auth-dropdown";
+import { useState, useRef } from "react"
 import { Upload, Loader2, CheckCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import FileUpload from "@/components/file-upload"
@@ -11,6 +12,9 @@ import { useRouter } from "next/navigation"
 import FileDragDropOverlay from "@/components/file-drag-drop-overlay"
 import { API } from "@/lib/frontend/api-service"
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
+import { NoCreditsTimer } from "./no-credits-timer"
+import { BuyCreditsButton } from "@/components/BuyCreditsButton"
 
 export default function Home() {
     const router = useRouter();
@@ -21,6 +25,7 @@ export default function Home() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [showFileUploadOverlay, setShowFileUploadOverlay] = useState(false);
+    const creditsRef = useRef<number>(credits);
 
   // Function to append files preventing duplicates based on name, size, and lastModified
   const appendFiles = (newFiles: File[]) => {
@@ -52,6 +57,21 @@ export default function Home() {
             alert("No files uploaded")
             return
         }
+        if (credits < 1) {
+            toast(
+              <div className="flex flex-col gap-2 w-80">
+                <div className="text-gray-900 font-semibold text-lg">Looks like you're out of credits</div>
+                <div className="text-gray-700 text-sm">To keep exploring and using this feature, you’ll need to top up. Grab a new credit pack and you’re good to go!</div>
+                <NoCreditsTimer duration={5000} />
+                <BuyCreditsButton onClick={() => { toast.dismiss(); router.push('/buy'); }}>
+                  Buy More Credits
+                </BuyCreditsButton>
+              </div>,
+              { duration: 5000 }
+            );
+            return;
+        }
+        creditsRef.current = credits;
         setIsProcessing(true);
         try {
             const examJsonResponse =  await API.uploadFiles(uploadedFiles);
@@ -64,7 +84,7 @@ export default function Home() {
             setOutput(JSON.stringify(examJson, null, 2));
             // Check if exam already exists in user history to avoid spending credits
             if (!examJsonResponse.isInUserUploads) {
-              setCredits(credits - 1);
+              animateCreditDeduction();
             }
             localStorage.setItem("examData", JSON.stringify(examJson));
             setIsSuccess(true);
@@ -72,8 +92,22 @@ export default function Home() {
             setTimeout(() => {
                 router.push("/exam/" + examJson.examId);
             }, 2000);
-         } catch (error) {
-            alert("Failed to process request")
+         } catch (error: any) {
+                 if (error.message === 'INSUFFICIENT_CREDITS') {
+                toast(
+                  <div className="flex flex-col gap-2 w-80">
+                    <div className="text-gray-900 font-semibold text-lg">Looks like you're out of credits</div>
+                    <div className="text-gray-700 text-sm">To keep exploring and using this feature, you’ll need to top up. Grab a new credit pack and you’re good to go!</div>
+                    <NoCreditsTimer duration={5000} />
+                    <BuyCreditsButton onClick={() => { toast.dismiss(); router.push('/buy'); }}>
+                      Buy More Credits
+                    </BuyCreditsButton>
+                  </div>,
+                  { duration: 5000 }
+                );
+                 } else {
+                     alert("Failed to process request")
+                 }
             setIsProcessing(false);
          }
     }
@@ -89,6 +123,25 @@ export default function Home() {
     // Only allow file drop if logged in, otherwise use a no-op
     const handleFileDrop = session ? appendFiles : () => {};
 
+    // Animate credit deduction
+    function animateCreditDeduction() {
+      const start = creditsRef.current;
+      const end = start - 1;
+      let frame = 0;
+      const totalFrames = 20;
+      function animate() {
+        frame++;
+        const value = Math.round(start - (frame / totalFrames));
+        setCredits(value);
+        if (frame < totalFrames) {
+          requestAnimationFrame(animate);
+        } else {
+          setCredits(end);
+        }
+      }
+      animate();
+    }
+
     return (
         <div className="min-h-auto flex flex-col">
             <FileDragDropOverlay showOverlay={showFileUploadOverlay} setShowOverlay={setShowFileUploadOverlay} onFileDrop={handleFileDrop} />
@@ -97,10 +150,9 @@ export default function Home() {
                     <div className="bg-white rounded-xl shadow-md p-8 space-y-6 border border-gray-100 w-full">
                         <h1 className="text-2xl font-bold text-gray-900">Upload Exam (PDF)</h1>
                         <p className="text-gray-600 text-base">Upload your exam file in PDF format. Drag and drop or use the button below. Duplicate files are automatically ignored. Only PDF files are allowed.</p>
-                        {!session ? (
-                            <div className="flex flex-col items-center gap-4 py-8">
+                        {!session ? (                            <div className="flex flex-col items-center gap-4 py-8">
                                 <div className="text-lg text-gray-700">You must be signed in to upload files.</div>
-                                <AuthDropDown onSignIn={(platform) => { signIn(platform); }} />
+                                <StyledAuthDropDown onSignIn={(platform) => { signIn(platform); }} />
                             </div>
                         ) : (
                             <FileUpload
@@ -108,6 +160,7 @@ export default function Home() {
                                 onFileRemove={onFileRemove}
                                 onFilesUploaded={appendFiles}
                                 uploadedFiles={uploadedFiles}
+                                isProcessing={isProcessing}
                             />
                         )}
                         <div className="flex gap-3 items-center justify-end pt-2">
