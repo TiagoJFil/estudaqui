@@ -11,6 +11,9 @@
 !.yarn/versions
 .idea/*
 .idea
+
+bun.lock
+
 # testing
 /coverage
 

@@ -11,5 +11,4 @@ export interface ExamQuestion {
 export interface ExamJSON {
   examId: string;
   questions: ExamQuestion[];
-  uploadDate?: Date; // Optional field for upload date
 }
