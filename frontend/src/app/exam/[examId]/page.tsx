@@ -7,12 +7,14 @@ import { useParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { API } from "@/lib/frontend/api-service";
 import { ExamCarousel } from "@/components/exam/exam-carousel";
+import ExamNotFound from "@/components/exam/exam-not-found";
 
 export default function ExamPage() {
     const params = useParams();
     const examId = params?.examId as string | undefined;
     const [questions, setQuestions] = useState<(MultipleChoiceQuestion | OpenEndedQuestion)[] | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [notFound, setNotFound] = useState(false);
 
     const isLoading = questions === null;
     const isFetching = useRef(false);
@@ -44,15 +46,21 @@ export default function ExamPage() {
                 }
             }
             console.log("Fetching exam data from API for ID:", examId);
-            const examJson = await API.getExamById(examId)
-            if (!examJson || !examJson.questions || !Array.isArray(examJson.questions)) {
-                setError("Exam not found or invalid format.");
+            try {
+                const examJson = await API.getExamById(examId);
+                if (!examJson || !examJson.questions || !Array.isArray(examJson.questions)) {
+                    setNotFound(true);
+                    isFetching.current = false;
+                    return;
+                }
+                console.log("Fetched exam data from API:", examJson);
+                setQuestions(examJson.questions);
                 isFetching.current = false;
-                return;
+            } catch (e) {
+                console.error("Failed to load exam:", e);
+                setNotFound(true);
+                isFetching.current = false;
             }
-            console.log("Fetched exam data from API:", examJson);
-            setQuestions(examJson.questions);
-            isFetching.current = false;
 
         }
         processEffect();
@@ -103,6 +111,7 @@ export default function ExamPage() {
             </div>
         </div>
     );
+    if (notFound) return <ExamNotFound />;
     if (error) return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50"><div className="text-red-600 text-lg font-semibold bg-white rounded-lg shadow p-6">{error}</div></div>;
 
     return (

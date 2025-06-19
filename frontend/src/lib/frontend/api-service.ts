@@ -96,8 +96,12 @@ async function getSuggestedAnswerFromApi(question: string, additionalContent: st
         throw error;
     }
 }
-async function getExamById(examId: string): Promise<ExamJson> {
+// Fetch an exam by ID. Returns null if the exam is not found (404)
+async function getExamById(examId: string): Promise<ExamJson | null> {
     const response = await fetch(`/api/v1/exam/${encodeURIComponent(examId)}`);
+    if (response.status === 404) {
+        return null;
+    }
     if (!response.ok) throw new Error("Failed to fetch exam");
     return await response.json();
 }
@@ -176,7 +180,7 @@ export class API {
     ): Promise<string> {
         return getSuggestedAnswerFromApi(question, additionalContent);
     }
-    static async getExamById(examId: string): Promise<ExamJson> {
+    static async getExamById(examId: string): Promise<ExamJson | null> {
         return getExamById(examId);
     }
     static async getUserUploads(): Promise<any[]> {
