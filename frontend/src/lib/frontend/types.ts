@@ -10,6 +10,11 @@ export type ExamJson = {
     questions: Array<OpenEndedQuestion | MultipleChoiceQuestion>;
 };
 
+export type ExamJsonResponse = {
+    examJson: ExamJson;
+    isInUserUploads: boolean; // Indicates if the exam is in the user's uploads
+};
+
 export interface ExamQuestion {
   question: string;
   questionType: "openEnded" | "multipleChoice" | "other";
@@ -18,7 +23,7 @@ export interface ExamQuestion {
 
 export interface MultipleChoiceQuestion extends ExamQuestion {
   responses?: string[] | null;
-  correctResponse?: string | null;
+  correctResponses?: string[] | null;
 }
 
 export interface OpenEndedQuestion extends ExamQuestion {

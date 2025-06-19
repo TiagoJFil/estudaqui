@@ -11,7 +11,7 @@ export default function MultipleChoice({ question }: { question: MultipleChoiceQ
     <div className={clsx("space-y-2", cardBase)}>
       {question.responses?.map((response, idx) => {
         const isSelected = selected === response;
-        const isCorrect = question.correctResponse === response;
+        const isCorrect = question.correctResponses?.includes(response);
         const showFeedback = selected !== null;
         const bgColor =
           showFeedback && isSelected

@@ -1,8 +1,8 @@
 "use client"
 
-import { ExamJson } from "@/lib/frontend/types";
+import { ExamJson, ExamJsonResponse } from "@/lib/frontend/types";
 
-async function uploadFilesToServer(uploadedFiles: File[]): Promise<any> {
+async function uploadFilesToServer(uploadedFiles: File[]): Promise<ExamJsonResponse> {
     const formData = new FormData();
     uploadedFiles.forEach((file) => formData.append("files", file));
 
@@ -15,9 +15,12 @@ async function uploadFilesToServer(uploadedFiles: File[]): Promise<any> {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-
+        const isInUserUploads = response.headers.get("X-In-User-Uploads") === "true";
         const data = await response.json();
-        return data; // Return the structured exam JSON
+        return {
+            examJson: data as ExamJson,
+            isInUserUploads: isInUserUploads, // Indicate if the exam was already uploaded
+        };
     } catch (error) {
         console.error("Error processing request:", error);
         throw error;
@@ -140,7 +143,7 @@ export async function deleteHistoryExam(examId: string): Promise<any> {
 }
 
 export class API {
-    static async uploadFiles(uploadedFiles: File[]): Promise<any> {
+    static async uploadFiles(uploadedFiles: File[]): Promise<ExamJsonResponse> {
         return uploadFilesToServer(uploadedFiles);
     }
 

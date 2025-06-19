@@ -1,6 +1,5 @@
 
 import { HistoryService } from "@/lib/backend/data/data-service";
-import { getExamById } from "@/lib/backend/llm/exam-service";
 import { getUserIdentifierServerside } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 

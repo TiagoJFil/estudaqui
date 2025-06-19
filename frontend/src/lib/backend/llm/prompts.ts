@@ -33,14 +33,14 @@ Return the results in **strict, valid JSON** with the following structure (no co
       "supplementalContent": "string",
       "questionType": "openEnded" | "multipleChoice" | "other",
       "responses": [ "string", ... ] | null,
-      "correctResponse": "string" | null
+      "correctResponses": [ "string", ... ] | null
     }
   ]
 }
 
 ### Rules:
 
-1. Use **only** the content from the input document. Do not infer, invent, or supplement information.
+1. Use **only** the content from the input document. **Do not infer, invent, or supplement** information.
 2. For each question:
    - Set the \`question\` field to the **exact question text** as written.
    - Set the \`supplementalContent\` field to include **all directly attached content necessary to understand the question**, such as:
@@ -50,15 +50,18 @@ Return the results in **strict, valid JSON** with the following structure (no co
      - Instructions
    - **Do not reference external content** (e.g., do not write "Leia o excerto..."). If an excerpt or context is present, copy it in full.
 3. Set \`questionType\` as follows:
-   - "openEnded": requires a free-text response
-   - "multipleChoice": includes predefined options
-   - "other": any other format
-4. If the question has no listed response options, set "responses": null.
-5. Only include \`correctResponse\` if the correct answer is **explicitly stated**. Otherwise, use null.
+- "openEnded": requires a free-text response
+- "multipleChoice": includes predefined options
+- "other": any other format
+4.Set \`responses\` to:
+-An array of response options (in exact order and formatting)
+-Otherwise "null" if none are present
+5. Set  \`correctResponses\` to:
+-An array of correct answers, **only if clearly marked** in the document
+-Otherwise, set to "null"
 6. **Escape all necessary characters** to ensure valid JSON (e.g., quotes, newlines).
 7. **Preserve original wording, formatting, and order** exactly as shown in the document.
 8. **Do not include explanations, commentary, or any output other than the JSON.**
-
 ### Output:
 
 Return **only the JSON object** as described above. Do not include any other text, commentary, or formatting (such as code fences).
