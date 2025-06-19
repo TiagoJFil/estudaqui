@@ -4,6 +4,7 @@ import { Footer } from "@/components/ui/footer"
 import Navbar from "@/components/navbar"
 import CreditsAndSignIn from "@/components/CreditsAndSignIn"
 import { SidebarProvider, useSidebar } from "@/context/sidebar-context"
+import { Toaster } from "sonner"
 
 function SidebarLayout() {
   const { isCollapsed } = useSidebar()
@@ -46,6 +47,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         </div>
         <Footer />
       </div>
+      <Toaster position="top-right" richColors closeButton duration={5000} />
     </SidebarProvider>
   )
 }

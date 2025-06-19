@@ -9,6 +9,9 @@ import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { API } from "@/lib/frontend/api-service";
 import { AuthDropDown } from "./auth-drop-down";
+import { BuyCreditsButton } from "@/components/BuyCreditsButton";
+import { StyledAuthDropDown } from "@/components/styled-auth-dropdown";
+import "@/styles/credit-pop.css";
 
 export default function CreditsAndSignIn() {
   const { data: session, status } = useSession();
@@ -26,23 +29,23 @@ export default function CreditsAndSignIn() {
     console.log("Session data:", session);
     setCredits(session.user.credits!)
     setIsLoading(false);
-  }, [status]);
-
-  return (
-    <div className="flex items-center gap-4">
+  }, [status]);  return (
+    <div className="flex flex-row items-center justify-end min-h-[48px] px-2 w-full">
       {isLoading ? (
         <Skeleton className="h-6 w-20" />
       ) : (
-        <div className="text-lg font-bold text-gray-600">
-          Credits: {credits}
-        </div>
+        <>
+          <div className="flex items-center mr-4">
+            <span className="text-sm text-gray-500 mr-2">CREDITS</span>
+            <span className="text-xl font-bold text-indigo-600 animate-credit-pop" key={credits}>{credits}</span>
+          </div>          <BuyCreditsButton
+            onClick={() => router.push("/buy")}
+            className="mr-4"
+          >
+            Buy More Credits
+          </BuyCreditsButton>
+        </>
       )}
-      <Button
-        onClick={() => router.push("/buy")}
-        className="hover:bg-gray-200 hover:text-black transition-colors"
-      >
-        Buy More
-      </Button>
       {isLoading ? (
         <div className="flex items-center gap-2">
           <Skeleton className="h-6 w-24" />
@@ -62,17 +65,14 @@ export default function CreditsAndSignIn() {
               height={32}
               className="rounded-full"
             />
-          )}
-          <Button
-            variant="outline"
-            className="hover:bg-gray-50"
+          )}          <button
             onClick={() => signOut()}
+            className="ml-1 sm:ml-2 px-3 py-1.5 bg-gradient-to-tr from-gray-400 to-gray-600 text-white text-sm font-medium rounded-lg shadow-md hover:scale-105 hover:cursor-pointer transition-transform focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
           >
             Sign Out
-          </Button>
-        </>
-      ) : (
-        <AuthDropDown onSignIn={(platform) => { signIn(platform); }} />
+          </button>
+        </>      ) : (
+        <StyledAuthDropDown onSignIn={(platform) => { signIn(platform); }} />
       )}
     </div>
   );
