@@ -60,8 +60,8 @@ export default function Home() {
         if (credits < 1) {
             toast(
               <div className="flex flex-col gap-2 w-80">
-                <div className="text-gray-900 font-semibold text-lg">You’ve run out of credits</div>
-                <div className="text-gray-700 text-sm">You need more credits to continue. Please purchase a new pack to unlock more features.</div>
+                <div className="text-gray-900 font-semibold text-lg">Looks like you're out of credits</div>
+                <div className="text-gray-700 text-sm">To keep exploring and using this feature, you’ll need to top up. Grab a new credit pack and you’re good to go!</div>
                 <NoCreditsTimer duration={5000} />
                 <BuyCreditsButton onClick={() => { toast.dismiss(); router.push('/buy'); }}>
                   Buy More Credits
@@ -96,8 +96,8 @@ export default function Home() {
                  if (error.message === 'INSUFFICIENT_CREDITS') {
                 toast(
                   <div className="flex flex-col gap-2 w-80">
-                    <div className="text-gray-900 font-semibold text-lg">You’ve run out of credits</div>
-                    <div className="text-gray-700 text-sm">You need more credits to continue. Please purchase a new pack to unlock more features.</div>
+                    <div className="text-gray-900 font-semibold text-lg">Looks like you're out of credits</div>
+                    <div className="text-gray-700 text-sm">To keep exploring and using this feature, you’ll need to top up. Grab a new credit pack and you’re good to go!</div>
                     <NoCreditsTimer duration={5000} />
                     <BuyCreditsButton onClick={() => { toast.dismiss(); router.push('/buy'); }}>
                       Buy More Credits

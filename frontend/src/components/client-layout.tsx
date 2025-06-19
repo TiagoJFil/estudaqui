@@ -47,7 +47,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         </div>
         <Footer />
       </div>
-      <Toaster position="top-right" richColors closeButton duration={5000} />
+      <Toaster position="bottom-right" richColors closeButton duration={5000} />
     </SidebarProvider>
   )
 }
