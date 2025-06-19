@@ -54,14 +54,18 @@ export default function Home() {
         }
         setIsProcessing(true);
         try {
-            const examJson = await API.uploadFiles(uploadedFiles);
+            const examJsonResponse =  await API.uploadFiles(uploadedFiles);
+            const examJson = examJsonResponse.examJson
             if (!examJson || Object.keys(examJson).length === 0) {
                 alert("No exam data found in the uploaded files")
                 setIsProcessing(false);
                 return
             }
             setOutput(JSON.stringify(examJson, null, 2));
-            setCredits(credits - 1);
+            // Check if exam already exists in user history to avoid spending credits
+            if (!examJsonResponse.isInUserUploads) {
+              setCredits(credits - 1);
+            }
             localStorage.setItem("examData", JSON.stringify(examJson));
             setIsSuccess(true);
             // Redirect after brief confirmation
