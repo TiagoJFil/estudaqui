@@ -88,7 +88,6 @@ export default function Home() {
 
   // Only allow file drop if logged in, otherwise use a no-op
   const handleFileDrop = session ? appendFiles : () => {};
-
   return (
     <div className="min-h-auto flex flex-col">
       <FileDragDropOverlay
