@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation"
 import FileDragDropOverlay from "@/components/file-drag-drop-overlay"
 import { API } from "@/lib/frontend/api-service"
 import { Button } from "@/components/ui/button"
+import toast from "react-hot-toast"
 
 export default function Home() {
     const router = useRouter();
@@ -52,6 +53,20 @@ export default function Home() {
             alert("No files uploaded")
             return
         }
+        if (credits < 1) {
+            toast.custom(t => (
+                <div className="flex items-center gap-3 bg-white shadow-lg rounded-md p-4">
+                    <span className="text-gray-800">You've run out of credits.</span>
+                    <Button
+                        size="sm"
+                        className="bg-purple-600 text-white hover:bg-purple-700"
+                        onClick={() => { router.push('/buy'); toast.dismiss(t.id); }}>
+                        Buy More Credits
+                    </Button>
+                </div>
+            ));
+            return;
+        }
         setIsProcessing(true);
         try {
             const examJsonResponse =  await API.uploadFiles(uploadedFiles);
@@ -72,8 +87,22 @@ export default function Home() {
             setTimeout(() => {
                 router.push("/exam/" + examJson.examId);
             }, 2000);
-         } catch (error) {
-            alert("Failed to process request")
+         } catch (error: any) {
+            if (error.message === 'INSUFFICIENT_CREDITS') {
+                toast.custom(t => (
+                    <div className="flex items-center gap-3 bg-white shadow-lg rounded-md p-4">
+                        <span className="text-gray-800">You've run out of credits.</span>
+                        <Button
+                            size="sm"
+                            className="bg-purple-600 text-white hover:bg-purple-700"
+                            onClick={() => { router.push('/buy'); toast.dismiss(t.id); }}>
+                            Buy More Credits
+                        </Button>
+                    </div>
+                ));
+            } else {
+                alert("Failed to process request")
+            }
             setIsProcessing(false);
          }
     }

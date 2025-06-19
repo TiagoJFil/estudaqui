@@ -13,6 +13,9 @@ async function uploadFilesToServer(uploadedFiles: File[]): Promise<ExamJsonRespo
         });
 
         if (!response.ok) {
+            if (response.status === 403) {
+                throw new Error('INSUFFICIENT_CREDITS');
+            }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const isInUserUploads = response.headers.get("X-In-User-Uploads") === "true";
