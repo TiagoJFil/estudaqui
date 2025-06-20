@@ -5,6 +5,7 @@ import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
 import "@solana/wallet-adapter-react-ui/styles.css";
+import { FirebaseTrackingProvider } from "@/context/firebase-tracking-provider";
 
 export default function ProvidersWrapper({ children }: { children: React.ReactNode }) {
   // Use custom RPC endpoint or fallback to Devnet
@@ -14,9 +15,11 @@ export default function ProvidersWrapper({ children }: { children: React.ReactNo
       <WalletProvider wallets={[new PhantomWalletAdapter(), new SolflareWalletAdapter()] } onError={console.log}  autoConnect>
         <WalletModalProvider>
           <SessionProvider session={undefined}>
-            <UserProvider>
-              {children}
-            </UserProvider>
+            <FirebaseTrackingProvider>
+              <UserProvider>
+                {children}
+              </UserProvider>
+            </FirebaseTrackingProvider>
           </SessionProvider>
         </WalletModalProvider>
       </WalletProvider>
