@@ -4,7 +4,8 @@ import { useCallback } from "react"
 import { useDropzone } from "react-dropzone"
 import { Upload, Trash2, FileText, Image, Film, Music } from "lucide-react"
 import { Card } from "@/components/ui/card"
-import { VALID_FILE_TYPES, MAX_FILE_SIZE_MB, cn } from "@/lib/contants"
+import { VALID_FILE_TYPES, MAX_FILE_SIZE_MB } from "@/lib/contants"
+import { cn } from "@/lib/utils";
 
 type FileUploadProps = {
   uploadedFiles: File[];
