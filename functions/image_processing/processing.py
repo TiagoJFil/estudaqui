@@ -365,10 +365,10 @@ class OpenCVProcesser:
 
         
 
-
+"""
 if __name__ == "__main__":
     # read image diana.png 
-    img = cv2.imread("pessoa.png")
+    img = cv2.imread("fq.png")
     if img is None:
         print("Error: Could not read image.")
     else:
@@ -381,3 +381,4 @@ if __name__ == "__main__":
                 cv2.waitKey(0)
         else:
             print("No boxes detected.")
+"""
