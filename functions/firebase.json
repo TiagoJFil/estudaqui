@@ -1,0 +1,33 @@
+{
+  "functions": [
+    {
+      "source": "picture2figure",
+      "codebase": "picture2figure",
+      "ignore": [
+        "venv",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "runtime": "python311",
+      "region": "us-west1"
+    },
+    {
+      "source": "pdf2img",
+      "codebase": "pdf2img",
+      "ignore": [
+        "venv",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "runtime": "python311",
+      "region": "us-west1",
+      "environmentVariables": {
+        "THREADS": "8"
+      }
+    }
+  ]
+}
