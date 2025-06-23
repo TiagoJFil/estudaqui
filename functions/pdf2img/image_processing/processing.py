@@ -19,7 +19,7 @@ class OpenCVProcesser:
         """Initialize the OpenCVProcesser."""
         pass
 
-    def process(self, img,):
+    def process(self, img):
         """
         Process the image to detect figures and return their bounding boxes.
         :param img: Input image in BGR format.
@@ -362,23 +362,3 @@ class OpenCVProcesser:
             
             # Show each contour if requested
         return image
-
-        
-
-"""
-if __name__ == "__main__":
-    # read image diana.png 
-    img = cv2.imread("fq.png")
-    if img is None:
-        print("Error: Could not read image.")
-    else:
-        processor = OpenCVProcesser()
-        boxes = processor.process(img)
-        if boxes:
-            print(f"Detected {len(boxes)} boxes.")
-            for box in boxes:
-                cv2.imshow("Detected Boxes", box)
-                cv2.waitKey(0)
-        else:
-            print("No boxes detected.")
-"""

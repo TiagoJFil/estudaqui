@@ -6,16 +6,17 @@ import numpy as np
 import gc
 import psutil
 import asyncio
-import aiohttp
 from concurrent.futures import ThreadPoolExecutor
 from firebase_functions import storage_fn, options
 from firebase_admin import initialize_app, storage
 from firebase_functions.options import set_global_options
 from datetime import datetime
 from firebase_functions.options import MemoryOption 
+from image_processing.processing import OpenCVProcesser
 
 # Maximum number of concurrent operations
 MAX_CONCURRENT_OPERATIONS = int(os.environ.get("THREADS", "8"))
+FIGURES_DESTINATION_BUCKET = "estudaqui-pdf-figures"
 
 def get_memory_usage():
     """Get current memory usage in MB"""
@@ -34,6 +35,7 @@ set_global_options(
     cpu=1
 )
 
+openCVProcesser = OpenCVProcesser()
 initialize_app()
 
 def extract_images_from_pdf(pdf_path, scale_factor=1.0, dpi=200):
@@ -58,6 +60,28 @@ def extract_images_from_pdf(pdf_path, scale_factor=1.0, dpi=200):
             img_bgr = extract_image_from_page(page, mat, scale_factor)
             images.append(img_bgr)
     return images
+
+def extract_images_from_picture(picture_path):
+    """
+    Extract images from a picture file and optionally downscale them.
+    
+    Args:
+        picture_path (str): Path to the picture file
+        scale_factor (float): Scale factor for resizing images (1.0 means 100%, 0.5 means 50%)
+        
+    Returns:
+        list: List of OpenCV BGR images
+    """
+    # Use OpenCV to read the image
+    img_bgr = cv2.imread(picture_path)
+    
+    if img_bgr is None:
+        raise ValueError(f"Could not read image from {picture_path}")
+    
+    figures = openCVProcesser.process_image(img_bgr)
+    
+    return figures
+
 
 def extract_image_from_page(page, mat, scale_factor=1.0):
     """
@@ -90,7 +114,7 @@ def extract_image_from_page(page, mat, scale_factor=1.0):
     
     return img_bgr
 
-async def upload_image_async(destination_bucket, destination_path, metadata, image_bytes):
+async def upload_image_async(destination_bucket, destination_path, image_metadata, image_bytes,figures_metadata, figures):
     """
     Upload an image to Firebase Storage asynchronously.
     
@@ -104,11 +128,29 @@ async def upload_image_async(destination_bucket, destination_path, metadata, ima
         str: The path where the image was uploaded
     """
     # Create a task for the upload to make it truly non-blocking
-    dest_blob = destination_bucket.blob(destination_path)
-    dest_blob.metadata = metadata
+    image_dest_blob = destination_bucket.blob(destination_path)
+    image_dest_blob.metadata = image_metadata
 
     # Convert the synchronous upload to asynchronous with asyncio.to_thread
-    await asyncio.to_thread(dest_blob.upload_from_string, image_bytes, content_type='image/jpeg')
+    await asyncio.to_thread(image_dest_blob.upload_from_string, image_bytes, content_type='image/jpeg')
+    
+    async def upload_figures_async(i, figure):
+        figure_destination_path = f"pdf/{image_metadata['pdfId']}/figures/page_{image_metadata['pageNumber']}_figure_{i+1}.jpg"
+        figure_blob = storage.bucket(FIGURES_DESTINATION_BUCKET).blob(figure_destination_path)
+        figure_blob.metadata = {
+            'pdfId': image_metadata['pdfId'],
+            'pageNumber': image_metadata['pageNumber']
+        }
+        # This is the correct approach - using asyncio.to_thread to run the synchronous method in a separate thread
+        await asyncio.to_thread(figure_blob.upload_from_string, figure, content_type='image/jpeg')
+
+    pendingUploads = [upload_figures_async(i, figure) for i, figure in enumerate(figures)]
+    
+    # Wait for all figure uploads to complete
+    if pendingUploads:
+        await asyncio.gather(*pendingUploads)
+        
+    print(f"Uploaded image to {destination_path} with metadata: {image_metadata}")
     return destination_path
 
 async def process_page(page, destination_bucket, pdf_id, page_number, file_name):
@@ -140,14 +182,15 @@ async def process_page(page, destination_bucket, pdf_id, page_number, file_name)
     image_bytes = buffer.tobytes()
     
     destination_path = f"pdf/{pdf_id}/images/page_{page_number}.jpg"
-    metadata = {
+    image_metadata = {
         'pdfId': pdf_id,
         'pageNumber': str(page_number),
         'originalFileName': file_name
     }
+    figures = extract_images_from_picture(destination_path)
     
     print(f"Processed image {page_number}, queued for upload")
-    return await upload_image_async(destination_bucket, destination_path, metadata, image_bytes)
+    return await upload_image_async(destination_bucket, destination_path, image_metadata, image_bytes,figures)
 
 @storage_fn.on_object_finalized(bucket="estudaqui-pdf-uploads")
 def process_uploaded_pdf(event: storage_fn.CloudEvent) -> None:
