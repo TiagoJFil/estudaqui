@@ -15,7 +15,7 @@ from datetime import datetime
 from firebase_functions.options import MemoryOption 
 
 # Maximum number of concurrent operations
-MAX_CONCURRENT_OPERATIONS = 10
+MAX_CONCURRENT_OPERATIONS = int(os.environ.get("THREADS", "8"))
 
 def get_memory_usage():
     """Get current memory usage in MB"""
@@ -177,10 +177,6 @@ def process_uploaded_pdf(event: storage_fn.CloudEvent) -> None:
     bucket = storage.bucket(bucket_name)
     blob = bucket.blob(file_name)
     
-    # Create a temporary file path
-    with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as temp_file:
-        temp_path = temp_file.name
-    
         
     bucket = storage.bucket(bucket_name)
     blob = bucket.blob(file_name)
@@ -210,7 +206,7 @@ def process_uploaded_pdf(event: storage_fn.CloudEvent) -> None:
             
             # Process the PDF in batches to optimize memory usage
             upload_tasks = []
-            batch_size = 5  # Process 5 pages at a time to balance memory and speed
+            batch_size = 8  # Process 5 pages at a time to balance memory and speed
             
             with fitz.open(temp_path) as doc:
                 print(f"Opened PDF, total pages: {len(doc)}, memory usage: {get_memory_usage():.2f} MB")

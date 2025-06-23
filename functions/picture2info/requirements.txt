@@ -1,0 +1,7 @@
+firebase_functions~=0.1.0
+firebase-admin~=6.2.0
+openai~=1.88.0
+PyMuPDF==1.26.1
+opencv-python-headless==4.8.0.74
+numpy~=1.24.3
+traits~=6.4.1
