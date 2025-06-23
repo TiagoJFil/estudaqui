@@ -13,7 +13,7 @@
       "runtime": "python311",
       "region": "us-west1",
       "environmentVariables": {
-        "THREADS": "8"
+        "THREADS": "10"
       }
     },
     {

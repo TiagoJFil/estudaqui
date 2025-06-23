@@ -27,7 +27,7 @@ class OpenCVProcesser:
         :param max_aspect_ratio: Maximum aspect ratio of the bounding box.
         :return: List of dictionaries with keys 'x', 'y', 'w', 'h'.
         """
-        figures = self._detect_figures_cv(img, testing_mode=True)
+        figures = self._detect_figures_cv(img, testing_mode=False)
         return self._cut_boxes(img, figures)
     
     def _prepare_image(self,inputImage):
