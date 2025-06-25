@@ -13,8 +13,19 @@ export interface PDFInfo {
     createdAt: Date; 
 }
 
+export interface UserUpload { 
+    filename: string,
+    createdAt: Date
+}
+
+export interface UserUploadInfo { 
+    file: UserUpload,
+    id: string
+}
+
+
 export interface PaymentInfo {
-    method: "solana" | "card" | "paypal" | "mbway" ;
+    method: "solana" | "card" | "mbway" ;
     userId: string;
     packID: string;
     timestamp: Date;

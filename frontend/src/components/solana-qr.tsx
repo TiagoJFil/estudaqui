@@ -1,8 +1,9 @@
-import { getQRCryptoPaymentIDMemo, hashAndEncodeBase58, NEXT_PUBLIC_USDC_MINT } from "@/lib/utils"
+import { getQRCryptoPaymentIDMemo } from "@/lib/utils"
 import { TransferRequestURLFields, encodeURL, createQR } from "@solana/pay"
 import { PublicKey } from "@solana/web3.js"
 import { useState, useEffect, useRef, useMemo } from "react"
 import BigNumber from "bignumber.js"
+import { NEXT_PUBLIC_USDC_MINT } from "@/lib/contants"
 
 export function SolanaPayQR({ amount, userID, packName, packID, timerTIMEOUT, getOrderID }: 
   {  amount: number, userID: string, packName: string, packID: string, timerTIMEOUT : number , getOrderID: () => string }) {

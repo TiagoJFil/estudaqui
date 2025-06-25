@@ -5,14 +5,29 @@ import clsx from "clsx";
 import { cardBase } from "./exam-class-names";
 
 export default function MultipleChoice({ question }: { question: MultipleChoiceQuestion }) {
-  const [selected, setSelected] = useState<string | null>(null);
+  // State holds selected responses; supports single or multi-select
+  const [selected, setSelected] = useState<string[]>([]);
+
+  // Determine if multiple answers allowed
+  const maxSelections = question.correctResponses?.length ?? 1;
+  const isMulti = maxSelections > 1;
+
+  // Toggle response selection within allowed limit
+  const toggleSelection = (response: string) => {
+    if (selected.includes(response)) {
+      setSelected(selected.filter((r) => r !== response));
+    } else if (selected.length < maxSelections) {
+      setSelected([...selected, response]);
+    }
+  };
 
   return (
     <div className={clsx("space-y-2", cardBase)}>
       {question.responses?.map((response, idx) => {
-        const isSelected = selected === response;
+        const isSelected = selected.includes(response);
         const isCorrect = question.correctResponses?.includes(response);
-        const showFeedback = selected !== null;
+        // Show feedback once at least one selection made
+        const showFeedback = selected.length > 0;
         const bgColor =
           showFeedback && isSelected
             ? isCorrect
@@ -23,7 +38,7 @@ export default function MultipleChoice({ question }: { question: MultipleChoiceQ
         return (
           <div
             key={idx}
-            onClick={() => setSelected(response)}
+            onClick={() => toggleSelection(response)}
             className={clsx("cursor-pointer border p-3 rounded transition-all", bgColor)}
           >
             <div className="flex items-center space-x-2">

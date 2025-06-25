@@ -2,9 +2,9 @@
 
 import { ExamJson, ExamJsonResponse } from "@/lib/frontend/types";
 
-async function uploadFilesToServer(uploadedFiles: File[]): Promise<ExamJsonResponse> {
+async function uploadFilesToServer(uploadedFile: File): Promise<ExamJsonResponse> {
     const formData = new FormData();
-    uploadedFiles.forEach((file) => formData.append("files", file));
+    formData.append("file", uploadedFile);
 
     try {
         const response = await fetch("/api/v1/upload", {
@@ -99,8 +99,12 @@ async function getSuggestedAnswerFromApi(question: string, additionalContent: st
         throw error;
     }
 }
-async function getExamById(examId: string): Promise<ExamJson> {
+// Fetch an exam by ID. Returns null if the exam is not found (404)
+async function getExamById(examId: string): Promise<ExamJson | null> {
     const response = await fetch(`/api/v1/exam/${encodeURIComponent(examId)}`);
+    if (response.status === 404) {
+        return null;
+    }
     if (!response.ok) throw new Error("Failed to fetch exam");
     return await response.json();
 }
@@ -146,8 +150,8 @@ export async function deleteHistoryExam(examId: string): Promise<any> {
 }
 
 export class API {
-    static async uploadFiles(uploadedFiles: File[]): Promise<ExamJsonResponse> {
-        return uploadFilesToServer(uploadedFiles);
+    static async uploadFile(uploadedFile: File): Promise<ExamJsonResponse> {
+        return uploadFilesToServer(uploadedFile);
     }
 
     static async updateHistoryExam(
@@ -179,7 +183,7 @@ export class API {
     ): Promise<string> {
         return getSuggestedAnswerFromApi(question, additionalContent);
     }
-    static async getExamById(examId: string): Promise<ExamJson> {
+    static async getExamById(examId: string): Promise<ExamJson | null> {
         return getExamById(examId);
     }
     static async getUserUploads(): Promise<any[]> {

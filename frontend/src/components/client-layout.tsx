@@ -22,7 +22,7 @@ function MainContent({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex-1 flex flex-col min-h-full">
       {/* Top Bar for credits/sign-in */}
-      <header className="w-full flex items-center justify-end px-4 py-3 bg-transparent">
+      <header className="relative z-10 w-full flex items-center justify-end px-4 py-3 bg-transparent">
         <CreditsAndSignIn />
       </header>
       {/* Main Content */}
