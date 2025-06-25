@@ -1,7 +1,15 @@
 {
+    "General": {
+        "branding": "Studaki"
+    },
+
     "HomePage": {
-        "title": "Bem-vindo ao Studaki",
-        "description": "A tua solução completa para sucesso académico.",
-        "cta": "Começar"
+        
+    },
+
+    "SideBar": {
+        "upload": "Novo Upload",
+        "examSearch": "Buscar Provas",
+        "recentUploads": "Recentes"
     }
 }

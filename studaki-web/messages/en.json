@@ -1,7 +1,15 @@
 {
+    "General": {
+        "branding": "Studaki"
+    },
+
     "HomePage": {
-        "title": "Welcome to Studaki",
-        "description": "Your one-stop solution for student management and academic success.",
-        "cta": "Get Started"
+        
+    },
+
+    "SideBar": {
+        "upload": "New Upload",
+        "examSearch": "Search Exams",
+        "recentUploads": "Recent"
     }
 }
