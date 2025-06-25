@@ -23,7 +23,7 @@ PAGE_IMAGES_DESTINATION_BUCKET = "estudaqui-pdf-images"
 dpi_factor = 200  # DPI for rendering the PDF pages
 zoom_factor = dpi_factor / 72  # Fit to the PDF's default DPI
 MATRIX_PICTURE = fitz.Matrix(zoom_factor, zoom_factor)  # 2x zoom for better quality
-SCALE_FACTOR = 0.7  # Scale factor for downscaling the image
+SCALE_FACTOR = 0.75  # Scale factor for downscaling the image
 
 def get_memory_usage():
     """Get current memory usage in MB"""

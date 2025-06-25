@@ -17,8 +17,8 @@
       }
     },
     {
-      "source": "picture2figure",
-      "codebase": "picture2figure",
+      "source": "picture2info",
+      "codebase": "picture2info",
       "ignore": [
         "venv",
         ".git",

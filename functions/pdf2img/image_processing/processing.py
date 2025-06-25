@@ -19,15 +19,15 @@ class OpenCVProcesser:
         """Initialize the OpenCVProcesser."""
         pass
 
-    def process(self, img):
+    def process(self, img,testing_mode=False):
         """
         Process the image to detect figures and return their bounding boxes.
         :param img: Input image in BGR format.
         :param min_area: Minimum area of the bounding box to consider.
         :param max_aspect_ratio: Maximum aspect ratio of the bounding box.
-        :return: List of dictionaries with keys 'x', 'y', 'w', 'h'.
+        :return: List of cropped images based on detected bounding boxes.
         """
-        figures = self._detect_figures_cv(img, testing_mode=False)
+        figures = self._detect_figures_cv(img, testing_mode=testing_mode)
         return self._cut_boxes(img, figures)
     
     def _prepare_image(self,inputImage):
