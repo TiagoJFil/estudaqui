@@ -16,14 +16,17 @@ from image_processing.processing import OpenCVProcesser
 from gcloud.aio.storage import Storage
 
 # Maximum number of concurrent operations
-MAX_CONCURRENT_OPERATIONS = int(os.environ.get("THREADS", "10"))
+MAX_CONCURRENT_OPERATIONS = int(os.environ.get("THREADS", "12"))  # Increased from 10
 FIGURES_DESTINATION_BUCKET = "estudaqui-pdf-figures"
 PAGE_IMAGES_DESTINATION_BUCKET = "estudaqui-pdf-images"
 
+# Performance optimization constants
 dpi_factor = 200  # DPI for rendering the PDF pages
 zoom_factor = dpi_factor / 72  # Fit to the PDF's default DPI
 MATRIX_PICTURE = fitz.Matrix(zoom_factor, zoom_factor)  # 2x zoom for better quality
 SCALE_FACTOR = 0.75  # Scale factor for downscaling the image
+JPEG_QUALITY = 85  # JPEG compression quality (85 is good balance of quality/size)
+BATCH_SIZE = 15  # Pages to process in each batch
 
 def get_memory_usage():
     """Get current memory usage in MB"""
@@ -79,24 +82,21 @@ def extract_image_from_page(page, mat, scale_factor=1.0):
     Returns:
         np.ndarray: OpenCV BGR image
     """
-    # If we're going to resize anyway, we can save memory by applying the scale to the matrix
-    # before rendering the pixmap, resulting in a smaller initial image
+    # Pre-calculate the matrix with scale factor for better performance
     if scale_factor != 1.0:
-        adjusted_mat = fitz.Matrix(mat.a * scale_factor, mat.b * scale_factor, 
-                                  mat.c * scale_factor, mat.d * scale_factor, 
-                                  mat.e * scale_factor, mat.f * scale_factor)
-        pix = page.get_pixmap(matrix=adjusted_mat)
+        # Use simpler matrix multiplication for better performance
+        adjusted_mat = mat * scale_factor
+        pix = page.get_pixmap(matrix=adjusted_mat, alpha=False)  # Disable alpha channel for speed
     else:
-        pix = page.get_pixmap(matrix=mat)
+        pix = page.get_pixmap(matrix=mat, alpha=False)  # Disable alpha channel for speed
     
-    # Process the pixmap directly
-    img_array = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.width, 3)
-    img_bgr = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
-    
-    # Free the pixmap memory as soon as possible
-    del pix
-    image = cv2.imencode('.jpg', img_bgr, [cv2.IMWRITE_JPEG_QUALITY, 85])[1]
-    return image
+    try:
+        # Direct conversion without intermediate array - more memory efficient
+        img_data = pix.pil_tobytes(format="JPEG", optimize=True, quality=JPEG_QUALITY)
+        return np.frombuffer(img_data, dtype=np.uint8)
+    finally:
+        # Ensure pixmap is always freed
+        pix = None
 
 async def upload_image_async(destination_path, image_metadata, image_bytes,figures_metadata, figures):
     """
@@ -117,39 +117,51 @@ async def upload_image_async(destination_path, image_metadata, image_bytes,figur
 
     async with Storage() as client:
         # Prepare all our upload data
-        uploads = []
-        for i, figure in enumerate(figures):
-            if figure is not None:
-                # Encode the NumPy array as JPEG bytes
-                success, encoded_img = cv2.imencode('.jpg', figure, [cv2.IMWRITE_JPEG_QUALITY, 85])
-                if success:
-                    # Convert to bytes
-                    figure_bytes = encoded_img.tobytes()
-                    uploads.append({
-                        "figure": figure_bytes,  # This is now bytes, not NumPy array
-                        "index": i,
-                        "metadata": figures_metadata[i]
-                    })
-        await client.upload(
+        figure_uploads = []
+        
+        # Upload the page image
+        page_upload_task = client.upload(
             PAGE_IMAGES_DESTINATION_BUCKET,
             destination_path,
             image_bytes,
             content_type='image/jpeg',
             metadata={'metadata': image_metadata}
         )
+        
+        # Prepare figure uploads
+        for i, figure in enumerate(figures):
+            if figure is not None:
+                # Encode the NumPy array as JPEG bytes
+                success, encoded_img = cv2.imencode('.jpg', figure, [cv2.IMWRITE_JPEG_QUALITY, JPEG_QUALITY])
+                if success:
+                    # Convert to bytes
+                    figure_bytes = encoded_img.tobytes()
+                    figure_uploads.append({
+                        "figure": figure_bytes,  # This is now bytes, not NumPy array
+                        "index": i,
+                        "metadata": figures_metadata[i]
+                    })
 
         # Simultaneously upload all files
-        await asyncio.gather(
-            *[
-                client.upload(
-                    FIGURES_DESTINATION_BUCKET,
-                    get_figure_path(figure_info["index"]), 
-                    figure_info["figure"], 
-                    metadata={'metadata': figure_info["metadata"]}
-                )
-                for figure_info in uploads
-            ]
-        )    
+        figures_upload_start_time = datetime.now()
+        
+        # Create all upload tasks
+        upload_tasks = [page_upload_task]
+        upload_tasks.extend([
+            client.upload(
+                FIGURES_DESTINATION_BUCKET,
+                get_figure_path(figure_info["index"]), 
+                figure_info["figure"], 
+                metadata={'metadata': figure_info["metadata"]}
+            )
+            for figure_info in figure_uploads
+        ])
+        
+        # Execute all uploads concurrently
+        await asyncio.gather(*upload_tasks)    
+        figures_upload_end_time = datetime.now()
+        if figure_uploads:
+            print(f"Page {image_metadata['pageNumber']}: {len(figure_uploads)} figures uploaded in {figures_upload_end_time - figures_upload_start_time}")
     return destination_path
 
 async def process_page(page, pdf_id, page_number, file_name):
@@ -166,16 +178,26 @@ async def process_page(page, pdf_id, page_number, file_name):
     Returns:
         str: The path where the image was uploaded
     """
-    image_buffer = await asyncio.to_thread(
+    page_processing_start_time = datetime.now()
+    extract_image_start_time = datetime.now()
+    image_bytes_array = await asyncio.to_thread(
         extract_image_from_page, 
         page, 
         MATRIX_PICTURE, 
         scale_factor=SCALE_FACTOR
     )
-    image_bytes = image_buffer.tobytes()
-    #make image object for opencv
-    image_cv = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
-    figures = extract_images_from_picture(image_cv)
+    extract_image_end_time = datetime.now()
+    print(f"Page {page_number}: Extracted page image in {extract_image_end_time - extract_image_start_time}")
+    
+    # Convert once for upload
+    image_bytes = image_bytes_array.tobytes()
+    
+    # Decode directly for OpenCV processing - avoid double conversion
+    extract_figures_start_time = datetime.now()
+    image_cv = cv2.imdecode(image_bytes_array, cv2.IMREAD_COLOR)
+    figures = await asyncio.to_thread(extract_images_from_picture, image_cv)
+    extract_figures_end_time = datetime.now()
+    print(f"Page {page_number}: Extracted {len(figures)} figures in {extract_figures_end_time - extract_figures_start_time}")
 
     
     destination_path = f"pdf/{pdf_id}/images/page_{page_number}.jpg"
@@ -187,8 +209,75 @@ async def process_page(page, pdf_id, page_number, file_name):
     }
     figures_metadata = [{"pageNumber": page_number, "figureNumber": i + 1 } for i in range(len(figures))]
 
-    print(f"Processed image {page_number}, queued for upload")
-    return await upload_image_async(destination_path, image_metadata, image_bytes,figures_metadata,figures)
+    upload_start_time = datetime.now()
+    result = await upload_image_async(destination_path, image_metadata, image_bytes,figures_metadata,figures)
+    upload_end_time = datetime.now()
+    print(f"Page {page_number}: Uploaded images in {upload_end_time - upload_start_time}")
+    
+    page_processing_end_time = datetime.now()
+    print(f"Page {page_number}: Total processing time {page_processing_end_time - page_processing_start_time}")
+    return result
+
+
+async def download_blob_to_memory(bucket_name, source_blob_name):
+    async with Storage() as client:
+        stream_response = await client.download_stream(bucket_name, source_blob_name)
+        content = await stream_response.read()
+        return content
+
+
+async def process_pdf_async(filestream, pdf_id, file_name):
+    # Create a semaphore to limit concurrent operations to prevent memory overload
+    semaphore = asyncio.Semaphore(MAX_CONCURRENT_OPERATIONS)
+    
+    async def process_with_semaphore(page, page_num):
+        async with semaphore:
+            return await process_page(page, pdf_id, page_num, file_name)
+    
+    # Process the PDF in batches to optimize memory usage
+    upload_tasks = []
+    batch_size = BATCH_SIZE  # Use configurable batch size
+    
+    pdf_open_start_time = datetime.now()
+    # Open PDF from bytes content
+    with fitz.open(stream=filestream, filetype="pdf") as doc:
+        pdf_open_end_time = datetime.now()
+        print(f"Opened PDF in {pdf_open_end_time - pdf_open_start_time}, total pages: {len(doc)}, memory usage: {get_memory_usage():.2f} MB")
+        total_pages = len(doc)
+        
+        # Pre-load all pages for faster access
+        all_pages = [doc[i] for i in range(total_pages)]
+        
+        # Process pages in batches
+        for i in range(0, total_pages, batch_size):
+            batch_start_time = datetime.now()
+            batch_end = min(i + batch_size, total_pages)
+            
+            # Create processing tasks for this batch using pre-loaded pages
+            batch_tasks = [
+                process_with_semaphore(all_pages[j], j + 1) 
+                for j in range(i, batch_end)
+            ]
+            
+            # Process this batch and wait for completion
+            batch_results = await asyncio.gather(*batch_tasks, return_exceptions=True)
+            
+            # Filter out exceptions and add successful results
+            successful_results = [r for r in batch_results if not isinstance(r, Exception)]
+            upload_tasks.extend(successful_results)
+            
+            # Log any exceptions
+            for j, result in enumerate(batch_results):
+                if isinstance(result, Exception):
+                    print(f"Error processing page {i + j + 1}: {result}")
+            
+            # Force garbage collection after each batch
+            del batch_tasks, batch_results
+            gc.collect()
+            batch_end_time = datetime.now()
+            print(f"Processed batch {i//batch_size + 1} ({batch_end - i} pages) in {batch_end_time - batch_start_time}, memory usage: {get_memory_usage():.2f} MB")
+    
+    return upload_tasks
 
 @storage_fn.on_object_finalized(bucket="estudaqui-pdf-uploads")
 def process_uploaded_pdf(event: storage_fn.CloudEvent) -> None:
@@ -199,6 +288,7 @@ def process_uploaded_pdf(event: storage_fn.CloudEvent) -> None:
     Args:
         event: The event payload containing information about the uploaded file
     """
+    total_start_time = datetime.now()
     file_data = event.data
     
     # Get file details from the event
@@ -215,64 +305,25 @@ def process_uploaded_pdf(event: storage_fn.CloudEvent) -> None:
     print(f"Processing PDF: {file_name} from bucket: {bucket_name}")
     print(f"Initial memory usage: {get_memory_usage():.2f} MB")
     
-    bucket = storage.bucket(bucket_name)
-    blob = bucket.blob(file_name)
-    
-    with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as temp_file:
-        temp_path = temp_file.name
-        blob.download_to_filename(temp_path)
-
-    del bucket, blob
+    download_start_time = datetime.now()
+    file_content = asyncio.run(download_blob_to_memory(bucket_name, file_name))
+    download_end_time = datetime.now()
+    print(f"PDF downloaded in {download_end_time - download_start_time}")
 
     try:
         startingtime = datetime.now()
         startingmemory = get_memory_usage()
         
-        # Setup async processing with semaphore to control concurrency
-        async def process_pdf_async():
-            # Create a semaphore to limit concurrent operations to prevent memory overload
-            semaphore = asyncio.Semaphore(MAX_CONCURRENT_OPERATIONS)
-            
-            async def process_with_semaphore(page, page_num):
-                async with semaphore:
-                    return await process_page(page, pdf_id, page_num, file_name)
-            
-            # Process the PDF in batches to optimize memory usage
-            upload_tasks = []
-            batch_size = 10  # Process 10 pages at a time to balance memory and speed
-            
-            with fitz.open(temp_path) as doc:
-                print(f"Opened PDF, total pages: {len(doc)}, memory usage: {get_memory_usage():.2f} MB")
-                total_pages = len(doc)
-                
-                # Process pages in batches
-                for i in range(0, total_pages, batch_size):
-                    batch_end = min(i + batch_size, total_pages)
-                    batch_pages = [doc[j] for j in range(i, batch_end)]
-                    
-                    # Create processing tasks for this batch
-                    batch_tasks = [
-                        process_with_semaphore(page, j + 1) 
-                        for j, page in enumerate(batch_pages, start=i)
-                    ]
-                    
-                    # Process this batch and wait for completion
-                    batch_results = await asyncio.gather(*batch_tasks)
-                    upload_tasks.extend(batch_results)
-                    
-                    # Force garbage collection after each batch
-                    del batch_pages, batch_tasks, batch_results
-                    gc.collect()
-                    print(f"Processed batch {i//batch_size + 1}, memory usage: {get_memory_usage():.2f} MB")
-            
-            return upload_tasks
         
         # Run the async processing with a new event loop
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         
         try:
-            uploaded_paths = loop.run_until_complete(process_pdf_async())
+            async_process_start_time = datetime.now()
+            uploaded_paths = loop.run_until_complete(process_pdf_async(file_content,pdf_id,file_name))
+            async_process_end_time = datetime.now()
+            print(f"Async processing finished in {async_process_end_time - async_process_start_time}")
             print(f"Successfully uploaded {len(uploaded_paths)} images")
         finally:
             loop.close()
@@ -282,6 +333,7 @@ def process_uploaded_pdf(event: storage_fn.CloudEvent) -> None:
         endingtime = datetime.now()
         endingmemory = get_memory_usage()
         print(f"Processing completed in {endingtime - startingtime}, memory spent: {endingmemory - startingmemory:.2f} MB")
+        print(f"Total execution time: {datetime.now() - total_start_time}")
         print(f"Successfully processed PDF {file_name} and uploaded {len(uploaded_paths)} images")
     
     except Exception as e:
@@ -290,9 +342,10 @@ def process_uploaded_pdf(event: storage_fn.CloudEvent) -> None:
         print(f"Error details: {traceback.format_exc()}")
     
     finally:
-        # Clean up the temporary file
-        if os.path.exists(temp_path):
-            os.unlink(temp_path)
+        # Clean up memory
+        if 'file_content' in locals():
+            del file_content
+        gc.collect()
 
 
 

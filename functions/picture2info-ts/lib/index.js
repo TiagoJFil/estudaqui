@@ -54,52 +54,41 @@ let openai;
 const systemPrompt = `
 You are a professional exam parser.
 
-Your task is to extract all questions from the **provided document only**. Do not use any external knowledge or make assumptions beyond the content shown.  
-Return the results in **strict, valid JSON** with the following structure (no comments, no trailing commas):
+Extract all questions from the **input document only. Do not use outside knowledge or make assumptions.**  
+Return valid JSON (no comments, no trailing commas) in this format:
 
 \`{  "questions":  [  {  "questionNumber":  "string",  "question":  "string",  "supplementalContent":  "string",  "questionType":  "openEnded" | "multipleChoice" | "prompt" | "other",  "responses":  ["string", ...] | null,  "correctResponses":  ["string", ...] | null,  "imgCount": number }  ]  }\` 
 
 ### Rules:
 
-1.  Use **only** the content from the input document. **Do not infer, invent, or supplement** information.
+1.  Use **only** what’s shown. Don’t guess, infer, or supplement.
     
-2.  For each question:
-    
-    -   Set the \`questionNumber\` field to the **exact question number or identifier** as shown (e.g., "1", "Q1", "Pergunta 3", etc.).
-    -   Set the \`question\` field to the **exact question text** as written.
-    -   Set the \`supplementalContent\` field to include **all directly attached content necessary to understand the question**, such as:
-        -   Code snippets
-        -   Text excerpts
-        -   Definitions
-        -   Instructions
-            
-    -   **Do not reference external content** (e.g., do not write "Leia o excerto..."). If an excerpt or context is present, copy it in full.
-    -   Set \`imgCount\` to the number of images directly attached to the question, or 0 if none are present.
-        
-3.  Set \`questionType\` as follows:
-    -   \`"openEnded"\`: requires a free-text response
-    -   \`"multipleChoice"\`: includes predefined options
-    -   \`"prompt"\`: **not a question** but a context or instruction block, typically to introduce a group of questions or content (e.g., diagrams, figures, setups). It is not meant to be answered.
+2.  For each question, set:
+    -   \`questionNumber\` field to the **exact question number or identifier** as shown (e.g., "1", "Q1", "Pergunta 3", etc.).
+    -   \`question\` field to the **exact question text** as written.
+    -   \`supplementalContent\` directly attached content like code, excerpts, or definitions. Leave empty if none.
+    -   \`imgCount\` number of images directly tied to the question (or\`0\`)
+3.  Set \`questionType\`:
+    -   \`"openEnded"\`: free-text answer required
+    -   \`"multipleChoice"\`: predefined answer options
+    -   \`"prompt"\` context block not meant to be answered
     -   \`"other"\`: any other format
-        
 4.  Set \`responses\` to:
-    -   An array of response options (in exact order and formatting)
-    -   Otherwise \`null\` if none are present
-        
+    -   Array of options, if present
+    -   \`null\` if not
 5.  Set \`correctResponses\` to:
-    -   An array of correct answers, **only if clearly marked** in the document
-    -   Otherwise, set to \`null\`
-        
-6.  **Escape all necessary characters** to ensure valid JSON (e.g., quotes, newlines).
-7.  **Preserve original wording, formatting, and order** exactly as shown in the document.
-8.  **Do not include explanations, commentary, or any output other than the JSON.**
+    -   Only if clearly marked
+    -   Otherwise,\`null\`
+6.  **Escape characters** to ensure valid JSON (\`\n\`, \`\"\`,etc.).
+7.  Preserve exact wording and order.
+8.  Output **only the JSON — no comments, markdown, or explanations**.
 
-### Formatting Rules:
+### Math Formatting:
 
--   Use \`$...$\` for inline mathematical expressions.
--   Use \`$$...$$\` or \`\\[\\]\` for block mathematical expressions.
+-   Use \`$...$\` for inline math.
+-   Use \`$$...$$\` or \`\\[\\]\` for block math.
 -   Do not use \`\\\\[...\\\\]\` or any other math delimiters.
--   Do not include images, HTML, or unsupported Markdown features.
+-   No HTML, images, or unsupported Markdown
 
 ### Output:
 
@@ -220,57 +209,22 @@ async function processImageGPT(imageLink, fileName, model = 'gpt-4.1-mini') {
         }
     }
 }
-// Deep merge function for nested objects
-function deepMerge(existing, newData) {
-    if (!existing || typeof existing !== 'object' || !newData || typeof newData !== 'object') {
-        return newData;
-    }
-    if (Array.isArray(existing) || Array.isArray(newData)) {
-        return newData;
-    }
-    const result = { ...existing };
-    for (const [key, value] of Object.entries(newData)) {
-        if (key in result && typeof result[key] === 'object' && typeof value === 'object' &&
-            !Array.isArray(result[key]) && !Array.isArray(value)) {
-            result[key] = deepMerge(result[key], value);
-        }
-        else {
-            result[key] = value;
-        }
-    }
-    return result;
-}
 // Update Firestore document with retry logic
 async function updateFirestoreDocument(collection, documentId, body) {
+    const startTime = Date.now();
     await withRetry(async () => {
         const docRef = db.collection(collection).doc(documentId);
-        // Use a transaction to ensure atomic updates
-        await db.runTransaction(async (transaction) => {
-            const doc = await transaction.get(docRef);
-            let mergedData;
-            if (doc.exists) {
-                // Deep merge with existing data
-                console.log(`Merging with existing document ${documentId}`);
-                const existingData = doc.data() || {};
-                mergedData = deepMerge(existingData, body);
-            }
-            else {
-                // New document
-                console.log(`Creating new document ${documentId}`);
-                mergedData = body;
-            }
-            // Update the document
-            transaction.set(docRef, mergedData, { merge: true });
-        });
-        console.log(`Successfully updated document ${documentId} in collection ${collection}`);
+        // Use set with merge to avoid transaction contention from multiple pages of the same exam being processed at once.
+        await docRef.set(body, { merge: true });
     }, 5, // Fewer retries for Firestore operations
     `Firestore update for ${documentId}`);
+    const endTime = Date.now();
+    console.log(`Firestore update for document ${documentId} took ${endTime - startTime}ms`);
 }
 // Main processing function
 async function processImage(imageLink, fileName, pageNumber, examName, metadata) {
     try {
         const result = await processImageGPT(imageLink, fileName);
-        console.log(JSON.stringify(result, null, 2));
         const questions = result.questions;
         // Create questions object with question number as keys
         const questionsResults = {};
@@ -291,7 +245,6 @@ async function processImage(imageLink, fileName, pageNumber, examName, metadata)
                 [pageNumber]: { ...questionsResults, "figureCount": figureCount }
             }
         };
-        console.log(`Body being sent to Firestore for page ${pageNumber}:`, JSON.stringify(body, null, 2));
         await updateFirestoreDocument(RESULT_COLLECTION, examName, body);
         return result;
     }
@@ -326,6 +279,7 @@ exports.processImageUpload = (0, storage_1.onObjectFinalized)({
     timeoutSeconds: 540,
     memory: '1GiB',
     maxInstances: 20,
+    concurrency: 300
 }, async (event) => {
     var _a;
     const bucketName = event.data.bucket;
@@ -359,13 +313,12 @@ exports.processImageUpload = (0, storage_1.onObjectFinalized)({
     }
     // Generate the file link
     const fileLink = `https://firebasestorage.googleapis.com/v0/b/${bucketName}/o/${encodedFilePath}?alt=media`;
-    console.log(`Using URL: ${fileLink}`);
-    const fileMetadata = await admin.storage().bucket(bucketName).file(filePath).getMetadata();
-    if (!fileMetadata || !fileMetadata[0]) {
-        console.error(`No metadata found for file ${filePath}`);
+    const storageStartTime = Date.now();
+    const metadata = event.data.metadata;
+    if (!metadata) {
+        console.error(`No metadata found in event for file ${filePath}`);
         return null;
     }
-    const metadata = fileMetadata[0].metadata;
     console.log(`File metadata for ${filePath}:`, metadata);
     // Extract page number
     const pageNumberMatch = filePath.match(/_(\d+)\./);

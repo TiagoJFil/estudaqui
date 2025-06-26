@@ -75,7 +75,7 @@ Return valid JSON (no comments, no trailing commas) in this format:
     -   Otherwise,\`null\`
 6.  **Escape characters** to ensure valid JSON (\`\n\`, \`\"\`,etc.).
 7.  Preserve exact wording and order.
-8.  Output **only** the JSON — no comments, markdown, or explanations.
+8.  Output **only the JSON — no comments, markdown, or explanations**.
 
 ### Math Formatting:
 
@@ -237,18 +237,19 @@ async function updateFirestoreDocument(
   documentId: string, 
   body: Record<string, any>
 ): Promise<void> {
+  const startTime = Date.now();
   await withRetry(
     async () => {
       const docRef = db.collection(collection).doc(documentId);
       
       // Use set with merge to avoid transaction contention from multiple pages of the same exam being processed at once.
       await docRef.set(body, { merge: true });
-      
-      console.log(`Successfully updated document ${documentId} in collection ${collection}`);
     },
     5, // Fewer retries for Firestore operations
     `Firestore update for ${documentId}`
   );
+  const endTime = Date.now();
+  console.log(`Firestore update for document ${documentId} took ${endTime - startTime}ms`);
 }
 
 // Main processing function
@@ -261,7 +262,6 @@ async function processImage(
 ): Promise<ProcessImageResult | null> {
   try {
     const result = await processImageGPT(imageLink, fileName);
-    console.log(JSON.stringify(result, null, 2));
     const questions = result.questions;
     
     // Create questions object with question number as keys
@@ -285,8 +285,6 @@ async function processImage(
         [pageNumber]: {...questionsResults, "figureCount": figureCount}
       }
     };
-    
-    console.log(`Body being sent to Firestore for page ${pageNumber}:`, JSON.stringify(body, null, 2));
     
     await updateFirestoreDocument(RESULT_COLLECTION, examName, body);
     
@@ -372,13 +370,14 @@ export const processImageUpload = onObjectFinalized(
     
     // Generate the file link
     const fileLink = `https://firebasestorage.googleapis.com/v0/b/${bucketName}/o/${encodedFilePath}?alt=media`;
-    console.log(`Using URL: ${fileLink}`);
-    const fileMetadata = await admin.storage().bucket(bucketName).file(filePath).getMetadata();
-    if (!fileMetadata || !fileMetadata[0]) {
-      console.error(`No metadata found for file ${filePath}`);
+    
+    const storageStartTime = Date.now();
+    const metadata = event.data.metadata;
+
+    if (!metadata) {
+      console.error(`No metadata found in event for file ${filePath}`);
       return null;
     }
-    const metadata = fileMetadata[0].metadata;
     console.log(`File metadata for ${filePath}:`, metadata);
     
     // Extract page number

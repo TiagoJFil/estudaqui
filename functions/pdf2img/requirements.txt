@@ -7,3 +7,4 @@ psutil==7.0.0
 aiohttp==3.9.3
 asyncio==3.4.3
 gcloud-aio-storage==9.4.0
+pillow==11.2.1
