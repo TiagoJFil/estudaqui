@@ -17,17 +17,20 @@
       }
     },
     {
-      "source": "picture2info",
-      "codebase": "picture2info",
+      "source": "picture2info-ts",
+      "codebase": "picture2info-ts",
       "ignore": [
-        "venv",
+        "node_modules",
         ".git",
         "firebase-debug.log",
         "firebase-debug.*.log",
         "*.local"
       ],
-      "runtime": "python311",
-      "region": "us-west1"
+      "runtime": "nodejs20",
+      "region": "us-west1",
+      "environmentVariables": {
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}"
+      }
     }
   ]
 }

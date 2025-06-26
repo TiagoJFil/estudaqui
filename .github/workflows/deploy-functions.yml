@@ -20,7 +20,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
           
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -34,21 +34,28 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('functions/pdf2img/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
         
       - name: Install Python dependencies
-        run: |
-          cd functions
-          pip install -r requirements.txt
+        working-directory: functions/pdf2img
+        run: pip install -r requirements.txt
           
-      - name: Check for syntax errors
-        run: |
-          cd functions
-          python -m compileall .
+      - name: Check for syntax errors in Python function
+        working-directory: functions/pdf2img
+        run: python -m compileall .
+
+      - name: Install dependencies for TypeScript function
+        working-directory: functions/picture2info-ts
+        run: npm install
+
+      - name: Compile TypeScript function
+        working-directory: functions/picture2info-ts
+        run: npx tsc
           
       - name: Deploy Firebase Functions
+        working-directory: functions
         run: firebase deploy --only functions --project estudaqui
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

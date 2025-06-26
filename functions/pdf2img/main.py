@@ -39,7 +39,7 @@ set_global_options(
     memory=MemoryOption.GB_2,
     timeout_sec=540,  # Increased timeout for larger PDFs
     cpu=1,
-    concurrency=11
+    concurrency=30
 )
 
 openCVProcesser = OpenCVProcesser()
@@ -135,7 +135,7 @@ async def upload_image_async(destination_path, image_metadata, image_bytes,figur
             destination_path,
             image_bytes,
             content_type='image/jpeg',
-            metadata=image_metadata
+            metadata={'metadata': image_metadata}
         )
 
         # Simultaneously upload all files
@@ -145,13 +145,11 @@ async def upload_image_async(destination_path, image_metadata, image_bytes,figur
                     FIGURES_DESTINATION_BUCKET,
                     get_figure_path(figure_info["index"]), 
                     figure_info["figure"], 
-                    metadata=figure_info["metadata"]
+                    metadata={'metadata': figure_info["metadata"]}
                 )
                 for figure_info in uploads
             ]
         )    
-
-    print(f"Uploaded image to {destination_path} with metadata: {image_metadata}")
     return destination_path
 
 async def process_page(page, pdf_id, page_number, file_name):
@@ -177,16 +175,17 @@ async def process_page(page, pdf_id, page_number, file_name):
     image_bytes = image_buffer.tobytes()
     #make image object for opencv
     image_cv = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
+    figures = extract_images_from_picture(image_cv)
 
     
     destination_path = f"pdf/{pdf_id}/images/page_{page_number}.jpg"
     image_metadata = {
         'pdfId': pdf_id,
         'pageNumber': str(page_number),
-        'originalFileName': file_name
+        'originalFileName': file_name,
+        'figureCount': len(figures),
     }
-    figures = extract_images_from_picture(image_cv)
-    figures_metadata = [{"pageNumber": page_number, "figure_number": i } for i in range(len(figures))]
+    figures_metadata = [{"pageNumber": page_number, "figureNumber": i + 1 } for i in range(len(figures))]
 
     print(f"Processed image {page_number}, queued for upload")
     return await upload_image_async(destination_path, image_metadata, image_bytes,figures_metadata,figures)
