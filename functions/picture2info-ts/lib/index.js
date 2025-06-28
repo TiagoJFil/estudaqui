@@ -51,49 +51,6 @@ const RETRY_DELAYS = [1000, 2000, 4000, 8000, 16000, 32000]; // Exponential back
 const RESULT_COLLECTION = process.env.RESULT_COLLECTION || 'test';
 const openAIKey = (0, params_1.defineSecret)('OPENAI_API_KEY');
 let openai;
-const systemPrompt = `
-You are a professional exam parser.
-
-Extract all questions from the **input document only. Do not use outside knowledge or make assumptions.**  
-Return valid JSON (no comments, no trailing commas) in this format:
-
-\`{  "questions":  [  {  "questionNumber":  "string",  "question":  "string",  "supplementalContent":  "string",  "questionType":  "openEnded" | "multipleChoice" | "prompt" | "other",  "responses":  ["string", ...] | null,  "correctResponses":  ["string", ...] | null,  "imgCount": number }  ]  }\` 
-
-### Rules:
-
-1.  Use **only** what’s shown. Don’t guess, infer, or supplement.
-    
-2.  For each question, set:
-    -   \`questionNumber\` field to the **exact question number or identifier** as shown (e.g., "1", "Q1", "Pergunta 3", etc.).
-    -   \`question\` field to the **exact question text** as written.
-    -   \`supplementalContent\` directly attached content like code, excerpts, or definitions. Leave empty if none.
-    -   \`imgCount\` number of images directly tied to the question (or\`0\`)
-3.  Set \`questionType\`:
-    -   \`"openEnded"\`: free-text answer required
-    -   \`"multipleChoice"\`: predefined answer options
-    -   \`"prompt"\` context block not meant to be answered
-    -   \`"other"\`: any other format
-4.  Set \`responses\` to:
-    -   Array of options, if present
-    -   \`null\` if not
-5.  Set \`correctResponses\` to:
-    -   Only if clearly marked
-    -   Otherwise,\`null\`
-6.  **Escape characters** to ensure valid JSON (\`\n\`, \`\"\`,etc.).
-7.  Preserve exact wording and order.
-8.  Output **only the JSON — no comments, markdown, or explanations**.
-
-### Math Formatting:
-
--   Use \`$...$\` for inline math.
--   Use \`$$...$$\` or \`\\[\\]\` for block math.
--   Do not use \`\\\\[...\\\\]\` or any other math delimiters.
--   No HTML, images, or unsupported Markdown
-
-### Output:
-
-Return **only the JSON object** as described above. Do not include any other text, commentary, or formatting (such as code fences).
-`;
 // Initialize OpenAI client
 // Utility function for exponential backoff
 const sleep = (ms) => {
@@ -136,7 +93,7 @@ async function withRetry(operation, maxRetries = MAX_RETRIES, operationName = 'o
     throw lastError;
 }
 // OpenAI API call with retry logic
-async function processImageGPT(imageLink, fileName, model = 'gpt-4.1-mini') {
+async function processImageGPT(imageLink, fileName, model = 'gpt-4.1-nano') {
     const startTime = Date.now();
     if (!openai) {
         openai = new openai_1.default({ apiKey: openAIKey.value() });
@@ -144,11 +101,11 @@ async function processImageGPT(imageLink, fileName, model = 'gpt-4.1-mini') {
     const response = await withRetry(async () => {
         return await openai.responses.create({
             model,
+            prompt: {
+                "id": "pmpt_685ef860e03c819589b7885a7e1cfebb04e3aad6c1ba60ce",
+                "version": "2"
+            },
             input: [
-                {
-                    role: "system",
-                    content: systemPrompt,
-                },
                 {
                     role: "user",
                     content: [
@@ -211,15 +168,12 @@ async function processImageGPT(imageLink, fileName, model = 'gpt-4.1-mini') {
 }
 // Update Firestore document with retry logic
 async function updateFirestoreDocument(collection, documentId, body) {
-    const startTime = Date.now();
     await withRetry(async () => {
         const docRef = db.collection(collection).doc(documentId);
         // Use set with merge to avoid transaction contention from multiple pages of the same exam being processed at once.
         await docRef.set(body, { merge: true });
     }, 5, // Fewer retries for Firestore operations
     `Firestore update for ${documentId}`);
-    const endTime = Date.now();
-    console.log(`Firestore update for document ${documentId} took ${endTime - startTime}ms`);
 }
 // Main processing function
 async function processImage(imageLink, fileName, pageNumber, examName, metadata) {
@@ -249,7 +203,6 @@ async function processImage(imageLink, fileName, pageNumber, examName, metadata)
         return result;
     }
     catch (error) {
-        console.error(`Error processing image ${fileName}, page ${pageNumber}:`, error);
         throw error;
     }
 }
@@ -277,13 +230,15 @@ exports.processImageUpload = (0, storage_1.onObjectFinalized)({
     region: 'us-west1',
     secrets: [openAIKey],
     timeoutSeconds: 540,
-    memory: '1GiB',
+    memory: '4GiB',
+    cpu: 1,
     maxInstances: 20,
-    concurrency: 300
+    concurrency: 37
 }, async (event) => {
     var _a;
     const bucketName = event.data.bucket;
     const filePath = event.data.name;
+    const startTime = Date.now();
     if (!filePath) {
         console.log('No file path in event');
         return null;
@@ -313,7 +268,6 @@ exports.processImageUpload = (0, storage_1.onObjectFinalized)({
     }
     // Generate the file link
     const fileLink = `https://firebasestorage.googleapis.com/v0/b/${bucketName}/o/${encodedFilePath}?alt=media`;
-    const storageStartTime = Date.now();
     const metadata = event.data.metadata;
     if (!metadata) {
         console.error(`No metadata found in event for file ${filePath}`);
@@ -342,6 +296,10 @@ exports.processImageUpload = (0, storage_1.onObjectFinalized)({
     catch (error) {
         console.error(`Critical error processing file ${filePath}:`, error);
         return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+    finally {
+        const endTime = Date.now();
+        console.log(`Processing time for file ${filePath}, page ${pageNumber}: ${endTime - startTime}ms`);
     }
 });
 /*

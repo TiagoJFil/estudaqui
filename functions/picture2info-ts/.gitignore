@@ -16,7 +16,9 @@ firebase-debug.*.log*
 .firebase/
 
 # Firebase config
-
+lib/
+bun.lock
+package-lock.json
 # Uncomment this if you'd like others to create their own config files:
 # .firebaserc
 
