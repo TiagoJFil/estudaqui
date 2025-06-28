@@ -11,20 +11,20 @@ const db = admin.firestore();
 
 // Types
 interface Question {
-  questionNumber: string;
-  question: string;
-  supplementalContent: string;
-  questionType: 'openEnded' | 'multipleChoice' | 'prompt' | 'other';
-  responses: string[] | null;
-  correctResponses: string[] | null;
-  imgCount: number;
+  n: string;
+  q: string;
+  sc: string;
+  y: 'openEnded' | 'multipleChoice' | 'prompt' | 'other';
+  r: string[] | null;
+  c: string[] | null;
+  i: number;
 }
 
 interface ProcessImageResult {
   questions: Question[];
 }
 
-interface QuestionResult {
+interface QuestionResultFirestore {
   question: string;
   questionNumber: string;
   supplementalContent: string;
@@ -98,7 +98,7 @@ async function withRetry<T>(
 async function processImageGPT(
   imageLink: string,
   fileName: string,
-  model: string = 'gpt-4.1-nano'
+  model: string = 'gpt-4.1-mini'
 ): Promise<ProcessImageResult> {
   const startTime = Date.now();
 
@@ -112,7 +112,7 @@ async function processImageGPT(
         model,
         prompt:{
           "id": "pmpt_685ef860e03c819589b7885a7e1cfebb04e3aad6c1ba60ce",
-          "version": "2"
+          "version": "3"
         },
         
         input: [
@@ -216,18 +216,18 @@ async function processImage(
     const questions = result.questions;
     
     // Create questions object with question number as keys
-    const questionsResults: Record<string, QuestionResult> = {};
+    const questionsResults: Record<string, QuestionResultFirestore> = {};
     const figureCount = metadata?.figureCount || 0;
     
     for (const question of questions) {
-      questionsResults[question.questionNumber] = {
-        question: question.question,
-        questionNumber: question.questionNumber,
-        supplementalContent: question.supplementalContent || '',
-        questionType: question.questionType,
-        responses: question.responses || null,
-        correctResponses: question.correctResponses || null,
-        imgCount: question.imgCount || 0,
+      questionsResults[question.n] = {
+        question: question.q || '',
+        questionNumber: question.n || '',
+        supplementalContent: question.sc || '',
+        questionType: question.y || '',
+        responses: question.r || null,
+        correctResponses: question.c || null,
+        imgCount: question.i || 0,
       };
     }
     

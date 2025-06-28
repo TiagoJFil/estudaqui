@@ -93,7 +93,7 @@ async function withRetry(operation, maxRetries = MAX_RETRIES, operationName = 'o
     throw lastError;
 }
 // OpenAI API call with retry logic
-async function processImageGPT(imageLink, fileName, model = 'gpt-4.1-nano') {
+async function processImageGPT(imageLink, fileName, model = 'gpt-4.1-mini') {
     const startTime = Date.now();
     if (!openai) {
         openai = new openai_1.default({ apiKey: openAIKey.value() });
@@ -103,7 +103,7 @@ async function processImageGPT(imageLink, fileName, model = 'gpt-4.1-nano') {
             model,
             prompt: {
                 "id": "pmpt_685ef860e03c819589b7885a7e1cfebb04e3aad6c1ba60ce",
-                "version": "2"
+                "version": "3"
             },
             input: [
                 {
@@ -184,14 +184,14 @@ async function processImage(imageLink, fileName, pageNumber, examName, metadata)
         const questionsResults = {};
         const figureCount = (metadata === null || metadata === void 0 ? void 0 : metadata.figureCount) || 0;
         for (const question of questions) {
-            questionsResults[question.questionNumber] = {
-                question: question.question,
-                questionNumber: question.questionNumber,
-                supplementalContent: question.supplementalContent || '',
-                questionType: question.questionType,
-                responses: question.responses || null,
-                correctResponses: question.correctResponses || null,
-                imgCount: question.imgCount || 0,
+            questionsResults[question.n] = {
+                question: question.q || '',
+                questionNumber: question.n || '',
+                supplementalContent: question.sc || '',
+                questionType: question.y || '',
+                responses: question.r || null,
+                correctResponses: question.c || null,
+                imgCount: question.i || 0,
             };
         }
         const body = {
@@ -233,7 +233,7 @@ exports.processImageUpload = (0, storage_1.onObjectFinalized)({
     memory: '4GiB',
     cpu: 1,
     maxInstances: 20,
-    concurrency: 37
+    concurrency: 30
 }, async (event) => {
     var _a;
     const bucketName = event.data.bucket;
