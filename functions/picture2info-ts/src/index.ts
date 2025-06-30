@@ -2,12 +2,17 @@ import { onObjectFinalized, StorageEvent } from 'firebase-functions/v2/storage';
 import { defineSecret } from 'firebase-functions/params';
 import * as admin from 'firebase-admin';
 import OpenAI from 'openai';
+import { Opik } from "opik";
+import { trackOpenAI } from "opik-openai";
+import { zodTextFormat } from "openai/helpers/zod";
+import { z } from "zod";
 
 admin.initializeApp();
 
 //admin.initializeApp()
 // Initialize Firestore
 const db = admin.firestore();
+
 
 // Types
 interface Question {
@@ -23,6 +28,25 @@ interface Question {
 interface ProcessImageResult {
   questions: Question[];
 }
+
+const OpenAIResponse = z.object({
+  questions: z.array(
+    z.object({
+      n: z.string(),
+      q: z.string(),
+      sc: z.string(),
+      y: z.union([
+        z.literal('openEnded'),
+        z.literal('multipleChoice'),
+        z.literal('prompt'),
+        z.literal('other')
+      ]),
+      r: z.array(z.string()).nullable(),
+      c: z.array(z.string()).nullable(),
+      i: z.number()
+    })
+  )
+})
 
 interface QuestionResultFirestore {
   question: string;
@@ -40,6 +64,78 @@ const RETRY_DELAYS = [1000, 2000, 4000, 8000, 16000, 32000]; // Exponential back
 const RESULT_COLLECTION = process.env.RESULT_COLLECTION || 'test';
 const openAIKey = defineSecret('OPENAI_API_KEY');
 let openai: OpenAI;
+
+let trackedOpenAI : OpenAI & OpikExtension;
+const opik = new Opik({
+  apiKey: process.env.OPIK_API_KEY || 'test',
+  projectName: process.env.OPIK_PROJECT_NAME || 'test',
+  workspaceName: process.env.OPIK_WORKSPACE || 'test',
+  apiUrl: process.env.OPIK_API_URL || 'https://www.comet.com/opik/api',
+});
+
+
+interface OpikExtension {
+    flush: () => Promise<void>;
+}
+
+
+const prompt = `
+You are a professional exam parser.
+
+Extract all questions from the **input document only. 
+Do not use outside knowledge or make assumptions.**  
+Return valid JSON (no comments, no trailing commas) in this format:
+
+{
+  "questions": [
+    {
+      "n": "string",  // questionNumber
+      "t": "string", // question text
+      "s": "string", // supplemental content
+      "y": "openEnded" | "multipleChoice" | "prompt" | "other", // question type
+      "r": ["string", ...] | null, // responses
+      "c": ["string", ...] | null, // correctResponses
+      "i": number // imgCount
+    }
+  ]
+}
+
+### Rules:
+
+1.  Use **only** what’s shown. Don’t guess, infer, or supplement.
+    
+2.  For each question, set:
+    -   \`questionNumber\` field to the **exact question number or identifier** as shown (e.g., "1", "Q1", "Pergunta 3", etc.). Do not put Question (number) of (x), ignore the " of (x)" and "Question".
+    -   \`question\` field to the **exact question text** as written.
+    -   \`supplementalContent\` directly attached content like code, excerpts, or definitions. Leave empty if none. Do not insert multiple choices content.
+    -   \`imgCount\` number of images directly tied to the question (or\`0\`)
+3.  Set \`questionType\`:
+    -   \`"openEnded"\`: free-text answer required
+    -   \`"multipleChoice"\`: predefined answer options
+    -   \`"prompt"\` context block not meant to be answered
+    -   \`"other"\`: any other format
+4.  Set \`"responses"\` to:
+    -   Array of options, if present
+    -   \`null\` if not
+5.  Set \`correctResponses\` to:
+    -   Only if clearly marked
+    -   Otherwise,\`null\`
+6.  **Escape characters** to ensure valid JSON (\`\n\`, \`\"\`,etc.).
+7.  Preserve exact wording and order.
+8.  Output **only the JSON — no comments, markdown, or explanations**.
+
+### Math Formatting:
+
+-   Use \`$...$\` for inline math.
+-   Use \`$$...$$\` or \`\\[\\]\` for block math.
+-   Do not use \`\\\\[...\\\\]\` or any other math delimiters.
+-   No HTML, images, or unsupported Markdown
+
+### Output:
+
+Return **only the JSON object** as described above. Do not include any other text, commentary, or formatting (such as code fences).
+`
+
 
 
 // Initialize OpenAI client
@@ -104,18 +200,21 @@ async function processImageGPT(
 
   if (!openai) {
     openai = new OpenAI({ apiKey: openAIKey.value() });
+    trackedOpenAI = trackOpenAI(openai, {
+      client: opik
+    }
+    );
   }
 
   const response = await withRetry(
     async () => {
-      return await openai.responses.create({
-        model,
-        prompt:{
-          "id": "pmpt_685ef860e03c819589b7885a7e1cfebb04e3aad6c1ba60ce",
-          "version": "3"
-        },
-        
+      return await trackedOpenAI.responses.create({
+        model,  
         input: [
+          {
+            role: "system",
+            content: prompt,
+          },
           {
           role: "user",
           content: [
@@ -126,6 +225,9 @@ async function processImageGPT(
             },
           ],
         }],
+        text: {
+          format: zodTextFormat(OpenAIResponse,"event"),
+        },
         temperature: 0.15,
       });
     },
@@ -134,7 +236,7 @@ async function processImageGPT(
   );
   const endTime = Date.now();
   console.log(`OpenAI API call for file ${fileName} took ${endTime - startTime}ms`);
-
+  console.log(`OpenAI response for file ${fileName}:`, response);
   // Extract content from response
   let content = response.output_text
   if (!content) {
@@ -213,6 +315,7 @@ async function processImage(
 ): Promise<ProcessImageResult | null> {
   try {
     const result = await processImageGPT(imageLink, fileName);
+      await trackedOpenAI.flush();
     const questions = result.questions;
     
     // Create questions object with question number as keys
@@ -329,7 +432,6 @@ export const processImageUpload = onObjectFinalized(
       console.error(`No metadata found in event for file ${filePath}`);
       return null;
     }
-    console.log(`File metadata for ${filePath}:`, metadata);
     
     // Extract page number
     const pageNumberMatch = filePath.match(/_(\d+)\./);
@@ -346,7 +448,6 @@ export const processImageUpload = onObjectFinalized(
       const result = await processWithTimeout(fileLink, fileName, pageNumber, examName,metadata, 150000);
       
       if (result) {
-        console.log(`Successfully processed file ${filePath}, page ${pageNumber}`);
         return { success: true, questionsFound: result.questions.length };
       } else {
         console.error(`Failed to process file ${filePath}, page ${pageNumber}`);
@@ -358,6 +459,7 @@ export const processImageUpload = onObjectFinalized(
     }finally {
       const endTime = Date.now();
       console.log(`Processing time for file ${filePath}, page ${pageNumber}: ${endTime - startTime}ms`);
+            
     }
   }
 );
