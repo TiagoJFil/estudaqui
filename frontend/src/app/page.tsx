@@ -2,7 +2,7 @@
 
 import { useSession, signIn } from "next-auth/react";
 import { AuthDropDown } from "@/components/auth-drop-down";
-import React, { useState, useCallback, useEffect, useContext } from "react"
+import React, { useState,useRef, useCallback, useEffect, useContext } from "react"
 import { Upload, Loader2, CheckCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import FileUpload from "@/components/file-upload"
@@ -12,6 +12,10 @@ import FileDragDropOverlay from "@/components/file-drag-drop-overlay"
 import { API } from "@/lib/frontend/api-service"
 import { Button } from "@/components/ui/button"
 import { FirebaseContext } from "@/context/firebase-tracking-provider"
+import { StyledAuthDropDown } from "@/components/styled-auth-dropdown";
+import { toast } from "sonner"
+import { NoCreditsTimer } from "./no-credits-timer"
+import { BuyCreditsButton } from "@/components/BuyCreditsButton"
 
 export default function Home() {
     const router = useRouter();
@@ -22,6 +26,7 @@ export default function Home() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [showFileUploadOverlay, setShowFileUploadOverlay] = useState(false);
+    const creditsRef = useRef<number>(credits);
     // Access Firebase analytics from context
     const analytics = useContext(FirebaseContext);
 
@@ -31,14 +36,14 @@ export default function Home() {
     // Otherwise, add the new file (taking only the first one if multiple are provided)
     setUploadedFiles(currentFiles => {
       if (newFiles.length === 0) return currentFiles;
-      
+
       // Only take the first file from the new files
       const newFile = newFiles[0];
         // Replace existing file (if any) with the new one
       return [newFile];
     });
   }
-  
+
   const handleProcess = async () => {
         if (!session) {
             alert("You must be signed in to process files.");
@@ -48,9 +53,24 @@ export default function Home() {
             alert("No file uploaded")
             return
         }
+        if (credits < 1) {
+            toast(
+              <div className="flex flex-col gap-2 w-80">
+                <div className="text-gray-900 font-semibold text-lg">Looks like you're out of credits</div>
+                <div className="text-gray-700 text-sm">To keep exploring and using this feature, you’ll need to top up. Grab a new credit pack and you’re good to go!</div>
+                <NoCreditsTimer duration={5000} />
+                <BuyCreditsButton onClick={() => { toast.dismiss(); router.push('/buy'); }}>
+                  Buy More Credits
+                </BuyCreditsButton>
+              </div>,
+              { duration: 5000 }
+            );
+            return;
+        }
+        creditsRef.current = credits;
         setIsProcessing(true);
         try {
-            const file = uploadedFiles[0]; 
+            const file = uploadedFiles[0];
             const examJsonResponse =  await API.uploadFile(file);
             const examJson = examJsonResponse.examJson
             if (!examJson || Object.keys(examJson).length === 0) {
@@ -61,7 +81,7 @@ export default function Home() {
             setOutput(JSON.stringify(examJson, null, 2));
             // Check if exam already exists in user history to avoid spending credits
             if (!examJsonResponse.isInUserUploads) {
-              setCredits(credits - 1);
+              animateCreditDeduction();
             }
             localStorage.setItem("examData", JSON.stringify(examJson));
             setIsSuccess(true);
@@ -69,8 +89,22 @@ export default function Home() {
             setTimeout(() => {
                 router.push("/exam/" + examJson.examId);
             }, 2000);
-         } catch (error) {
-            alert("Failed to process request")
+         } catch (error: any) {
+                 if (error.message === 'INSUFFICIENT_CREDITS') {
+                toast(
+                  <div className="flex flex-col gap-2 w-80">
+                    <div className="text-gray-900 font-semibold text-lg">Looks like you're out of credits</div>
+                    <div className="text-gray-700 text-sm">To keep exploring and using this feature, you’ll need to top up. Grab a new credit pack and you’re good to go!</div>
+                    <NoCreditsTimer duration={5000} />
+                    <BuyCreditsButton onClick={() => { toast.dismiss(); router.push('/buy'); }}>
+                      Buy More Credits
+                    </BuyCreditsButton>
+                  </div>,
+                  { duration: 5000 }
+                );
+                 } else {
+                     alert("Failed to process request")
+                 }
             setIsProcessing(false);
          }
     }
@@ -90,14 +124,33 @@ export default function Home() {
             }
         },
         [session, appendFiles]
-    );    // Reset drag state when component unmounts
+    );
+  // Reset drag state when component unmounts
     useEffect(() => {
         return () => {
             // Cleanup function
             setShowFileUploadOverlay(false);
         };
     }, []);
-    
+
+  // Animate credit deduction
+  function animateCreditDeduction() {
+    const start = creditsRef.current;
+    const end = start - 1;
+    let frame = 0;
+    const totalFrames = 20;
+    function animate() {
+      frame++;
+      const value = Math.round(start - (frame / totalFrames));
+      setCredits(value);
+      if (frame < totalFrames) {
+        requestAnimationFrame(animate);
+      } else {
+        setCredits(end);
+      }
+    }
+    animate();
+  }
     return (
         <div className="min-h-auto flex flex-col">
             <FileDragDropOverlay showOverlay={showFileUploadOverlay} setShowOverlay={setShowFileUploadOverlay} onFileDrop={handleFileDrop} />
@@ -108,7 +161,7 @@ export default function Home() {
                         {!session ? (
                             <div className="flex flex-col items-center gap-4 py-8">
                                 <div className="text-lg text-gray-700">You must be signed in to upload files.</div>
-                                <AuthDropDown onSignIn={(platform) => { signIn(platform); }} />
+                                <StyledAuthDropDown onSignIn={(platform) => { signIn(platform); }} />
                             </div>
                         ) : (
                             <FileUpload
@@ -116,6 +169,7 @@ export default function Home() {
                                 onFileRemove={onFileRemove}
                                 onFilesUploaded={appendFiles}
                                 uploadedFiles={uploadedFiles}
+                                isProcessing={isProcessing}
                             />
                         )}
                         <div className="flex gap-3 items-center justify-end pt-2">

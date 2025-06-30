@@ -4,6 +4,7 @@ import { Footer } from "@/components/ui/footer"
 import Navbar from "@/components/navbar"
 import CreditsAndSignIn from "@/components/CreditsAndSignIn"
 import { SidebarProvider, useSidebar } from "@/context/sidebar-context"
+import { Toaster } from "sonner"
 
 function SidebarLayout() {
   const { isCollapsed } = useSidebar()
@@ -21,7 +22,7 @@ function MainContent({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex-1 flex flex-col min-h-full">
       {/* Top Bar for credits/sign-in */}
-      <header className="w-full flex items-center justify-end px-4 py-3 bg-transparent">
+      <header className="relative z-10 w-full flex items-center justify-end px-4 py-3 bg-transparent">
         <CreditsAndSignIn />
       </header>
       {/* Main Content */}
@@ -46,6 +47,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         </div>
         <Footer />
       </div>
+      <Toaster position="bottom-right" richColors closeButton duration={5000} />
     </SidebarProvider>
   )
 }

@@ -62,9 +62,11 @@
     "react-hot-toast": "^2.5.2",
     "react-icons": "^5.5.0",
     "react-markdown": "^10.1.0",
+    "react-toastify": "^11.0.5",
     "react-resizable-panels": "^3.0.3",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
+    "sonner": "^2.0.5",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
     "uri-js": "4.2.2"
