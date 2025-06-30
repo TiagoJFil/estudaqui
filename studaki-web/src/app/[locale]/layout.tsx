@@ -16,12 +16,17 @@ export default async function LocaleLayout({
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
+
+  // Load messages for the current locale
+  const messages = (await import(`../../../messages/${locale}.json`)).default;
  
   return (
-    <html lang={locale}>
-      <body>
-        <NextIntlClientProvider>
-          <MainLayout children={children}/>
+    <html lang={locale} className="h-full">
+      <body className="h-full bg-gray-100 overflow-hidden">
+        <NextIntlClientProvider messages={messages}>
+          <MainLayout>
+            {children}
+          </MainLayout>
         </NextIntlClientProvider>
       </body>
     </html>

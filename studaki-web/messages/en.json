@@ -1,15 +1,35 @@
 {
     "General": {
-        "branding": "Studaki"
+        "branding": "Studaki",
+        "credits": "Credits",
+        "buyMore": "Buy More!",
+        "menu": "Menu"
     },
 
     "HomePage": {
-        
+        "title": "Study smarter, faster, and hassle-free.",
+        "subtitle": "Upload your exams or tests in PDF format and instantly turn them into interactive quizzes.",
+        "description": "Get immediate corrections when available or smart answer suggestions when not. It's the fastest and easiest way to review, spot mistakes, and get ready to ace your tests.",
+        "dropzoneText": "*Drag and drop or use the button \"Process PDF\". Only one PDF file is allowed at a time.",
+        "uploadButton": "Upload PDF",
+        "processButton": "Process PDF",
+        "fileSelected": "Selected file: {filename}",
+        "processing": "Processing...",
+        "dragActive": "Drop your PDF here"
     },
 
     "SideBar": {
         "upload": "New Upload",
         "examSearch": "Search Exams",
-        "recentUploads": "Recent"
+        "recentUploads": "Recent",
+        "help": "Help",
+        "information": "Information"
+    },
+
+    "Actions": {
+        "delete": "Delete",
+        "close": "Close",
+        "cancel": "Cancel",
+        "confirm": "Confirm"
     }
 }

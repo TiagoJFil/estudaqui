@@ -1,15 +1,35 @@
 {
     "General": {
-        "branding": "Studaki"
+        "branding": "Studaki",
+        "credits": "Créditos",
+        "buyMore": "Comprar Mais!",
+        "menu": "Menu"
     },
 
     "HomePage": {
-        
+        "title": "Estude de forma mais inteligente, rápida e sem complicações.",
+        "subtitle": "Carregue suas provas ou testes em formato PDF e converta-os instantaneamente em questionários interativos.",
+        "description": "Receba correções imediatas quando disponíveis ou sugestões inteligentes de respostas quando não. É a maneira mais rápida e fácil de revisar, identificar erros e se preparar para ter sucesso em suas provas.",
+        "dropzoneText": "*Arraste e solte ou use o botão \"Processar PDF\". Apenas um arquivo PDF é permitido por vez.",
+        "uploadButton": "Carregar PDF",
+        "processButton": "Processar PDF",
+        "fileSelected": "Arquivo selecionado: {filename}",
+        "processing": "Processando...",
+        "dragActive": "Solte seu PDF aqui"
     },
 
     "SideBar": {
         "upload": "Novo Upload",
         "examSearch": "Buscar Provas",
-        "recentUploads": "Recentes"
+        "recentUploads": "Recentes",
+        "help": "Ajuda",
+        "information": "Informação"
+    },
+
+    "Actions": {
+        "delete": "Excluir",
+        "close": "Fechar",
+        "cancel": "Cancelar",
+        "confirm": "Confirmar"
     }
 }
